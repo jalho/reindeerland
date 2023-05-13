@@ -1,4 +1,4 @@
-main: main.c build
+debug: main.c build
 	cc -g main.c -o build/main
 build:
 	mkdir build
