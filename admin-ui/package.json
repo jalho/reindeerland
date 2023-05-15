@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "@arwes/animation": "1.0.0-alpha.19",
+    "@arwes/core": "1.0.0-alpha.19",
+    "@arwes/design": "1.0.0-alpha.19",
+    "@arwes/sounds": "1.0.0-alpha.19",
+    "@emotion/css": "11.11.0",
+    "@emotion/react": "11.11.0",
+    "animejs": "3.2.1",
+    "howler": "2.2.3",
+    "polished": "4.2.2",
+    "prop-types": "15.8.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
+  },
+  "scripts": {
+    "start": "esbuild app.tsx --bundle --servedir=www/ --outdir=www/js"
+  },
+  "devDependencies": {
+    "@types/animejs": "3.1.7",
+    "@types/howler": "2.2.7",
+    "@types/react": "17.0.59",
+    "@types/react-dom": "17.0.20",
+    "esbuild": "0.17.19"
+  }
+}
