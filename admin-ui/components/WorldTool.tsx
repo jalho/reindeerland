@@ -1,15 +1,18 @@
 import React from "react";
-import { Text, Figure } from "@arwes/core";
-import Column from "./Column";
 
 const WorldTool: React.FC = () => {
   return (
-    <Figure src={"http://localhost:8001"} alt="Map of Reindeerland">
-      <Column>
-        <Text as="p">TODO: Legends here.</Text>
-        <Text as="p">TODO: Controls here.</Text>
-      </Column>
-    </Figure>
+    <>
+      <div style={{ height: "7rem", width: "7rem" }}>
+        <img
+          src={"http://localhost:8001"}
+          alt="Map of Reindeerland"
+          style={{ objectFit: "contain", width: "100%", height: "100%" }}
+        />
+      </div>
+      <p>TODO: Legends here.</p>
+      <p>TODO: Controls here.</p>
+    </>
   );
 };
 

@@ -1,5 +1,3 @@
-import { Text } from "@arwes/core";
-import Column from "./Column";
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Dispatch, State, getServerName } from "../state/store";
@@ -13,10 +11,10 @@ const Header: React.FC = () => {
   }, []);
 
   return (
-    <Column>
-      <Text as="h1">{serverName}</Text>
-      <Text as="p">TODO: Stats and general information here.</Text>
-    </Column>
+    <>
+      <h1>{serverName}</h1>
+      <p>TODO: Stats and general information here.</p>
+    </>
   );
 };
 
