@@ -49,6 +49,8 @@ logger.info("Syncing game state for all clients every %d ms", config.rconSyncInt
 setInterval(intervalPrune(connections, config.ackMaxAgeMs, logger), config.deadConnectionsPruneIntervalMs);
 logger.info("Pruning dead connections every %d ms", config.deadConnectionsPruneIntervalMs);
 
+// TODO: implement authorization
+
 wss.on("connection", function connection(downstream) {
   const logger = log4js.getLogger();
   const clientId = crypto.randomUUID();
