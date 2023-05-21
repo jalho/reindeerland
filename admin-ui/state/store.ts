@@ -1,3 +1,5 @@
+/// <reference types="../../interfaces/typescript/admin-ui.d.ts" />
+
 import { createSlice, configureStore, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import Upstream from "./Upstream";
 
@@ -39,6 +41,8 @@ const connectUpstream = createAsyncThunk("serverInfo/connectUpstream", async () 
   const socket = await upstream.connect();
   console.log("Connected to upstream!");
   socket.addEventListener("message", (event) => {
+    const { syn } = JSON.parse(event.data);
+    socket.send(JSON.stringify({ ack: syn }));
     store.dispatch(serverInfo.actions.messageReceived(event.data));
   });
   console.log("Message listener attached!");
