@@ -1,7 +1,7 @@
 import type Log4js from "log4js";
 import { TConnections } from "../main.js";
 
-const intervalPrune = (connections: TConnections, ackMaxAgeMs = 3000, logger: Log4js.Logger) => () => {
+const intervalPrune = (connections: TConnections, ackMaxAgeMs: number, logger: Log4js.Logger) => () => {
   const ts = Date.now();
   let pruned = 0;
   for (const [clientId, cl] of Object.entries(connections)) {
@@ -13,7 +13,9 @@ const intervalPrune = (connections: TConnections, ackMaxAgeMs = 3000, logger: Lo
       pruned++;
     }
   }
-  if (pruned > 0) logger.info("Pruned %d disconnected clients", pruned);
-}
+  if (pruned > 0) {
+    logger.info("Pruned %d disconnected clients. %d connections left.", pruned, Object.keys(connections).length);
+  }
+};
 
 export default intervalPrune;

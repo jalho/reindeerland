@@ -23,6 +23,10 @@ const config = {
    * How often to prune dead connections, in milliseconds.
    */
   deadConnectionsPruneIntervalMs: 1000,
+  /**
+   * Log level (Log4js).
+   */
+  logLevel: "info" as const,
 };
 
 const logger = log4js
@@ -30,7 +34,7 @@ const logger = log4js
     appenders: {
       stdout: { type: "stdout", layout: { pattern: "%[[%d] %p [client %X{clientId}]%] - %m", type: "pattern" } },
     },
-    categories: { default: { appenders: ["stdout"], level: "all" } },
+    categories: { default: { appenders: ["stdout"], level: config.logLevel } },
   })
   .getLogger();
 const wss = new WebSocketServer({ port: config.wsListenPort });

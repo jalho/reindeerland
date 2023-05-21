@@ -1,24 +1,15 @@
 import Log4js from "log4js";
 import crypto from "node:crypto";
-import { TConnections, TIdentifiedSocket } from "../main.js";
+import { TConnections } from "../main.js";
 import WebSocket from "ws";
 
 // TODO: log warning after timeout if ack not received
-const makeAckListener = (syn: string, connection: TConnections[string], logger: Log4js.Logger, ackTimeoutMs = 1000) => {
+const makeAckListener = (syn: string, connection: TConnections[string], logger: Log4js.Logger) => {
   const listenerRegisterTs = Date.now();
-  const timeoutHandle = setTimeout(() => {
-    if (connection.lastAck >= listenerRegisterTs) {
-      logger.error("Ack received in time but ack listener timeout not cleared. This is a bug!");
-    } else {
-      logger.warn("Ack not received in time! Client is likely disconnected.");
-    }
-  }, ackTimeoutMs);
-
   return (event: WebSocket.MessageEvent): void => {
     const ts = Date.now();
     const { ack } = JSON.parse(event.data.toString());
     if (ack === syn) {
-      clearTimeout(timeoutHandle);
       connection.lastAck = ts;
       logger.trace("Received ack in %d ms", ts - listenerRegisterTs);
     }
