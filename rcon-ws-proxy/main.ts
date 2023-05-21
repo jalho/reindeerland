@@ -4,10 +4,25 @@ import { WebSocketServer, WebSocket, MessageEvent } from "ws";
 import log4js from "log4js";
 import crypto from "node:crypto";
 import syncRcon from "./handlers/interval-sync.js";
+import intervalPrune from "./handlers/interval-prune.js";
 
 const config = {
+  /**
+   * How often to sync the game state for all clients, in milliseconds.
+   */
   rconSyncIntervalMs: 3000,
+  /**
+   * WebSocket server listen port.
+   */
   wsListenPort: 8002,
+  /**
+   * How old an ack can be before we prune the connection, in milliseconds.
+   */
+  ackMaxAgeMs: 3000,
+  /**
+   * How often to prune dead connections, in milliseconds.
+   */
+  deadConnectionsPruneIntervalMs: 1000,
 };
 
 const logger = log4js
@@ -28,8 +43,11 @@ export type TIdentifiedSocket = WebSocket & { clientId: string };
 
 // sync game state regularly for all clients
 setInterval(syncRcon(connections), config.rconSyncIntervalMs);
+logger.info("Syncing game state for all clients every %d ms", config.rconSyncIntervalMs);
 
-// TODO: prune dead connections based on lastAck in regular interval
+// prune dead connections regularly
+setInterval(intervalPrune(connections, config.ackMaxAgeMs, logger), config.deadConnectionsPruneIntervalMs);
+logger.info("Pruning dead connections every %d ms", config.deadConnectionsPruneIntervalMs);
 
 wss.on("connection", function connection(downstream) {
   const logger = log4js.getLogger();
@@ -48,9 +66,5 @@ wss.on("connection", function connection(downstream) {
 });
 
 wss.on("listening", () => {
-  logger.info(
-    "Listening %s. Syncing RCON every %d ms for every connected client.",
-    Object.values(wss.address()).join(":"),
-    config.rconSyncIntervalMs
-  );
+  logger.info("Listening %s", Object.values(wss.address()).join(":"));
 });
