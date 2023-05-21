@@ -27,7 +27,7 @@ export type TConnections = typeof connections;
 export type TIdentifiedSocket = WebSocket & { clientId: string };
 
 // sync game state regularly for all clients
-setInterval(syncRcon(connections, logger), config.rconSyncIntervalMs);
+setInterval(syncRcon(connections), config.rconSyncIntervalMs);
 
 // TODO: prune dead connections based on lastAck in regular interval
 
