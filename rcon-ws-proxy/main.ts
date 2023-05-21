@@ -12,7 +12,9 @@ const config = {
 
 const logger = log4js
   .configure({
-    appenders: { stdout: { type: "stdout", layout: { pattern: "%[[%d] %p [client %X{clientId}]%] - %m", type: "pattern" } } },
+    appenders: {
+      stdout: { type: "stdout", layout: { pattern: "%[[%d] %p [client %X{clientId}]%] - %m", type: "pattern" } },
+    },
     categories: { default: { appenders: ["stdout"], level: "all" } },
   })
   .getLogger();
@@ -23,6 +25,11 @@ const connections: {
 } = {};
 export type TConnections = typeof connections;
 export type TIdentifiedSocket = WebSocket & { clientId: string };
+
+// sync game state regularly for all clients
+setInterval(syncRcon(connections, logger), config.rconSyncIntervalMs);
+
+// TODO: prune dead connections based on lastAck in regular interval
 
 wss.on("connection", function connection(downstream) {
   const logger = log4js.getLogger();
@@ -38,10 +45,6 @@ wss.on("connection", function connection(downstream) {
   downstream.on("error", logger.error);
   const identifiedDownstream = downstream as TIdentifiedSocket;
   identifiedDownstream.clientId = clientId;
-
-  setInterval(syncRcon(identifiedDownstream, logger, connections), config.rconSyncIntervalMs);
-
-  // TODO: prune dead connections based on lastAck in regular interval
 });
 
 wss.on("listening", () => {

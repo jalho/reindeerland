@@ -16,30 +16,36 @@ const makeAckListener = (syn: string, connection: TConnections[string], logger: 
   };
 };
 
-const syncRcon = (downstream: TIdentifiedSocket, logger: Log4js.Logger, connections: TConnections) => () => {
-  // clear old registered ack listener
-  const registeredAckListener = connections[downstream.clientId].ackListener;
-  if (registeredAckListener !== null) {
-    connections[downstream.clientId].socket.removeEventListener("message", registeredAckListener);
-  }
-
-  // construct payload
+const syncRcon = (connections: TConnections, logger: Log4js.Logger) => async () => {
+  // construct payload to be sent to all clients
   const syn = crypto.randomUUID();
+
+  const players: IAdminUIRemoteState["players"] = {}; // TODO: get from RCON
+  const tcs: IAdminUIRemoteState["tcs"] = {}; // TODO: get from RCON
+
   const payload: IAdminUIRemoteState & Pick<ISynAck, "syn"> = {
     lastSyncTsMs: Date.now(),
-    players: {},
-    tcs: {},
+    players,
+    tcs,
     syn,
   };
 
-  // register new ack listener
-  const newAckListener = makeAckListener(syn, connections[downstream.clientId], logger);
-  downstream.addEventListener("message", newAckListener);
-  connections[downstream.clientId].ackListener = newAckListener;
+  for (const [clientId, cl] of Object.entries(connections)) {
+    // clear old registered ack listener
+    const registeredAckListener = connections[clientId].ackListener;
+    if (registeredAckListener !== null) {
+      connections[clientId].socket.removeEventListener("message", registeredAckListener);
+    }
 
-  // send
-  downstream.send(JSON.stringify(payload));
-  logger.trace("Sent RCON payload to client, expecting ack");
+    // register new ack listener
+    const newAckListener = makeAckListener(syn, connections[clientId], logger);
+    cl.socket.addEventListener("message", newAckListener);
+    connections[clientId].ackListener = newAckListener;
+
+    // send
+    cl.socket.send(JSON.stringify(payload));
+    logger.trace("Sent RCON payload to client, expecting ack");
+  }
 };
 
 export default syncRcon;
