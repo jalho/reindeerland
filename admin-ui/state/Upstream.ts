@@ -12,7 +12,7 @@ class Upstream {
 
     // TODO: parameterize upstream, use user provided credentials
     console.log(this._url.protocol, this._url.hostname);
-    await fetch(`http://${this._url.hostname}:${this._url.port}/login`, { method: "POST" });
+    await fetch(`https://${this._url.hostname}:${this._url.port}/login`, { method: "POST" });
 
     const s = new WebSocket(this._url);
     return new Promise((resolve, reject) => {
