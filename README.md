@@ -49,5 +49,7 @@ Required: `certbot`
    -rw------- 1 jka docker 1704 May 27 11:04 privkey1.pem
    ```
 
-   For a regular HTTPS server, `cert1.pem` and `privkey1.pem` are the relevant
-   files.
+   For a regular HTTPS server, `fullchain1.pem` and `privkey1.pem` are the
+   necessary TLS certificate(s) and the corresponding usable TLS server private
+   key.
+   

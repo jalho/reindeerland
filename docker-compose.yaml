@@ -26,7 +26,7 @@ services:
       - 443:443
     volumes:
       - type: bind
-        source: ~/temp-certbot/archive/sandbox.reindeerland.eu/cert1.pem
+        source: ~/temp-certbot/archive/sandbox.reindeerland.eu/fullchain1.pem
         target: /etc/nginx/tls.crt
         bind:
           create_host_path: false
