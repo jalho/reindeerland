@@ -1,15 +1,36 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import crypto from "node:crypto";
 import stream from "node:stream";
 import log4js from "log4js";
 import type { WebSocketServer } from "ws";
+import { IStore } from "../stores/_Store.js";
+import { IUser } from "../stores/Users.js";
 
 const TOKEN_COOKIE_NAME = "token";
 const SIG_COOKIE_NAME = "sig";
+const SECRET_ENV_VAR_PASSWORD_HASH = "SECRET_PASSWORD_HASH";
+const SECRET_ENV_VAR_TOKEN_SIGNING = "SECRET_TOKEN_SIGNING";
+const HMAC_ALGORITHM = "sha512";
+const HEADERNAME_USERNAME: TAuthHeader = "x-rcon-ws-proxy-username";
+const HEADERNAME_PASSWORD: TAuthHeader = "x-rcon-ws-proxy-password";
 
 interface Token {}
 interface Parsed {
   token: Token;
   signature: Buffer;
+}
+
+// TODO: add support for different secrets: one for signing tokens and one of hashing passwords
+function getSecret(type: "password hashing" | "token signing"): Buffer {
+  if (type === "password hashing") {
+    if (process.env[SECRET_ENV_VAR_PASSWORD_HASH]) {
+      return Buffer.from(process.env[SECRET_ENV_VAR_PASSWORD_HASH], "base64");
+    } else throw new Error(`Environment variable ${SECRET_ENV_VAR_PASSWORD_HASH} not set`);
+  } else {
+    if (process.env[SECRET_ENV_VAR_TOKEN_SIGNING]) {
+      return Buffer.from(process.env[SECRET_ENV_VAR_TOKEN_SIGNING], "base64");
+    } else throw new Error(`Environment variable ${SECRET_ENV_VAR_TOKEN_SIGNING} not set`);
+  }
 }
 
 /**
@@ -72,14 +93,57 @@ const handleUpgrade =
     }
   };
 
+function hash(item: string, key: Buffer): Buffer {
+  return crypto.createHmac(HMAC_ALGORITHM, key).update(item).digest();
+}
+
+/**
+ * Match given password against stored hash.
+ */
+async function matchPassword(
+  username: string,
+  password: string,
+  store: IStore<IUser>,
+  logger: log4js.Logger
+): Promise<IUser | null> {
+  const user = await store.findOne({ id: username });
+  if (!user) {
+    logger.warn("User %s not found", username);
+    return null;
+  }
+  const hashIn = hash(password, getSecret("password hashing"));
+  if (crypto.timingSafeEqual(user.passwordHash, hashIn)) return user;
+  else return null;
+}
+
 /**
  * Check request parameters and set auth cookies if OK.
  */
-function handleLogin(logger: log4js.Logger, req: IncomingMessage, res: ServerResponse) {
+async function handleLogin(logger: log4js.Logger, req: IncomingMessage, res: ServerResponse, store: IStore<IUser>) {
   logger.debug("Handling login request");
-  // TODO: check request credentials against some persistent store, conditionally set cookies
-  res.setHeader("Set-Cookie", [`${TOKEN_COOKIE_NAME}=foo; HttpOnly`, `${SIG_COOKIE_NAME}=bar; HttpOnly`]);
-  res.end();
+  const username = req.headers[HEADERNAME_USERNAME];
+  const password = req.headers[HEADERNAME_PASSWORD];
+  if (!username || !password || Array.isArray(username) || Array.isArray(password)) {
+    logger.warn(
+      "Missing or invalid username or password, expected headers %s and %s",
+      HEADERNAME_USERNAME,
+      HEADERNAME_PASSWORD
+    );
+    res.statusCode = 400;
+    res.end();
+    return;
+  }
+  const user = await matchPassword(username, password, store, logger);
+  if (user) {
+    logger.info("Login successful", user);
+    // TODO: make an actual signed token for the authorized user
+    res.setHeader("Set-Cookie", [`${TOKEN_COOKIE_NAME}=foo; HttpOnly`, `${SIG_COOKIE_NAME}=bar; HttpOnly`]);
+    res.end();
+  } else {
+    logger.warn("Invalid username or password");
+    res.statusCode = 401;
+    res.end();
+  }
 }
 
 export { handleUpgrade, handleLogin };

@@ -20,3 +20,5 @@ interface IAdminUIRemoteState {
   players: {};
   tcs: {};
 }
+
+type TAuthHeader = "x-rcon-ws-proxy-username" | "x-rcon-ws-proxy-password";

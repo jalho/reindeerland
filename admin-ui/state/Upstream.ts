@@ -1,3 +1,8 @@
+/// <reference types="../../rcon-ws-proxy/admin-ui.d.ts" />
+
+const HEADERNAME_USERNAME: TAuthHeader = "x-rcon-ws-proxy-username";
+const HEADERNAME_PASSWORD: TAuthHeader = "x-rcon-ws-proxy-password";
+
 class Upstream {
   private _url: URL;
   /** `null` when not connected */
@@ -10,9 +15,14 @@ class Upstream {
   private async _connect(): Promise<WebSocket> {
     if (this._socket) return this._socket; // already connected
 
-    // TODO: parameterize upstream, use user provided credentials
     console.log(this._url.protocol, this._url.hostname);
-    await fetch(`https://${this._url.hostname}:${this._url.port}/login`, { method: "POST" });
+    await fetch(`https://${this._url.hostname}:${this._url.port}/login`, {
+      method: "POST",
+      headers: {
+        [HEADERNAME_USERNAME]: "foo", // TODO: get as user input
+        [HEADERNAME_PASSWORD]: "bar", // TODO: get as user input
+      },
+    });
 
     const s = new WebSocket(this._url);
     return new Promise((resolve, reject) => {

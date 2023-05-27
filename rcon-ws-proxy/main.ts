@@ -5,6 +5,7 @@ import http from "node:http";
 import syncRcon from "./handlers/interval-sync.js";
 import intervalPrune from "./handlers/interval-prune.js";
 import { handleUpgrade, handleLogin } from "./handlers/auth.js";
+import Users from "./stores/Users.js";
 
 const config = {
   /**
@@ -46,6 +47,8 @@ const connections: {
 export type TConnections = typeof connections;
 export type TIdentifiedSocket = WebSocket & { clientId: string };
 
+const userStore = new Users();
+
 // sync game state regularly for all clients
 setInterval(syncRcon(connections), config.rconSyncIntervalMs);
 logger.info("Syncing game state for all clients every %d ms", config.rconSyncIntervalMs);
@@ -57,7 +60,7 @@ logger.info("Pruning dead connections every %d ms", config.deadConnectionsPruneI
 httpServer.on("upgrade", handleUpgrade(logger, wsServer));
 httpServer.on("request", (req, res) => {
   if (req.method === "POST" && req.url === "/login") {
-    handleLogin(logger, req, res);
+    handleLogin(logger, req, res, userStore);
   } else {
     logger.warn("Received unknown request for %s %s", req.method, req.url);
     res.writeHead(404);
