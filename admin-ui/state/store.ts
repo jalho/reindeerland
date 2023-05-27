@@ -3,7 +3,7 @@
 import { createSlice, configureStore, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import Upstream from "./Upstream";
 
-const upstream = new Upstream(new URL("ws://localhost:8002"));
+const upstream = new Upstream(new URL("wss://sandbox.reindeerland.eu/ws"));
 
 interface IAdminUIState {
   connected: boolean;

@@ -1,4 +1,4 @@
-all-images: admin-ui-image map-service-image rcon-ws-proxy-image
+all-images: admin-ui-image map-service-image rcon-ws-proxy-image tls-proxy-image
 
 admin-ui-image:
 	@cd admin-ui && npm install
@@ -12,3 +12,6 @@ rcon-ws-proxy-image:
 	@cd rcon-ws-proxy && npm install
 	@cd rcon-ws-proxy && npm run build
 	@docker build -t rcon-ws-proxy:local -f rcon-ws-proxy/Dockerfile rcon-ws-proxy
+
+tls-proxy-image:
+	@docker build -t tls-proxy:local -f tls-proxy/Dockerfile tls-proxy

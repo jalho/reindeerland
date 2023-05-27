@@ -18,5 +18,18 @@ services:
     hostname: rcon-ws-proxy
     container_name: rcon-ws-proxy
     image: rcon-ws-proxy:local
-
-# TODO: add lb
+  tls-proxy:
+    image: tls-proxy:local
+    container_name: tls-proxy
+    hostname: tls-proxy
+    volumes:
+      - type: bind
+        source: ~/temp-certbot/archive/sandbox.reindeerland.eu/cert1.pem
+        target: /etc/nginx/tls.crt
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ~/temp-certbot/archive/sandbox.reindeerland.eu/privkey1.pem
+        target: /etc/nginx/tls.key
+        bind:
+          create_host_path: false

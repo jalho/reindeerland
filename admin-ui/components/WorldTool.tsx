@@ -5,7 +5,7 @@ const WorldTool: React.FC = () => {
     <>
       <div style={{ height: "7rem", width: "7rem" }}>
         <img
-          src={"http://localhost:8001"}
+          src={"https://sandbox.reindeerland.eu/map"}
           alt="Map of Reindeerland"
           style={{ objectFit: "contain", width: "100%", height: "100%" }}
         />
