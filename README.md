@@ -7,6 +7,27 @@ Required: `make`, `docker`, `npm`
 3. `make`
 4. `docker compose up`
 
+# Components
+
+- `admin-ui`
+
+  Web page showing a real time map of _Reindeerland_ Rust game server.
+
+- `map-service`
+
+  HTTP server serving _Reindeerland_ Rust game server map as a .PNG file.
+
+- `rcon-ws-proxy`
+
+  Accepts WebSocket connections from the `admin-ui` for authorized users.
+  Expects specific auth headers in `/login` request, and specific auth cookies
+  in subsequent WebSocket upgrade request. The cookies are set in response to
+  the login request.
+
+- `tls-proxy`
+
+  TLS reverse proxy load balancer serving all of the above over TLS.
+
 # Getting TLS cert manually with certbot
 
 IP address is logged publicly by the CA, thus consider running these commands
@@ -52,4 +73,3 @@ Required: `certbot`
    For a regular HTTPS server, `fullchain1.pem` and `privkey1.pem` are the
    necessary TLS certificate(s) and the corresponding usable TLS server private
    key.
-   
