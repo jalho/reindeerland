@@ -10,7 +10,7 @@ services:
     # TODO: bind the directory from where to look for image, instead of a specific image file
     volumes:
       - type: bind
-        source: ./map-service/map_4500_21232.png
+        source: ~/images/map_4500_21232.png
         target: /opt/map_4500_21232.png
         bind:
           create_host_path: false
