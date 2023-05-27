@@ -25,22 +25,27 @@ function evaluateAuthorization(logger: log4js.Logger, token: Token, signature: B
  * Parse auth cookies.
  */
 function parseAuthorization(logger: log4js.Logger, request: IncomingMessage): Parsed | false {
-  const cookies = request.headers.cookie?.split(";").map((c) => c.trim());
-  if (!cookies) {
-    logger.warn("Expected %s and %s cookies", TOKEN_COOKIE_NAME, SIG_COOKIE_NAME);
-    return false;
-  }
-  const tokenCookie = cookies.find((c) => c.startsWith(TOKEN_COOKIE_NAME + "="));
-  const sigCookie = cookies.find((c) => c.startsWith(SIG_COOKIE_NAME + "="));
-  if (tokenCookie && sigCookie) {
-    const token = tokenCookie.split("=")[1];
-    const sig = sigCookie.split("=")[1];
-    return {
-      token: JSON.parse(Buffer.from(token, "base64").toString()),
-      signature: Buffer.from(sig, "base64"),
-    };
-  } else {
-    logger.warn("Missing %s and/or %s cookies", TOKEN_COOKIE_NAME, SIG_COOKIE_NAME);
+  try {
+    const cookies = request.headers.cookie?.split(";").map((c) => c.trim());
+    if (!cookies) {
+      logger.warn("Expected %s and %s cookies", TOKEN_COOKIE_NAME, SIG_COOKIE_NAME);
+      return false;
+    }
+    const tokenCookie = cookies.find((c) => c.startsWith(TOKEN_COOKIE_NAME + "="));
+    const sigCookie = cookies.find((c) => c.startsWith(SIG_COOKIE_NAME + "="));
+    if (tokenCookie && sigCookie) {
+      const token = tokenCookie.split("=")[1];
+      const sig = sigCookie.split("=")[1];
+      return {
+        token: JSON.parse(Buffer.from(token, "base64").toString()),
+        signature: Buffer.from(sig, "base64"),
+      };
+    } else {
+      logger.warn("Missing %s and/or %s cookies", TOKEN_COOKIE_NAME, SIG_COOKIE_NAME);
+      return false;
+    }
+  } catch (e) {
+    logger.error("Error parsing authorization", e);
     return false;
   }
 }
