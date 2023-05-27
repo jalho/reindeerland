@@ -27,7 +27,7 @@ Required: `make`, `docker`, `npm`
   Users can be created via a private HTTP API:
 
   1. SSH to the server.
-  2. `curl 'http://pod-ip:90 -H "username: foo" -H "password: bar"'`
+  2. `curl "http://172.18.0.5:90" -H "username: foo" -H "password: bar"`
 
 - [`tls-proxy`](./tls-proxy)
 
