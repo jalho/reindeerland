@@ -9,22 +9,22 @@ Required: `make`, `docker`, `npm`
 
 # Components
 
-- `admin-ui`
+- [`admin-ui`](./admin-ui)
 
   Web page showing a real time map of _Reindeerland_ Rust game server.
 
-- `map-service`
+- [`map-service`](./map-service)
 
   HTTP server serving _Reindeerland_ Rust game server map as a .PNG file.
 
-- `rcon-ws-proxy`
+- [`rcon-ws-proxy`](./rcon-ws-proxy)
 
   Accepts WebSocket connections from the `admin-ui` for authorized users.
   Expects specific auth headers in `/login` request, and specific auth cookies
   in subsequent WebSocket upgrade request. The cookies are set in response to
   the login request.
 
-- `tls-proxy`
+- [`tls-proxy`](./tls-proxy)
 
   TLS reverse proxy load balancer serving all of the above over TLS.
 
