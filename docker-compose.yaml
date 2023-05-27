@@ -18,6 +18,9 @@ services:
     hostname: rcon-ws-proxy
     container_name: rcon-ws-proxy
     image: rcon-ws-proxy:local
+    environment:
+      - SECRET_PASSWORD_HASH=${SECRET_PASSWORD_HASH}
+      - SECRET_TOKEN_SIGNING=${SECRET_TOKEN_SIGNING}
   tls-proxy:
     image: tls-proxy:local
     container_name: tls-proxy
