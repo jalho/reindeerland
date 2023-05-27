@@ -6,6 +6,7 @@ import syncRcon from "./handlers/interval-sync.js";
 import intervalPrune from "./handlers/interval-prune.js";
 import { handleUpgrade, handleLogin } from "./handlers/auth.js";
 import Users from "./stores/Users.js";
+import handlePrivateAdminRequest from "./handlers/register-user.js";
 
 const config = {
   /**
@@ -13,9 +14,14 @@ const config = {
    */
   rconSyncIntervalMs: 3000,
   /**
-   * HTTP/WebSocket server listen port.
+   * Public HTTP/WebSocket server listen port. For authentication and business.
    */
-  listenPort: 80,
+  publicApiPort: 80,
+  /**
+   * Private HTTP server listen port. For system administration (like
+   * registering new admin users).
+   */
+  privateSysAdminPort: 90,
   /**
    * How old an ack can be before we prune the connection, in milliseconds.
    */
@@ -38,16 +44,17 @@ const logger = log4js
     categories: { default: { appenders: ["stdout"], level: config.logLevel } },
   })
   .getLogger();
-const httpServer = http.createServer();
-const wsServer = new WebSocketServer({ noServer: true });
+const userStore = new Users();
+
+const publicAuthApi = http.createServer();
+const privateSysAdminApi = http.createServer((i, o) => handlePrivateAdminRequest(i, o, userStore, logger));
+const publicRconSyncServer = new WebSocketServer({ noServer: true });
 
 const connections: {
   [clientId: string]: { socket: WebSocket; lastAck: number; ackListener: ((event: MessageEvent) => void) | null };
 } = {};
 export type TConnections = typeof connections;
 export type TIdentifiedSocket = WebSocket & { clientId: string };
-
-const userStore = new Users();
 
 // sync game state regularly for all clients
 setInterval(syncRcon(connections), config.rconSyncIntervalMs);
@@ -57,8 +64,8 @@ logger.info("Syncing game state for all clients every %d ms", config.rconSyncInt
 setInterval(intervalPrune(connections, config.ackMaxAgeMs, logger), config.deadConnectionsPruneIntervalMs);
 logger.info("Pruning dead connections every %d ms", config.deadConnectionsPruneIntervalMs);
 
-httpServer.on("upgrade", handleUpgrade(logger, wsServer));
-httpServer.on("request", (req, res) => {
+publicAuthApi.on("upgrade", handleUpgrade(logger, publicRconSyncServer));
+publicAuthApi.on("request", (req, res) => {
   if (req.method === "POST" && req.url === "/login") {
     handleLogin(logger, req, res, userStore);
   } else {
@@ -68,7 +75,7 @@ httpServer.on("request", (req, res) => {
   }
 });
 
-wsServer.on("connection", function connection(downstream) {
+publicRconSyncServer.on("connection", function connection(downstream) {
   const logger = log4js.getLogger();
   const clientId = crypto.randomUUID();
   logger.addContext("clientId", clientId);
@@ -77,15 +84,16 @@ wsServer.on("connection", function connection(downstream) {
     connections[clientId] = { socket: downstream, lastAck: Date.now(), ackListener: null };
   } else throw new Error(`Duplicate client ID ${clientId} detected! This is a bug!`);
 
-  logger.info("New client connected (%d clients connected in total)", wsServer.clients.size);
+  logger.info("New client connected (%d clients connected in total)", publicRconSyncServer.clients.size);
 
   downstream.on("error", logger.error);
   const identifiedDownstream = downstream as TIdentifiedSocket;
   identifiedDownstream.clientId = clientId;
 });
 
-wsServer.on("listening", () => {
-  logger.info("Listening %s", Object.values(wsServer.address()).join(":"));
+publicRconSyncServer.on("listening", () => {
+  logger.info("Listening %s", Object.values(publicRconSyncServer.address()).join(":"));
 });
 
-httpServer.listen(config.listenPort);
+publicAuthApi.listen(config.publicApiPort, () => console.log(publicAuthApi.address()));
+privateSysAdminApi.listen(config.privateSysAdminPort, () => console.log(privateSysAdminApi.address()));

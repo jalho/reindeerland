@@ -146,4 +146,4 @@ async function handleLogin(logger: log4js.Logger, req: IncomingMessage, res: Ser
   }
 }
 
-export { handleUpgrade, handleLogin };
+export { handleUpgrade, handleLogin, hash, getSecret };
