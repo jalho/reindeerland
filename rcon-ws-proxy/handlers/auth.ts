@@ -137,7 +137,7 @@ async function handleLogin(logger: log4js.Logger, req: IncomingMessage, res: Ser
   }
   const user = await matchPassword(username, password, store, logger);
   if (user) {
-    logger.info("Login successful", user);
+    logger.info("Login successful: %s", user.id);
     const token: Token = { username: user.id };
     const token_base64 = Buffer.from(JSON.stringify(token)).toString("base64");
     const sigSecret = getSecret("token signing");
