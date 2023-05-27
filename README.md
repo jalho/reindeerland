@@ -24,6 +24,11 @@ Required: `make`, `docker`, `npm`
   in subsequent WebSocket upgrade request. The cookies are set in response to
   the login request.
 
+  Users can be created via a private HTTP API:
+
+  1. SSH to the server.
+  2. `curl 'http://pod-ip:90 -H "username: foo" -H "password: bar"'`
+
 - [`tls-proxy`](./tls-proxy)
 
   TLS reverse proxy load balancer serving all of the above over TLS.

@@ -14,7 +14,9 @@ const HMAC_ALGORITHM = "sha512";
 const HEADERNAME_USERNAME: TAuthHeader = "x-rcon-ws-proxy-username";
 const HEADERNAME_PASSWORD: TAuthHeader = "x-rcon-ws-proxy-password";
 
-interface Token {}
+interface Token {
+  username: string;
+}
 interface Parsed {
   token: Token;
   signature: Buffer;
@@ -34,11 +36,11 @@ function getSecret(type: "password hashing" | "token signing"): Buffer {
 }
 
 /**
- * Evaluate auth cookies.
+ * Evaluate token permissions.
  */
 function evaluateAuthorization(logger: log4js.Logger, token: Token, signature: Buffer): boolean {
-  logger.debug("Evaluating authorization", token, signature);
-  // TODO
+  logger.debug("TODO: Evaluate permissions", token);
+  // TODO: add some CSRF protection?
   return true;
 }
 
@@ -136,8 +138,15 @@ async function handleLogin(logger: log4js.Logger, req: IncomingMessage, res: Ser
   const user = await matchPassword(username, password, store, logger);
   if (user) {
     logger.info("Login successful", user);
-    // TODO: make an actual signed token for the authorized user
-    res.setHeader("Set-Cookie", [`${TOKEN_COOKIE_NAME}=foo; HttpOnly`, `${SIG_COOKIE_NAME}=bar; HttpOnly`]);
+    const token: Token = { username: user.id };
+    const token_base64 = Buffer.from(JSON.stringify(token)).toString("base64");
+    const sigSecret = getSecret("token signing");
+    const sig = hash(token_base64, sigSecret);
+    const sig_base64 = sig.toString("base64");
+    res.setHeader("Set-Cookie", [
+      `${TOKEN_COOKIE_NAME}=${token_base64}; HttpOnly`,
+      `${SIG_COOKIE_NAME}=${sig_base64}; HttpOnly`,
+    ]);
     res.end();
   } else {
     logger.warn("Invalid username or password");
