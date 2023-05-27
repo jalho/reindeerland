@@ -22,6 +22,8 @@ services:
     image: tls-proxy:local
     container_name: tls-proxy
     hostname: tls-proxy
+    ports:
+      - 443:443
     volumes:
       - type: bind
         source: ~/temp-certbot/archive/sandbox.reindeerland.eu/cert1.pem
