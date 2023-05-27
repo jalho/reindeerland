@@ -3,8 +3,10 @@
 import { WebSocketServer, WebSocket, MessageEvent } from "ws";
 import log4js from "log4js";
 import crypto from "node:crypto";
+import http from "node:http";
 import syncRcon from "./handlers/interval-sync.js";
 import intervalPrune from "./handlers/interval-prune.js";
+import { handleUpgrade, handleLogin } from "./handlers/auth.js";
 
 const config = {
   /**
@@ -12,9 +14,9 @@ const config = {
    */
   rconSyncIntervalMs: 3000,
   /**
-   * WebSocket server listen port.
+   * HTTP/WebSocket server listen port.
    */
-  wsListenPort: 8002,
+  listenPort: 8002,
   /**
    * How old an ack can be before we prune the connection, in milliseconds.
    */
@@ -26,7 +28,7 @@ const config = {
   /**
    * Log level (Log4js).
    */
-  logLevel: "info" as const,
+  logLevel: "debug" as const,
 };
 
 const logger = log4js
@@ -37,7 +39,8 @@ const logger = log4js
     categories: { default: { appenders: ["stdout"], level: config.logLevel } },
   })
   .getLogger();
-const wss = new WebSocketServer({ port: config.wsListenPort });
+const httpServer = http.createServer();
+const wsServer = new WebSocketServer({ noServer: true });
 
 const connections: {
   [clientId: string]: { socket: WebSocket; lastAck: number; ackListener: ((event: MessageEvent) => void) | null };
@@ -53,9 +56,18 @@ logger.info("Syncing game state for all clients every %d ms", config.rconSyncInt
 setInterval(intervalPrune(connections, config.ackMaxAgeMs, logger), config.deadConnectionsPruneIntervalMs);
 logger.info("Pruning dead connections every %d ms", config.deadConnectionsPruneIntervalMs);
 
-// TODO: implement authorization
+httpServer.on("upgrade", handleUpgrade(logger, wsServer));
+httpServer.on("request", (req, res) => {
+  if (req.method === "POST" && req.url === "/login") {
+    handleLogin(logger, req, res);
+  } else {
+    logger.warn("Received unknown request for %s %s", req.method, req.url);
+    res.writeHead(404);
+    res.end();
+  }
+});
 
-wss.on("connection", function connection(downstream) {
+wsServer.on("connection", function connection(downstream) {
   const logger = log4js.getLogger();
   const clientId = crypto.randomUUID();
   logger.addContext("clientId", clientId);
@@ -64,13 +76,15 @@ wss.on("connection", function connection(downstream) {
     connections[clientId] = { socket: downstream, lastAck: Date.now(), ackListener: null };
   } else throw new Error(`Duplicate client ID ${clientId} detected! This is a bug!`);
 
-  logger.info("New client connected (%d clients connected in total)", wss.clients.size);
+  logger.info("New client connected (%d clients connected in total)", wsServer.clients.size);
 
   downstream.on("error", logger.error);
   const identifiedDownstream = downstream as TIdentifiedSocket;
   identifiedDownstream.clientId = clientId;
 });
 
-wss.on("listening", () => {
-  logger.info("Listening %s", Object.values(wss.address()).join(":"));
+wsServer.on("listening", () => {
+  logger.info("Listening %s", Object.values(wsServer.address()).join(":"));
 });
+
+httpServer.listen(config.listenPort);

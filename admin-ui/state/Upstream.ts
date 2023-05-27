@@ -9,6 +9,11 @@ class Upstream {
 
   private async _connect(): Promise<WebSocket> {
     if (this._socket) return this._socket; // already connected
+
+    // TODO: parameterize upstream, use user provided credentials
+    console.log(this._url.protocol, this._url.hostname);
+    await fetch(`http://${this._url.hostname}:${this._url.port}/login`, { method: "POST" });
+
     const s = new WebSocket(this._url);
     return new Promise((resolve, reject) => {
       s.addEventListener("open", () => {
