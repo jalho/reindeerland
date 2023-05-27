@@ -1,4 +1,4 @@
-/// <reference types="../../interfaces/typescript/admin-ui.d.ts" />
+/// <reference types="../../rcon-ws-proxy/admin-ui.d.ts" />
 
 import { createSlice, configureStore, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import Upstream from "./Upstream";

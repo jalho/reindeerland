@@ -1,5 +1,3 @@
-/// <reference types="../interfaces/typescript/admin-ui.d.ts" />
-
 import { WebSocketServer, WebSocket, MessageEvent } from "ws";
 import log4js from "log4js";
 import crypto from "node:crypto";
@@ -16,7 +14,7 @@ const config = {
   /**
    * HTTP/WebSocket server listen port.
    */
-  listenPort: 8002,
+  listenPort: 80,
   /**
    * How old an ack can be before we prune the connection, in milliseconds.
    */

@@ -7,7 +7,7 @@
   },
   "scripts": {
     "start": "esbuild app.tsx --bundle --servedir=www/ --outdir=www/",
-    "build": "esbuild app.tsx --bundle --outfile=www/bundle.js"
+    "build": "esbuild app.tsx --bundle --outfile=www/app.js"
   },
   "devDependencies": {
     "@types/react-dom": "17.0.20",

@@ -1,0 +1,22 @@
+services:
+  admin-ui:
+    hostname: admin-ui
+    container_name: admin-ui
+    image: admin-ui:local
+  map-service:
+    hostname: map-service
+    container_name: map-service
+    image: map-service:local
+    # TODO: bind the directory from where to look for image, instead of a specific image file
+    volumes:
+      - type: bind
+        source: ./map-service/map_4500_21232.png
+        target: /opt/map_4500_21232.png
+        bind:
+          create_host_path: false
+  rcon-ws-proxy:
+    hostname: rcon-ws-proxy
+    container_name: rcon-ws-proxy
+    image: rcon-ws-proxy:local
+
+# TODO: add lb

@@ -2,7 +2,8 @@
   "type": "module",
   "scripts": {
     "prestart": "tsc",
-    "start": "node main.js"
+    "start": "node main.js",
+    "build": "tsc"
   },
   "dependencies": {
     "log4js": "6.9.1",
