@@ -16,9 +16,10 @@ class Upstream {
     this._wsPath = wsPath;
   }
 
-  private async _connect(): Promise<WebSocket> {
+  public async connect(): Promise<WebSocket> {
     if (this._socket) return this._socket; // already connected
 
+    // TODO: get some kinda token and use it when making the WebSocket connection
     await fetch(this._url.protocol + "//" + this._url.hostname + ":" + this._url.port + this._loginPath, {
       method: "POST",
       headers: {
@@ -39,10 +40,6 @@ class Upstream {
     });
   }
 
-  public async connect(): Promise<WebSocket> {
-    return await this._connect();
-  }
-
   /**
    * Send a message to the upstream and wait for a response.
    *
@@ -53,7 +50,7 @@ class Upstream {
    *          reason.
    */
   public async send<T extends { id: string }>(message: T): Promise<Record<string, unknown> | null> {
-    const socket = await this._connect();
+    const socket = await this.connect();
     socket.send(JSON.stringify(message));
     return new Promise((resolve) => {
       socket.addEventListener("message", (event) => {
