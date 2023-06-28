@@ -1,6 +1,7 @@
 FROM node:20.2.0-bullseye
-WORKDIR /opt
-COPY . .
-RUN npm ci
-RUN npm run build
+WORKDIR /opt/server
+COPY ./package.json ./
+COPY ./node_modules ./node_modules
+COPY ./dist ./
+USER 1000
 CMD [ "node", "main.js" ]
