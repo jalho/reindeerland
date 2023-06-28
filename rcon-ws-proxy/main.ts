@@ -13,7 +13,7 @@ const config = {
   /**
    * How often to update the state for connected clients, in milliseconds.
    */
-  clientUpdateIntervalMs: 3000,
+  clientUpdateIntervalMs: 300,
   /**
    * How often to sync local RCON stores' caches with the _RustDedicated_ remote
    * RCON state.
