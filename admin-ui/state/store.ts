@@ -2,8 +2,9 @@
 
 import { createSlice, configureStore, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import Upstream from "./Upstream";
+import { WS_RCON_UPSTREAM } from "../constants/upstreams";
 
-const upstream = new Upstream(new URL("wss://sandbox.reindeerland.eu/ws"));
+const upstream = new Upstream(WS_RCON_UPSTREAM);
 
 interface IAdminUIState {
   connected: boolean;
