@@ -7,6 +7,7 @@ import intervalPrune from "./handlers/interval-prune.js";
 import { handleUpgrade, handleLogin, IAuthorizedConnection } from "./handlers/auth.js";
 import Users from "./stores/Users.js";
 import handlePrivateAdminRequest from "./handlers/register-user.js";
+import RCONPlayers from "./stores/RCONPlayers.js";
 
 const config = {
   /**
@@ -44,7 +45,10 @@ const logger = log4js
     categories: { default: { appenders: ["stdout"], level: config.logLevel } },
   })
   .getLogger();
+
+// stores
 const userStore = new Users();
+const rconPlayers = new RCONPlayers();
 
 const publicAuthApi = http.createServer();
 const privateSysAdminApi = http.createServer((i, o) => handlePrivateAdminRequest(i, o, userStore, logger));
@@ -57,7 +61,7 @@ export type TConnections = typeof connections;
 export type TIdentifiedSocket = WebSocket & { clientId: string };
 
 // sync game state regularly for all clients
-setInterval(syncRcon(connections), config.rconSyncIntervalMs);
+setInterval(syncRcon(connections, { rconPlayers }), config.rconSyncIntervalMs);
 logger.info("Syncing game state for all clients every %d ms", config.rconSyncIntervalMs);
 
 // prune dead connections regularly

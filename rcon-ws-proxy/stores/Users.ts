@@ -12,13 +12,13 @@ class Users extends _Store<IUser> {
     else return user;
   }
 
-  public async findMany(entity: Partial<IUser>): Promise<IUser[]> {
+  public async findMany(): Promise<IUser[]> {
     throw new Error("Method not implemented.");
   }
 
   public async save(entity: IUser): Promise<IUser> {
-    this._cache.set(entity.id, entity as IUser);
-    return entity as IUser;
+    this._cache.set(entity.id, entity);
+    return entity;
   }
 }
 
