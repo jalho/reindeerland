@@ -17,19 +17,27 @@ class Upstream {
   public async connect(): Promise<WebSocket> {
     if (this._socket) return this._socket; // already connected
 
+    let loginStatus: number | null = null;
     try {
       // upstream is expected to set auth cookies in response to this
-      await fetch(this._loginUrl, {
+      const response = await fetch(this._loginUrl, {
         method: "POST",
         headers: {
           [HEADERNAME_USERNAME]: "foo", // TODO: get as user input
           [HEADERNAME_PASSWORD]: "bar", // TODO: get as user input
         },
       });
+      loginStatus = response.status;
     } catch (err_login) {
       // fetch resolves as soon as the server responds with headers
       // -- thus reject implies e.g. CORS preflight response didn't succeed or some networking error
       console.error("Could not login via '%s'. Didn't get response headers. This could be due to e.g. missing CORS configuration or some networking error.", this._loginUrl);
+    }
+
+    const expectedStatus = 204;
+    if (loginStatus !== expectedStatus) {
+      console.error("Expected login response status to be %d, instead got %d. Not proceeding to connect!", expectedStatus, loginStatus);
+      throw new Error("Could not login!");
     }
 
     const s = new WebSocket(this._wsRconUrl);
