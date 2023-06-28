@@ -9,7 +9,7 @@ const WorldTool = (props: IProps): React.JSX.Element => {
 
   return (
     <>
-      <div style={{ height: "7rem", width: "7rem" }}>
+      <div style={{ width: "100%" }}>
         <img
           src={protocol + "//" + host + pathname}
           alt="Map of Reindeerland"
