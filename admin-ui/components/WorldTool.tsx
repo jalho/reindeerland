@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { State } from "../state/store";
+import Marker from "./Marker";
 
 interface IProps {
   upstream: URL;
@@ -18,7 +19,6 @@ const GAMEWORLD_SIZE = 5500;
 const MAP_ELEMENT_SIZE = 1000;
 const GAMEWORLD_ORIGIN = GAMEWORLD_SIZE / 2;
 const SCALE = MAP_ELEMENT_SIZE / GAMEWORLD_SIZE;
-const MARKER_RADIUS = 10;
 
 const WorldTool = (props: IProps): React.JSX.Element => {
   const { protocol, host, pathname } = props.upstream;
@@ -32,23 +32,9 @@ const WorldTool = (props: IProps): React.JSX.Element => {
           alt="Map of Reindeerland"
           style={{ width: "100%", position: "absolute" }}
         />
-        {Object.values(players).map((p) => {
-          const [x, z, y] = p.position;
-          return (
-            <div
-              key={p.id}
-              style={{
-                position: "absolute",
-                width: MARKER_RADIUS,
-                height: MARKER_RADIUS,
-                backgroundColor: "red",
-                left: SCALE * (GAMEWORLD_ORIGIN + x) - MARKER_RADIUS / 2,
-                top: SCALE * (GAMEWORLD_ORIGIN - y) - MARKER_RADIUS / 2,
-                borderRadius: "50%",
-              }}
-            />
-          );
-        })}
+        {Object.values(players).map((p) => (
+          <Marker gameworldOrigin={GAMEWORLD_ORIGIN} markerGameworldCoordinates={p.position} scale={SCALE} key={p.id} />
+        ))}
       </div>
       <p>TODO: Legends here.</p>
       <p>TODO: Controls here.</p>
