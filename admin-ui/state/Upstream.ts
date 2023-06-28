@@ -17,14 +17,15 @@ class Upstream {
   public async connect(): Promise<WebSocket> {
     if (this._socket) return this._socket; // already connected
 
+    // TODO: use Steam as IDP instead, don't do login in admin-ui at all
     let loginStatus: number | null = null;
     try {
       // upstream is expected to set auth cookies in response to this
       const response = await fetch(this._loginUrl, {
         method: "POST",
         headers: {
-          [HEADERNAME_USERNAME]: "foo", // TODO: get as user input
-          [HEADERNAME_PASSWORD]: "bar", // TODO: get as user input
+          [HEADERNAME_USERNAME]: "foo", // TODO: remove admin-ui login altogether; use Steam as IDP instead
+          [HEADERNAME_PASSWORD]: "bar", // TODO: remove admin-ui login altogether; use Steam as IDP instead
         },
       });
       loginStatus = response.status;

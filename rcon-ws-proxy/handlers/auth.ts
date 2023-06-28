@@ -22,7 +22,6 @@ interface Parsed {
   signature: Buffer;
 }
 
-// TODO: add support for different secrets: one for signing tokens and one of hashing passwords
 function getSecret(type: "password hashing" | "token signing"): Buffer {
   if (type === "password hashing") {
     if (process.env[SECRET_ENV_VAR_PASSWORD_HASH]) {
@@ -36,7 +35,7 @@ function getSecret(type: "password hashing" | "token signing"): Buffer {
 }
 
 /**
- * Evaluate token permissions.
+ * Check togen signature, evaluate token permissions.
  */
 function evaluateAuthorization(logger: log4js.Logger, token: Token, signature: Buffer): boolean {
   logger.debug("TODO: Evaluate permissions", token);
