@@ -24,20 +24,20 @@ interface Iplayerlistpos {
  * ]
  */
 export const playerlistpos = (str: string): Array<Iplayerlistpos> => {
-  const rows: string[] = str.split("\n").map((n) => n.trim());
+  const rows: string[] = str.split("\n").map((n) => n.trim()).filter(n => n);
   if (rows.length < 2) {
     throw new Error("Expected at least two rows (one key row, and then some data), but got:\n" + str);
   }
   const [keyRow, ...dataRows] = rows;
   if (!keyRow.match(playerlistpos_re.keyRow_re)) {
-    throw new Error(`Key row '${keyRow}' doesn't match the expected pattern '${playerlistpos_re.keyRow_re}'`);
+    throw new Error(`Key row '${keyRow}' doesn't match the expected pattern '${playerlistpos_re.keyRow_re}'. Whole data:\n` + str);
   }
 
   const parsed: Array<Iplayerlistpos> = [];
   for (const row of dataRows) {
     const mg = row.match(playerlistpos_re.dataRow_re);
     if (!mg) {
-      throw new Error(`Data row '${row}' doesn't match the expected pattern '${playerlistpos_re.dataRow_re}'`);
+      throw new Error(`Data row '${row}' doesn't match the expected pattern '${playerlistpos_re.dataRow_re}'. Whole data:\n` + str);
     }
     let [, ...groups] = mg;
     groups = groups.map((n) => n.trim());
