@@ -19,14 +19,21 @@ class Upstream {
   public async connect(): Promise<WebSocket> {
     if (this._socket) return this._socket; // already connected
 
-    // TODO: get some kinda token and use it when making the WebSocket connection
-    await fetch(this._url.protocol + "//" + this._url.hostname + ":" + this._url.port + this._loginPath, {
-      method: "POST",
-      headers: {
-        [HEADERNAME_USERNAME]: "foo", // TODO: get as user input
-        [HEADERNAME_PASSWORD]: "bar", // TODO: get as user input
-      },
-    });
+    const loginUrl = this._url.protocol + "//" + this._url.hostname + ":" + this._url.port + this._loginPath;
+    try {
+      // upstream is expected to set auth cookies in response to this
+      await fetch(loginUrl, {
+        method: "POST",
+        headers: {
+          [HEADERNAME_USERNAME]: "foo", // TODO: get as user input
+          [HEADERNAME_PASSWORD]: "bar", // TODO: get as user input
+        },
+      });
+    } catch (err_login) {
+      // fetch resolves as soon as the server responds with headers
+      // -- thus reject implies e.g. access policy or networking error
+      console.error("Could not login via '%s'. Didn't get response headers. This could be due to e.g. missing CORS configuration.", loginUrl);
+    }
 
     const wsUrl = new URL(this._url);
     wsUrl.pathname = this._wsPath;
