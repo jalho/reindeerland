@@ -143,6 +143,7 @@ async function handleLogin(logger: log4js.Logger, req: IncomingMessage, res: Ser
     const sigSecret = getSecret("token signing");
     const sig = hash(token_base64, sigSecret);
     const sig_base64 = sig.toString("base64");
+    res.statusCode = 204;
     res.setHeader("Set-Cookie", [
       `${TOKEN_COOKIE_NAME}=${token_base64}; HttpOnly`,
       `${SIG_COOKIE_NAME}=${sig_base64}; HttpOnly`,
