@@ -3,6 +3,11 @@
 const HEADERNAME_USERNAME: TAuthHeader = "x-rcon-ws-proxy-username";
 const HEADERNAME_PASSWORD: TAuthHeader = "x-rcon-ws-proxy-password";
 
+export interface IConnectUpstreamCredentials {
+  username: string;
+  password: string;
+}
+
 class Upstream {
   private _loginUrl: URL;
   private _wsRconUrl: URL;
@@ -14,7 +19,7 @@ class Upstream {
     this._wsRconUrl = wsRconUrl;
   }
 
-  public async connect(): Promise<WebSocket> {
+  public async connect(credentials: IConnectUpstreamCredentials): Promise<WebSocket> {
     if (this._socket) return this._socket; // already connected
 
     // TODO: use Steam as IDP instead, don't do login in admin-ui at all
@@ -24,20 +29,27 @@ class Upstream {
       const response = await fetch(this._loginUrl, {
         method: "POST",
         headers: {
-          [HEADERNAME_USERNAME]: "foo", // TODO: remove admin-ui login altogether; use Steam as IDP instead
-          [HEADERNAME_PASSWORD]: "bar", // TODO: remove admin-ui login altogether; use Steam as IDP instead
+          [HEADERNAME_USERNAME]: credentials.username, // TODO: remove admin-ui login altogether; use Steam as IDP instead
+          [HEADERNAME_PASSWORD]: credentials.password, // TODO: remove admin-ui login altogether; use Steam as IDP instead
         },
       });
       loginStatus = response.status;
     } catch (err_login) {
       // fetch resolves as soon as the server responds with headers
       // -- thus reject implies e.g. CORS preflight response didn't succeed or some networking error
-      console.error("Could not login via '%s'. Didn't get response headers. This could be due to e.g. missing CORS configuration or some networking error.", this._loginUrl);
+      console.error(
+        "Could not login via '%s'. Didn't get response headers. This could be due to e.g. missing CORS configuration or some networking error.",
+        this._loginUrl
+      );
     }
 
     const expectedStatus = 204;
     if (loginStatus !== expectedStatus) {
-      console.error("Expected login response status to be %d, instead got %d. Not proceeding to connect!", expectedStatus, loginStatus);
+      console.error(
+        "Expected login response status to be %d, instead got %d. Not proceeding to connect!",
+        expectedStatus,
+        loginStatus
+      );
       throw new Error("Could not login!");
     }
 

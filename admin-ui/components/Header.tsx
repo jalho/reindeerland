@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Dispatch, State, connectUpstream } from "../state/store";
+import React from "react";
+import { useSelector } from "react-redux";
+import { State } from "../state/store";
 
 function formatDate(ts?: number): string {
   if (ts === undefined) return "never";
@@ -14,12 +14,6 @@ function formatConnected(connected: boolean): string {
 const Header: React.FC = () => {
   const connected = useSelector((state: State) => state.connected);
   const lastSynced = useSelector((state: State) => state.lastSyncTsMs);
-
-  const dispatch = useDispatch<Dispatch>();
-
-  useEffect(() => {
-    dispatch(connectUpstream());
-  }, []);
 
   return (
     <>
