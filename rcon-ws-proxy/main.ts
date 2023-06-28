@@ -4,7 +4,7 @@ import crypto from "node:crypto";
 import http from "node:http";
 import syncRcon from "./handlers/interval-sync.js";
 import intervalPrune from "./handlers/interval-prune.js";
-import { handleUpgrade, handleLogin } from "./handlers/auth.js";
+import { handleUpgrade, handleLogin, IAuthorizedConnection } from "./handlers/auth.js";
 import Users from "./stores/Users.js";
 import handlePrivateAdminRequest from "./handlers/register-user.js";
 
@@ -39,7 +39,7 @@ const config = {
 const logger = log4js
   .configure({
     appenders: {
-      stdout: { type: "stdout", layout: { pattern: "%[[%d] %p [client %X{clientId}]%] - %m", type: "pattern" } },
+      stdout: { type: "stdout", layout: { pattern: "%[[%d] %p [username %X{username}] [client %X{clientId}]%] - %m", type: "pattern" } },
     },
     categories: { default: { appenders: ["stdout"], level: config.logLevel } },
   })
@@ -75,20 +75,20 @@ publicAuthApi.on("request", (req, res) => {
   }
 });
 
-publicRconSyncServer.on("connection", function connection(downstream) {
+publicRconSyncServer.on("connection", function connection(connection: IAuthorizedConnection) {
   const logger = log4js.getLogger();
   const clientId = crypto.randomUUID();
   logger.addContext("clientId", clientId);
+  logger.addContext("username", connection.token.username);
 
   if (connections[clientId] === undefined) {
-    connections[clientId] = { socket: downstream, lastAck: Date.now(), ackListener: null };
+    connections[clientId] = { socket: connection.downstream, lastAck: Date.now(), ackListener: null };
   } else throw new Error(`Duplicate client ID ${clientId} detected! This is a bug!`);
 
   logger.info("New client connected (%d clients connected in total)", publicRconSyncServer.clients.size);
 
-  downstream.on("error", logger.error);
-  const identifiedDownstream = downstream as TIdentifiedSocket;
-  identifiedDownstream.clientId = clientId;
+  connection.downstream.on("error", logger.error);
+  (<TIdentifiedSocket>connection.downstream).clientId = clientId;
 });
 
 publicRconSyncServer.on("listening", () => {

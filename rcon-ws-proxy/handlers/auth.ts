@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import crypto from "node:crypto";
 import stream from "node:stream";
 import log4js from "log4js";
-import type { WebSocketServer } from "ws";
+import type { WebSocketServer, WebSocket } from "ws";
 import { IStore } from "../stores/_Store.js";
 import { IUser } from "../stores/Users.js";
 
@@ -42,8 +42,9 @@ function checkSignature(logger: log4js.Logger, token: Token, actualSig: Buffer):
   const expectedSig = hash(token_base64, getSecret("token signing"));
   let sigIsLegit = false;
   try {
+    // crypto.timingSafeEqual throws at least when compared buffs have different length
     sigIsLegit = crypto.timingSafeEqual(actualSig, expectedSig);
-  } catch (err_sig_buff_check) { // crypto.timingSafeEqual throws at least when compared buffs have different length
+  } catch (err_sig_buff_check) {
     sigIsLegit = false;
   }
   if (!sigIsLegit) logger.warn("Got incorrect signature with token");
@@ -80,6 +81,11 @@ function parseAuthorization(logger: log4js.Logger, request: IncomingMessage): Pa
   }
 }
 
+export interface IAuthorizedConnection {
+  downstream: WebSocket;
+  token: Token;
+}
+
 /**
  * Check auth cookies and upgrade connection if OK.
  */
@@ -91,8 +97,12 @@ const handleUpgrade =
     if (authPayload && checkSignature(logger, authPayload.token, authPayload.signature)) {
       logger.info("Authorized connection; upgrading connection");
       socket.removeListener("error", logger.error);
-      wsServer.handleUpgrade(request, socket, head, function done(ws) {
-        wsServer.emit("connection", ws);
+      wsServer.handleUpgrade(request, socket, head, function done(downstream) {
+        const authorizedConnection: IAuthorizedConnection = {
+          downstream,
+          token: authPayload.token,
+        };
+        wsServer.emit("connection", authorizedConnection);
       });
     } else {
       logger.warn("Unauthorized upgrade attempt");
