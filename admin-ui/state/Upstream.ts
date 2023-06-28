@@ -5,18 +5,21 @@ const HEADERNAME_PASSWORD: TAuthHeader = "x-rcon-ws-proxy-password";
 
 class Upstream {
   private _url: URL;
+  private _loginPath: string;
+  private _wsPath: string;
   /** `null` when not connected */
   private _socket: WebSocket | null = null;
 
-  constructor(url: URL) {
+  constructor(url: URL, loginPath: string, wsPath: string) {
     this._url = url;
+    this._loginPath = loginPath;
+    this._wsPath = wsPath;
   }
 
   private async _connect(): Promise<WebSocket> {
     if (this._socket) return this._socket; // already connected
 
-    console.log(this._url.protocol, this._url.hostname);
-    await fetch(`https://${this._url.hostname}:${this._url.port}/login`, {
+    await fetch(this._url.protocol + "//" + this._url.hostname + ":" + this._url.port + this._loginPath, {
       method: "POST",
       headers: {
         [HEADERNAME_USERNAME]: "foo", // TODO: get as user input
@@ -24,6 +27,8 @@ class Upstream {
       },
     });
 
+    const wsUrl = new URL(this._url);
+    wsUrl.pathname = this._wsPath;
     const s = new WebSocket(this._url);
     return new Promise((resolve, reject) => {
       s.addEventListener("open", () => {

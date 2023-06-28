@@ -4,7 +4,7 @@ import { createSlice, configureStore, PayloadAction, createAsyncThunk } from "@r
 import Upstream from "./Upstream";
 import { WS_RCON_UPSTREAM } from "../constants/upstreams";
 
-const upstream = new Upstream(WS_RCON_UPSTREAM);
+const upstream = new Upstream(WS_RCON_UPSTREAM, "/login", "/ws");
 
 interface IAdminUIState {
   connected: boolean;
