@@ -30,6 +30,9 @@ const syncRcon = (connections: TConnections) => async () => {
     syn,
   };
 
+  // TODO: broadcast RCON sync payload to all clients "at once" instead of doing
+  // all this for each client one by one... gotta change the dead clients
+  // pruning syn-ack mechanism accordingly?
   for (const [clientId, cl] of Object.entries(connections)) {
     const logger = Log4js.getLogger();
     logger.addContext("clientId", clientId);
