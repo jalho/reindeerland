@@ -20,14 +20,7 @@ const serverInfo = createSlice({
   initialState,
   reducers: {
     messageReceived: (state, action: PayloadAction<any>) => {
-      const payload = JSON.parse(action.payload);
-      if (typeof payload !== "object" || payload === null) {
-        return;
-      }
-      if (!("lastSyncTsMs" in payload)) {
-        console.error("Got a message without a 'lastSyncTsMs' timestamp!", payload);
-        return;
-      }
+      const payload: IAdminUIRemoteState = JSON.parse(action.payload);
       Object.assign(state, payload);
     },
   },
@@ -38,12 +31,21 @@ const serverInfo = createSlice({
   },
 });
 
+/**
+ * Create a WebSocket connection to the upstream, and register a message
+ * listener that updates the global (Redux) state per received messages.
+ */
 const connectUpstream = createAsyncThunk("serverInfo/connectUpstream", async () => {
   const socket = await upstream.connect();
   console.log("Connected to upstream!");
+
   socket.addEventListener("message", (event) => {
+    // send "ack" for each received message -- upstream uses the information
+    // to prune dead connections
     const { syn } = JSON.parse(event.data);
     socket.send(JSON.stringify({ ack: syn }));
+
+    // update global state
     store.dispatch(serverInfo.actions.messageReceived(event.data));
   });
   console.log("Message listener attached!");
