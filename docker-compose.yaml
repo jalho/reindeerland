@@ -21,6 +21,8 @@ services:
     environment:
       - SECRET_PASSWORD_HASH=${SECRET_PASSWORD_HASH}
       - SECRET_TOKEN_SIGNING=${SECRET_TOKEN_SIGNING}
+      - RCON_WS_UPSTREAM_URL=${RCON_WS_UPSTREAM_URL}
+      - RCON_PASSWORD=${RCON_PASSWORD}
   tls-proxy:
     image: tls-proxy:local
     container_name: tls-proxy

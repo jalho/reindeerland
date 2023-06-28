@@ -1,35 +1,47 @@
+import WebSocket from "ws";
 import __Store from "./__Store.js";
 
-// TODO: remove this
-const dummyData = [
-  `SteamID           DisplayName POS                   ROT               
-    76561198135242017 jka         (1513.4, 0.1, 1435.5) (-0.6, -0.2, 0.8) `,
-  `SteamID           DisplayName POS                   ROT               
-    76561198135242017 jka         (1523.4, 0.1, 1435.5) (-0.6, -0.2, 0.8) `,
-  `SteamID           DisplayName POS                   ROT               
-    76561198135242017 jka         (1533.4, 0.1, 1435.5) (-0.6, -0.2, 0.8) `,
-  `SteamID           DisplayName POS                   ROT               
-    76561198135242017 jka         (1543.4, 0.1, 1435.5) (-0.6, -0.2, 0.8) `,
-];
+/**
+ * As of Apr 2023 RustDedicated didn't like getting Date.now() as command ID
+ * (i.e. ~13 digits).
+ */
+const MAX_ID = 100000;
+
+interface IncomingRCONMessage {
+  rconMessage: string;
+  timestamp: number;
+}
 
 abstract class _RCON extends __Store<IRCONPlayer> {
-  private _tick = 0; // TODO: remove this
+  private _rconCommandIdx = -1;
+  private _upstream: WebSocket.WebSocket;
 
-  constructor(remoteSyncIntervalMs: number) {
+  constructor(remoteSyncIntervalMs: number, upstream: WebSocket) {
     super();
+    this._upstream = upstream;
     setInterval(this.sync.bind(this), remoteSyncIntervalMs);
   }
 
   /**
    * Issue a command via remote RustDedicated RCON WebSocket API.
-   * 
+   *
    * @param command RCON command to send to the remote RustDedicated server
    * @returns raw string output of the command as returned from RustDedicated RCON API
    */
-  protected async sendRconCommand(command: string): Promise<string> {
-    // TODO: implement -- get from actual RCON
-    const data = dummyData[this._tick++ % dummyData.length];
-    return data;
+  protected async sendRconCommand(command: string): Promise<IncomingRCONMessage> {
+    const id = ++this._rconCommandIdx % MAX_ID;
+    return new Promise(async (resolve) => {
+      const _receiver = (m: WebSocket.MessageEvent) => {
+        const timestamp = Date.now();
+        const data = JSON.parse(m.data.toString());
+        if (data.Identifier === id) {
+          resolve({ rconMessage: data.Message, timestamp });
+          this._upstream.removeEventListener("message", _receiver);
+        }
+      };
+      this._upstream.addEventListener("message", _receiver);
+      this._upstream.send(JSON.stringify({ Identifier: id, Message: command }));
+    });
   }
 
   /**

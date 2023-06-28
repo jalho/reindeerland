@@ -45,15 +45,26 @@ const config = {
 const logger = log4js
   .configure({
     appenders: {
-      stdout: { type: "stdout", layout: { pattern: "%[[%d] %p [username %X{username}] [client %X{clientId}]%] - %m", type: "pattern" } },
+      stdout: {
+        type: "stdout",
+        layout: { pattern: "%[[%d] %p [username %X{username}] [client %X{clientId}]%] - %m", type: "pattern" },
+      },
     },
     categories: { default: { appenders: ["stdout"], level: config.logLevel } },
   })
   .getLogger();
 
+// (private) RCON WebSocket upstream
+const { RCON_WS_UPSTREAM_URL, RCON_PASSWORD } = process.env;
+if (!RCON_WS_UPSTREAM_URL) throw new Error(`Expected env var RCON_WS_UPSTREAM_URL`);
+if (!RCON_PASSWORD) throw new Error(`Expected env var RCON_PASSWORD`);
+const rconWsUpstreamUrl: URL = new URL(RCON_WS_UPSTREAM_URL);
+rconWsUpstreamUrl.pathname = RCON_PASSWORD;
+const rconWsUpstream = new WebSocket(rconWsUpstreamUrl);
+
 // stores
+const rconPlayers = new RCONPlayers(config.rconSyncIntervalMs, rconWsUpstream);
 const userStore = new Users();
-const rconPlayers = new RCONPlayers(config.rconSyncIntervalMs);
 logger.info("Syncing local RCON store caches every %d ms", config.rconSyncIntervalMs);
 
 const publicAuthApi = http.createServer();

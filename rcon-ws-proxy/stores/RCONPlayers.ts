@@ -4,8 +4,8 @@ import _Store from "./__Store.js";
 
 class RCONPlayers extends _RCON {
   protected async sync(): Promise<void> {
-    const str = await this.sendRconCommand("playerlistpos");
-    const parsed = playerlistpos(str);
+    const { rconMessage, timestamp } = await this.sendRconCommand("playerlistpos");
+    const parsed = playerlistpos(rconMessage);
     for (const playerPos of parsed) {
       this._cache.set(playerPos.SteamID, {
         country: "", // TODO!
