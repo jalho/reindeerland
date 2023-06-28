@@ -7,20 +7,14 @@ function formatDate(ts?: number): string {
   return new Date(ts).toLocaleTimeString();
 }
 
-function formatConnected(connected: boolean): string {
-  return connected ? "Connected" : "Not connected";
-}
-
 const Header: React.FC = () => {
-  const connected = useSelector((state: State) => state.connected);
-  const lastSynced = useSelector((state: State) => state.lastSyncTsMs);
+  const { lastSynced, players } = useSelector((state: State) => ({ lastSynced: state.lastSyncTsMs, players: state.players }));
 
   return (
     <>
-      <h1>
-        {formatConnected(connected)}, last synced: {formatDate(lastSynced)}
-      </h1>
-      <p>TODO: Stats and general information here.</p>
+      <h1>Last synced: {formatDate(lastSynced)}</h1>
+      <p>TODO: General information about the server here.</p>
+      <p>{Object.keys(players).length} players on the server.</p>
     </>
   );
 };

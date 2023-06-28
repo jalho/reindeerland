@@ -1,13 +1,12 @@
 import http from "node:http";
-import { IStore } from "../stores/_Store.js";
-import { IUser } from "../stores/Users.js";
+import Users from "../stores/Users.js";
 import log4js from "log4js";
 import { getSecret, hash } from "./auth.js";
 
 async function handlePrivateAdminRequest(
   req: http.IncomingMessage,
   res: http.ServerResponse,
-  store: IStore<IUser>,
+  store: Users,
   logger: log4js.Logger
 ): Promise<void> {
   const username = req.headers["username"];

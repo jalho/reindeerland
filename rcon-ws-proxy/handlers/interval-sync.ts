@@ -28,7 +28,7 @@ const syncRcon =
     // construct payload to be sent to all clients
     const syn = crypto.randomUUID();
 
-    const players: IAdminUIRemoteState["players"] = stores.rconPlayers.findMany();
+    const players: IAdminUIRemoteState["players"] = await stores.rconPlayers.findMany();
     const tcs: IAdminUIRemoteState["tcs"] = {}; // TODO: get from RCON
 
     const payload: IAdminUIRemoteState & Pick<ISynAck, "syn"> = {

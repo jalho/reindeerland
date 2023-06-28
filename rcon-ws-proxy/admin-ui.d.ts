@@ -11,14 +11,19 @@ interface ISynAck<ID = string> {
   ack: ID;
 }
 
+interface IRCONPlayer {
+  /** Steam ID */
+  id: string;
+}
+
 interface IAdminUIRemoteState {
   /**
    * The last time the remote state was synced, in milliseconds since the epoch.
    */
   lastSyncTsMs: number;
 
-  players: {};
-  tcs: {};
+  players: { [id: string]: IRCONPlayer };
+  tcs: { [id: string]: Record<string, unknown> };
 }
 
 type TAuthHeader = "x-rcon-ws-proxy-username" | "x-rcon-ws-proxy-password";

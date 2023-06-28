@@ -12,12 +12,12 @@ import { State } from "../state/store";
  * Show content if connected to upstream, otherwise show login view.
  */
 const RestrictedView = (): React.JSX.Element => {
-  const [connected, lastSyncTsMs]: [boolean, number | undefined] = useSelector((state: State) => [
+  const [connected, lastSyncTsMs]: [boolean, number] = useSelector((state: State) => [
     state.connected,
     state.lastSyncTsMs,
   ]);
 
-  const loggedIn: boolean = connected && Number.isInteger(lastSyncTsMs);
+  const loggedIn: boolean = connected && lastSyncTsMs > 0;
   if (!loggedIn) return <Login />;
 
   return (

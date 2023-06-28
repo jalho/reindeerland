@@ -1,20 +1,23 @@
 import _Store from "./_Store.js";
 
-interface IRCONPlayer {
-  /** Steam ID */
-  id: string;
-}
-
 class RCONPlayers extends _Store<IRCONPlayer> {
+  protected sync(): Promise<void> {
+    return Promise.resolve(); // TODO: implement cache interval sync -- update from RCON
+  }
+
   public async findOne(entity: Pick<IRCONPlayer, "id">): Promise<IRCONPlayer | null> {
     const user = this._cache.get(entity.id);
     if (!user) return null;
     else return user;
   }
 
-  public async findMany(entity?: Partial<IRCONPlayer> | null): Promise<IRCONPlayer[]> {
+  public async findMany(entity?: Partial<IRCONPlayer> | null): Promise<{ [id: string]: IRCONPlayer }> {
     if (entity) throw new Error("Not implemented");
-    else return Object.entries(this._cache).map(([k, v]) => v);
+    else {
+      const all: { [id: string]: IRCONPlayer } = {};
+      for (const [key, value] of this._cache) all[key] = value;
+      return all;
+    }
   }
 
   public async save(entity: IRCONPlayer): Promise<IRCONPlayer> {
@@ -23,5 +26,4 @@ class RCONPlayers extends _Store<IRCONPlayer> {
   }
 }
 
-export type { IRCONPlayer };
 export default RCONPlayers;

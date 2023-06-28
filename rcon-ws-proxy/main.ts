@@ -11,9 +11,14 @@ import RCONPlayers from "./stores/RCONPlayers.js";
 
 const config = {
   /**
-   * How often to sync the game state for all clients, in milliseconds.
+   * How often to update the state for connected clients, in milliseconds.
    */
-  rconSyncIntervalMs: 3000,
+  clientUpdateIntervalMs: 3000,
+  /**
+   * How often to sync local RCON stores' caches with the _RustDedicated_ remote
+   * RCON state.
+   */
+  rconSyncIntervalMs: 300,
   /**
    * Public HTTP/WebSocket server listen port. For authentication and business.
    */
@@ -48,7 +53,8 @@ const logger = log4js
 
 // stores
 const userStore = new Users();
-const rconPlayers = new RCONPlayers();
+const rconPlayers = new RCONPlayers(config.rconSyncIntervalMs);
+logger.info("Syncing local RCON store caches every %d ms", config.rconSyncIntervalMs);
 
 const publicAuthApi = http.createServer();
 const privateSysAdminApi = http.createServer((i, o) => handlePrivateAdminRequest(i, o, userStore, logger));
@@ -60,9 +66,9 @@ const connections: {
 export type TConnections = typeof connections;
 export type TIdentifiedSocket = WebSocket & { clientId: string };
 
-// sync game state regularly for all clients
-setInterval(syncRcon(connections, { rconPlayers }), config.rconSyncIntervalMs);
-logger.info("Syncing game state for all clients every %d ms", config.rconSyncIntervalMs);
+// send state updates regularly to all clients
+setInterval(syncRcon(connections, { rconPlayers }), config.clientUpdateIntervalMs);
+logger.info("Sending updates to all clients every %d ms", config.clientUpdateIntervalMs);
 
 // prune dead connections regularly
 setInterval(intervalPrune(connections, config.ackMaxAgeMs, logger), config.deadConnectionsPruneIntervalMs);

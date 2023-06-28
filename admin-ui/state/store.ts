@@ -10,9 +10,11 @@ interface IAdminUIState {
   connected: boolean;
 }
 
-const initialState: Partial<IAdminUIRemoteState> & IAdminUIState = {
-  lastSyncTsMs: undefined,
+const initialState: IAdminUIRemoteState & IAdminUIState = {
+  lastSyncTsMs: -1,
   connected: false,
+  players: {},
+  tcs: {},
 };
 
 const serverInfo = createSlice({

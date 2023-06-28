@@ -3,8 +3,7 @@ import crypto from "node:crypto";
 import stream from "node:stream";
 import log4js from "log4js";
 import type { WebSocketServer, WebSocket } from "ws";
-import { IStore } from "../stores/_Store.js";
-import { IUser } from "../stores/Users.js";
+import Users, { IUser } from "../stores/Users.js";
 
 const TOKEN_COOKIE_NAME = "token";
 const SIG_COOKIE_NAME = "sig";
@@ -122,7 +121,7 @@ function hash(item: string, key: Buffer): Buffer {
 async function matchPassword(
   username: string,
   password: string,
-  store: IStore<IUser>,
+  store: Users,
   logger: log4js.Logger
 ): Promise<IUser | null> {
   const user = await store.findOne({ id: username });
@@ -138,7 +137,7 @@ async function matchPassword(
 /**
  * Check request parameters and set auth cookies if OK.
  */
-async function handleLogin(logger: log4js.Logger, req: IncomingMessage, res: ServerResponse, store: IStore<IUser>) {
+async function handleLogin(logger: log4js.Logger, req: IncomingMessage, res: ServerResponse, store: Users) {
   logger.debug("Handling login request");
   const username = req.headers[HEADERNAME_USERNAME];
   const password = req.headers[HEADERNAME_PASSWORD];

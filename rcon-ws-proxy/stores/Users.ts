@@ -6,13 +6,17 @@ interface IUser {
 }
 
 class Users extends _Store<IUser> {
+  protected sync(): Promise<void> {
+    return Promise.resolve(); // this is not a remote RCON store -- thus NOOP!
+  }
+
   public async findOne(entity: Pick<IUser, "id">): Promise<IUser | null> {
     const user = this._cache.get(entity.id);
     if (!user) return null;
     else return user;
   }
 
-  public async findMany(): Promise<IUser[]> {
+  public async findMany(): Promise<{ [id: string]: IUser }> {
     throw new Error("Method not implemented.");
   }
 
