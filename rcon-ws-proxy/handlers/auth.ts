@@ -35,12 +35,20 @@ function getSecret(type: "password hashing" | "token signing"): Buffer {
 }
 
 /**
- * Check togen signature, evaluate token permissions.
+ * Check togen signature.
  */
-function evaluateAuthorization(logger: log4js.Logger, token: Token, signature: Buffer): boolean {
-  logger.debug("TODO: Evaluate permissions", token);
-  // TODO: add some CSRF protection?
-  return true;
+function checkSignature(logger: log4js.Logger, token: Token, actualSig: Buffer): boolean {
+  const token_base64 = Buffer.from(JSON.stringify(token)).toString("base64");
+  const expectedSig = hash(token_base64, getSecret("token signing"));
+  let sigIsLegit = false;
+  try {
+    sigIsLegit = crypto.timingSafeEqual(actualSig, expectedSig);
+  } catch (err_sig_buff_check) { // crypto.timingSafeEqual throws at least when compared buffs have different length
+    sigIsLegit = false;
+  }
+  if (!sigIsLegit) logger.warn("Got incorrect signature with token");
+  else logger.info("Token signature is OK -- token: %o", token);
+  return sigIsLegit;
 }
 
 /**
@@ -56,8 +64,8 @@ function parseAuthorization(logger: log4js.Logger, request: IncomingMessage): Pa
     const tokenCookie = cookies.find((c) => c.startsWith(TOKEN_COOKIE_NAME + "="));
     const sigCookie = cookies.find((c) => c.startsWith(SIG_COOKIE_NAME + "="));
     if (tokenCookie && sigCookie) {
-      const token = tokenCookie.split("=")[1];
-      const sig = sigCookie.split("=")[1];
+      const token = tokenCookie.substring((TOKEN_COOKIE_NAME + "=").length);
+      const sig = sigCookie.substring((SIG_COOKIE_NAME + "=").length);
       return {
         token: JSON.parse(Buffer.from(token, "base64").toString()),
         signature: Buffer.from(sig, "base64"),
@@ -80,7 +88,7 @@ const handleUpgrade =
   (request: IncomingMessage, socket: stream.Duplex, head: Buffer) => {
     socket.on("error", logger.error);
     const authPayload = parseAuthorization(logger, request);
-    if (authPayload && evaluateAuthorization(logger, authPayload.token, authPayload.signature)) {
+    if (authPayload && checkSignature(logger, authPayload.token, authPayload.signature)) {
       logger.info("Authorized connection; upgrading connection");
       socket.removeListener("error", logger.error);
       wsServer.handleUpgrade(request, socket, head, function done(ws) {
