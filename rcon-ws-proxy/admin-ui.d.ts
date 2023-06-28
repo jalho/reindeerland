@@ -14,6 +14,12 @@ interface ISynAck<ID = string> {
 interface IRCONPlayer {
   /** Steam ID */
   id: string;
+  /** x, y, z as reported by RustDedicated by RCON command `playerlistpos`. */
+  position: [number, number, number];
+  health: number;
+  rotation: unknown; // TODO: how is this presented in RCON?
+  ip_address: string;
+  country: string;
 }
 
 interface IAdminUIRemoteState {
