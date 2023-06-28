@@ -33,7 +33,7 @@ const WorldTool = (props: IProps): React.JSX.Element => {
           style={{ width: "100%", position: "absolute" }}
         />
         {Object.values(players).map((p) => (
-          <Marker gameworldOrigin={GAMEWORLD_ORIGIN} markerGameworldCoordinates={p.position} scale={SCALE} key={p.id} />
+          <Marker gameworldOrigin={GAMEWORLD_ORIGIN} markerGameworldCoordinates={p.position} scale={SCALE} key={p.id} data={p}/>
         ))}
       </div>
       <p>TODO: Legends here.</p>
