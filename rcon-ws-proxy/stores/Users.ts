@@ -1,4 +1,4 @@
-import _Store from "./_Store.js";
+import _Store from "./__Store.js";
 
 interface IUser {
   id: string;

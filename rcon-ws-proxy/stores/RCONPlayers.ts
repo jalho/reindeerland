@@ -1,21 +1,8 @@
 import { playerlistpos } from "../parsers/rcon.js";
-import _Store from "./_Store.js";
+import _RCON from "./_RCON.js";
+import _Store from "./__Store.js";
 
-// TODO: remove this
-const dummyData = [
-  `SteamID           DisplayName POS                   ROT               
-  76561198135242017 jka         (1513.4, 0.1, 1435.5) (-0.6, -0.2, 0.8) `,
-  `SteamID           DisplayName POS                   ROT               
-  76561198135242017 jka         (1523.4, 0.1, 1435.5) (-0.6, -0.2, 0.8) `,
-  `SteamID           DisplayName POS                   ROT               
-  76561198135242017 jka         (1533.4, 0.1, 1435.5) (-0.6, -0.2, 0.8) `,
-  `SteamID           DisplayName POS                   ROT               
-  76561198135242017 jka         (1543.4, 0.1, 1435.5) (-0.6, -0.2, 0.8) `,
-];
-
-class RCONPlayers extends _Store<IRCONPlayer> {
-  private _tick = 0; // TODO: remove this
-
+class RCONPlayers extends _RCON {
   protected async sync(): Promise<void> {
     const str = await this.sendRconCommand("playerlistpos");
     const parsed = playerlistpos(str);
@@ -29,12 +16,6 @@ class RCONPlayers extends _Store<IRCONPlayer> {
         rotation: playerPos.ROT,
       });
     }
-  }
-
-  // TODO: implement -- get from actual RCON
-  private async sendRconCommand(command: string): Promise<string> {
-    const data = dummyData[this._tick++ % dummyData.length];
-    return data;
   }
 
   public async findOne(entity: Pick<IRCONPlayer, "id">): Promise<IRCONPlayer | null> {
