@@ -17,7 +17,7 @@ interface IRCONPlayer {
   /** x, y, z as reported by RustDedicated by RCON command `playerlistpos`. */
   position: [number, number, number];
   health: number;
-  rotation: unknown; // TODO: how is this presented in RCON?
+  rotation: [number, number, number];
   ip_address: string;
   country: string;
 }

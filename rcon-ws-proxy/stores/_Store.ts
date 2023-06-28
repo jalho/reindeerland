@@ -3,7 +3,6 @@ import { IUser } from "./Users.js";
 interface IStore<Entity extends { id: string }> {
   findOne(entity: Pick<IUser, "id">): Promise<Entity | null>;
   findMany(entity: Partial<Entity>): Promise<{ [id: string]: Record<string, unknown> }>;
-  save(entity: Partial<Entity>): Promise<Entity>;
 }
 
 abstract class _Store<Entity extends { id: string }> implements IStore<Entity> {
@@ -19,7 +18,6 @@ abstract class _Store<Entity extends { id: string }> implements IStore<Entity> {
    * @param entity matcher; `null | undefined` means get all
    */
   public abstract findMany(entity: Partial<Entity> | null | undefined): Promise<{ [id: string]: Entity }>;
-  public abstract save(entity: Partial<Entity>): Promise<Entity>;
 
   /**
    * Sync local cache with remote. E.g. get players on the _RustDedicated_
