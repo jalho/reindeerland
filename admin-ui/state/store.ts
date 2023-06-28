@@ -2,9 +2,9 @@
 
 import { createSlice, configureStore, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import Upstream from "./Upstream";
-import { WS_RCON_UPSTREAM } from "../constants/upstreams";
+import { RCON_UPSTREAM_LOGIN, RCON_UPSTREAM_WS } from "../constants/upstreams";
 
-const upstream = new Upstream(WS_RCON_UPSTREAM, "/login", "/ws");
+const upstream = new Upstream(RCON_UPSTREAM_LOGIN, RCON_UPSTREAM_WS);
 
 interface IAdminUIState {
   connected: boolean;
