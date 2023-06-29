@@ -43,9 +43,6 @@ services:
     image: ghcr.io/jalho/reindeerland/rcon-ws-proxy:alpha-1
     env_file:
       - .env
-    depends_on:
-      rust-server-with-nc:
-        condition: service_healthy
   tls-proxy:
     networks:
       reindeerland-net: null
@@ -67,9 +64,6 @@ services:
         target: /etc/nginx/tls.key
         bind:
           create_host_path: false
-    depends_on:
-      rust-server-with-nc:
-        condition: service_healthy
   logprocessor:
     image: ghcr.io/jalho/reindeerland/logprocessor:alpha-1
     command: node main.mjs logs/ discord-hooks.json
@@ -86,9 +80,6 @@ services:
         target: /opt/run/discord-hooks.json
         bind:
           create_host_path: false
-    depends_on:
-      rust-server-with-nc:
-        condition: service_healthy
     container_name: logprocessor
 
 networks:

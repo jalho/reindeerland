@@ -24,7 +24,10 @@ Requirements: `docker`
 4. Start the composition detached and follow logs if you wish.
 
    ```bash
-   docker compose -f docker-compose.main.yaml -f docker-compose.aux.yaml up -d
+   docker compose -f docker-compose.main.yaml up -d && docker compose -f docker-compose.aux.yaml up -d
+   ```
+
+   ```bash
    docker compose -f docker-compose.main.yaml -f docker-compose.aux.yaml logs -f
    ```
 
