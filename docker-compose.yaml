@@ -1,6 +1,6 @@
 services:
   rust-server-with-nc:
-    image: rust-server-with-nc:local
+    image: ghcr.io/jalho/reindeerland/rust-server-with-nc:alpha-1
     container_name: reindeerland
     env_file:
       - .env
@@ -25,11 +25,11 @@ services:
   admin-ui:
     hostname: admin-ui
     container_name: admin-ui
-    image: admin-ui:local
+    image: ghcr.io/jalho/reindeerland/admin-ui:alpha-1
   map-service:
     hostname: map-service
     container_name: map-service
-    image: map-service:local
+    image: ghcr.io/jalho/reindeerland/map-service:alpha-1
     command: node server.mjs 80 /opt/images
     env_file:
       - .env
@@ -42,7 +42,7 @@ services:
   player-detail-service:
     hostname: player-detail-service
     container_name: player-detail-service
-    image: player-detail-service:local
+    image: ghcr.io/jalho/reindeerland/player-detail-service:alpha-1
     command: node main.js 80 /opt/server/ip-locs.json
     env_file:
       - .env
@@ -55,7 +55,7 @@ services:
   rcon-ws-proxy:
     hostname: rcon-ws-proxy
     container_name: rcon-ws-proxy
-    image: rcon-ws-proxy:local
+    image: ghcr.io/jalho/reindeerland/rcon-ws-proxy:alpha-1
     env_file:
       - .env
   tls-proxy:
@@ -64,7 +64,7 @@ services:
       - map-service
       - admin-ui
       - player-detail-service
-    image: tls-proxy:local
+    image: ghcr.io/jalho/reindeerland/tls-proxy:alpha-1
     container_name: tls-proxy
     hostname: tls-proxy
     ports:
@@ -81,7 +81,7 @@ services:
         bind:
           create_host_path: false
   logprocessor:
-    image: logprocessor:local
+    image: ghcr.io/jalho/reindeerland/logprocessor:alpha-1
     command: node main.mjs logs/ discord-hooks.json
     env_file:
       - .env
