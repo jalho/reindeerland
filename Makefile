@@ -1,4 +1,4 @@
-all-images: admin-ui-image map-service-image rcon-ws-proxy-image tls-proxy-image player-detail-service-image
+all-images: admin-ui-image map-service-image rcon-ws-proxy-image tls-proxy-image player-detail-service-image logprocessor-image
 
 admin-ui-image:
 	@cd admin-ui && npm install
@@ -20,3 +20,6 @@ player-detail-service-image:
 	@cd player-detail-service && npm install
 	@cd player-detail-service && npm run build
 	@docker build -t player-detail-service:local -f player-detail-service/Dockerfile player-detail-service
+
+logprocessor-image:
+	@docker build -t logprocessor:local -f logprocessor/Dockerfile logprocessor

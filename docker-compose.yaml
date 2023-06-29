@@ -57,3 +57,23 @@ services:
         target: /etc/nginx/tls.key
         bind:
           create_host_path: false
+  logprocessor:
+    image: logprocessor:local
+    command: node logprocessor.mjs logs/ discord-hooks.json
+    env_file:
+      - .env
+    volumes:
+      - type: bind
+        source: ${DOCKER_HOST_RUSTDEDICATED_LOGS_DIR}
+        target: /opt/run/logs
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${DOCKER_HOST_DISCORD_HOOKS_FILEPATH}
+        target: /opt/run/discord-hooks.json
+        bind:
+          create_host_path: false
+    depends_on:
+      rust-server:
+        condition: service_healthy
+    container_name: logprocessor
