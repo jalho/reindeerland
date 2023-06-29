@@ -1,4 +1,4 @@
-all-images: admin-ui-image map-service-image rcon-ws-proxy-image tls-proxy-image player-detail-service-image logprocessor-image
+all-images: admin-ui-image map-service-image rcon-ws-proxy-image tls-proxy-image player-detail-service-image logprocessor-image rust-server-with-nc-image
 
 admin-ui-image:
 	@cd admin-ui && npm install
@@ -23,3 +23,6 @@ player-detail-service-image:
 
 logprocessor-image:
 	@docker build -t logprocessor:local -f logprocessor/Dockerfile logprocessor
+
+rust-server-with-nc-image
+	@docker build -t rust-server-with-nc:local -f rust-server-with-nc/Dockerfile rust-server-with-nc

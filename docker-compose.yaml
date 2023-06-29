@@ -1,4 +1,27 @@
 services:
+  rust-server:
+    image: rust-server-with-nc:local
+    container_name: reindeerland
+    env_file:
+      - .env
+    hostname: reindeerland
+    ports:
+      - 28015:28015/udp
+      - 28017:28017/udp
+      - 28082:28082/tcp
+    volumes:
+      - type: bind
+        source: ${DOCKER_HOST_RDS_STEAMCMD_INSTALL_DIRPATH}
+        target: /steamcmd
+        bind:
+          create_host_path: false
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 28082 || exit 1"]
+      interval: 1m
+      retries: 20
+      start_period: 30m
+      timeout: 10s
+    restart: always
   admin-ui:
     hostname: admin-ui
     container_name: admin-ui
