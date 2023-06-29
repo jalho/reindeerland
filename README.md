@@ -10,26 +10,19 @@ $ docker compose version
 Docker Compose version v2.18.1
 ```
 
-1. Get the Docker composition definition file.
+1. Get required manifests and initliaze directories.
 
    ```bash
-   wget https://github.com/jalho/reindeerland/raw/master/docker-compose.yaml
+   wget https://github.com/jalho/reindeerland/raw/master/Makefile && make
    ```
 
-2. Define env vars.
+2. Define secret env vars and whatever else the `Makefile` didn't do.
 
    ```bash
-   cp example.env .env
-   vim .env
+   cp example.env .env && vim .env
    ```
 
-3. Make sure directories and files referenced in the `.env` file exist and
-   that secret keys are correct & sensible. You can use `make` as there is a
-   [`Makefile`](./Makefile) that at least defines what should be present.
-
-   TODO: Make the `Makefile` wget or generate the stuff required!
-
-4. Start the composition detached and follow logs if you wish.
+3. Start the composition detached and follow logs if you wish.
 
    ```bash
    docker compose -f docker-compose.main.yaml up -d --wait && docker compose -f docker-compose.aux.yaml up -d
@@ -39,7 +32,7 @@ Docker Compose version v2.18.1
    docker compose -f docker-compose.main.yaml -f docker-compose.aux.yaml logs -f
    ```
 
-5. Ask _RustDedicated_ to render the gameworld map as a .PNG image.
+4. Ask _RustDedicated_ to render the gameworld map as a .PNG image.
 
    ```bash
    docker exec reindeerland rcon rendermap
@@ -52,7 +45,7 @@ Docker Compose version v2.18.1
 
    TODO: Make `rcon-ws-proxy` issue the `rendermap` command on startup instead!
 
-6. Create a user for logging in to the `admin-ui`.
+5. Create a user for logging in to the `admin-ui`.
 
    ```bash
    docker exec rcon-ws-proxy curl "http://localhost:90" -H "username: foo" -H "password: bar"
@@ -60,7 +53,7 @@ Docker Compose version v2.18.1
 
    TODO: Add e.g. Steam IDP instead!
 
-7. Schedule weekly wipe with `crontab -e`:
+6. Schedule weekly wipe with `crontab -e`:
 
    ```
    0 14 * * FRI timeout 1h bash /opt/run/rust-server/_scripts/wipe.sh /opt/run/rust-server/.env
