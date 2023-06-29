@@ -7,4 +7,5 @@ all: /opt/run/rust-server/docker-compose.yaml \
 	 /opt/run/rust-server/steamcmd \
 	 /opt/run/rust-server/.env \
 	 /opt/run/rust-server/tls/fullchain1.pem \
-	 /opt/run/rust-server/tls/privkey1.pem
+	 /opt/run/rust-server/tls/privkey1.pem \
+	 /opt/run/rust-server/_scripts/wipe.sh
