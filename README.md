@@ -1,11 +1,29 @@
 # Usage
 
-Required: `make`, `docker`, `npm`
+Requirements: `docker`
 
-1. `git clone ${this repository}`
-2. `cd ${this repository}`
-3. `make`
-4. `docker compose up`
+1. Get the Docker composition definition file.
+
+   ```bash
+   wget https://github.com/jalho/reindeerland/raw/master/docker-compose.yaml
+   ```
+
+2. Define env vars.
+
+   ```bash
+   cp example.env .env
+   vim .env
+   ```
+
+3. Make sure directories and files referenced in the `.env` file exist and
+   that secret keys are correct & sensible.
+
+4. Start the composition detached and follow logs if you wish.
+
+   ```bash
+   docker compose up -d
+   docker compose logs -f
+   ```
 
 # Components
 
@@ -87,10 +105,4 @@ Required: `certbot`
 
 # Development
 
-First disable TLS in loadbalancer, configure CORS dev policy and update the browser web UI app's upstreams to target the loadbalancer.
-
-Then build images, start Docker composition, create a user and follow logs:
-
-```bash
-docker compose down; make && docker compose up -d && sleep 5s; docker exec rcon-ws-proxy curl "http://localhost:90" -H "username: foo" -H "password: bar" && docker compose logs -f
-```
+First disable TLS in loadbalancer, configure CORS dev policy and update the browser web UI app's upstreams to target the loadbalancer. Then build images with those changes, start Docker composition, create a user and follow logs.
