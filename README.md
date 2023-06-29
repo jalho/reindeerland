@@ -24,8 +24,8 @@ Requirements: `docker`
 4. Start the composition detached and follow logs if you wish.
 
    ```bash
-   docker compose up -d
-   docker compose logs -f
+   docker compose -f docker-compose.main.yaml -f docker-compose.aux.yaml up -d
+   docker compose -f docker-compose.main.yaml -f docker-compose.aux.yaml logs -f
    ```
 
 5. Ask _RustDedicated_ to render the gameworld map as a .PNG image.
