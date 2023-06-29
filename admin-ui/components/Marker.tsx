@@ -36,7 +36,7 @@ const Marker = (props: IMarker<IRCONPlayer>): React.JSX.Element => {
           position: "absolute",
           width: MARKER_RADIUS,
           height: MARKER_RADIUS,
-          backgroundColor: "red",
+          backgroundColor: props.data.online ? "red" : "gray",
           left: left - MARKER_RADIUS / 2,
           top: top - MARKER_RADIUS / 2,
           opacity: 0.85,
@@ -50,7 +50,7 @@ const Marker = (props: IMarker<IRCONPlayer>): React.JSX.Element => {
         <div
           style={{
             position: "absolute",
-            backgroundColor: "red",
+            backgroundColor: props.data.online ? "red" : "gray",
             left: left + TOOLTIP_OFFSET,
             top: top - TOOLTIP_OFFSET,
             padding: "0 1rem 0 1rem",
@@ -59,6 +59,7 @@ const Marker = (props: IMarker<IRCONPlayer>): React.JSX.Element => {
           }}
         >
           <code>{props.data.name}</code>
+          {!props.data.online && <span> (offline)</span>}
         </div>
       )}
     </>
