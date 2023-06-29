@@ -1,4 +1,4 @@
-all-images: admin-ui-image map-service-image rcon-ws-proxy-image tls-proxy-image
+all-images: admin-ui-image map-service-image rcon-ws-proxy-image tls-proxy-image player-detail-service-image
 
 admin-ui-image:
 	@cd admin-ui && npm install
@@ -15,3 +15,7 @@ rcon-ws-proxy-image:
 
 tls-proxy-image:
 	@docker build -t tls-proxy:local -f tls-proxy/Dockerfile tls-proxy
+
+player-detail-service-image:
+	@cd player-detail-service && npm run build
+	@docker build -t player-detail-service:local -f player-detail-service/Dockerfile player-detail-service

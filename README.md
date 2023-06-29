@@ -17,6 +17,12 @@ Required: `make`, `docker`, `npm`
 
   HTTP server serving _Reindeerland_ Rust game server map as a .PNG file.
 
+- [`player-detail-service`](./player-detail-service)
+
+  HTTP server storing and providing additional details of players, i.e.
+  information not available via RustDedicated RCON such as country information
+  and lifetime stats etc.
+
 - [`rcon-ws-proxy`](./rcon-ws-proxy)
 
   Accepts WebSocket connections from the `admin-ui` for authorized users.

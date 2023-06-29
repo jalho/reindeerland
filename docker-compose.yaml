@@ -14,6 +14,16 @@ services:
         target: /opt/map_4500_10443.png
         bind:
           create_host_path: false
+  player-detail-service:
+    hostname: player-detail-service
+    container_name: player-detail-service
+    image: player-detail-service:local
+    volumes:
+      - type: bind
+        source: ~/temp/.dat
+        target: /opt/server/store.dat
+        bind:
+          create_host_path: false
   rcon-ws-proxy:
     hostname: rcon-ws-proxy
     container_name: rcon-ws-proxy
@@ -24,6 +34,11 @@ services:
       - RCON_WS_UPSTREAM_URL=${RCON_WS_UPSTREAM_URL}
       - RCON_PASSWORD=${RCON_PASSWORD}
   tls-proxy:
+    depends_on:
+      - rcon-ws-proxy
+      - map-service
+      - admin-ui
+      - player-detail-service
     image: tls-proxy:local
     container_name: tls-proxy
     hostname: tls-proxy
