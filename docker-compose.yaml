@@ -1,5 +1,7 @@
 services:
   rust-server-with-nc:
+    networks:
+      reindeerland-net: null
     image: ghcr.io/jalho/reindeerland/rust-server-with-nc:alpha-1
     container_name: reindeerland
     env_file:
@@ -27,6 +29,8 @@ services:
     container_name: admin-ui
     image: ghcr.io/jalho/reindeerland/admin-ui:alpha-1
   map-service:
+    networks:
+      reindeerland-net: null
     hostname: map-service
     container_name: map-service
     image: ghcr.io/jalho/reindeerland/map-service:alpha-1
@@ -40,6 +44,8 @@ services:
         bind:
           create_host_path: false
   player-detail-service:
+    networks:
+      reindeerland-net: null
     hostname: player-detail-service
     container_name: player-detail-service
     image: ghcr.io/jalho/reindeerland/player-detail-service:alpha-1
@@ -53,6 +59,8 @@ services:
         bind:
           create_host_path: false
   rcon-ws-proxy:
+    networks:
+      reindeerland-net: null
     hostname: rcon-ws-proxy
     container_name: rcon-ws-proxy
     image: ghcr.io/jalho/reindeerland/rcon-ws-proxy:alpha-1
@@ -62,6 +70,8 @@ services:
       rust-server-with-nc:
         condition: service_healthy
   tls-proxy:
+    networks:
+      reindeerland-net: null
     image: ghcr.io/jalho/reindeerland/tls-proxy:alpha-1
     container_name: tls-proxy
     hostname: tls-proxy
@@ -100,3 +110,7 @@ services:
       rust-server-with-nc:
         condition: service_healthy
     container_name: logprocessor
+
+networks:
+  reindeerland-net:
+    name: reindeerland-net
