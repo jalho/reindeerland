@@ -59,7 +59,7 @@ services:
           create_host_path: false
   logprocessor:
     image: logprocessor:local
-    command: node logprocessor.mjs logs/ discord-hooks.json
+    command: node main.mjs logs/ discord-hooks.json
     env_file:
       - .env
     volumes:
