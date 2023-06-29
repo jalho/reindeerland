@@ -1,5 +1,5 @@
 services:
-  rust-server:
+  rust-server-with-nc:
     image: rust-server-with-nc:local
     container_name: reindeerland
     env_file:
@@ -97,6 +97,6 @@ services:
         bind:
           create_host_path: false
     depends_on:
-      rust-server:
+      rust-server-with-nc:
         condition: service_healthy
     container_name: logprocessor
