@@ -10,34 +10,40 @@ import Title from "./Title";
 import { useSelector } from "react-redux";
 import { State } from "../state/store";
 
+function formatConnectedSeconds(connected_seconds: number) {
+  const seconds = connected_seconds % 60;
+  return `${Math.floor(connected_seconds / 60)} min, ${seconds} sec`;
+}
+
 export default function Playerlist() {
-  const players: any = useSelector<State>((s) => s.players);
+  const players = useSelector<State>((s) => s.players) as { [id: string]: IRCONPlayer };
+  const playerCount = Object.keys(players).length;
+  if (playerCount < 1) return null;
 
   return (
     <>
-      <Title>Connected players {Object.keys(players).length}</Title>
+      <Title>{playerCount} connected players</Title>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Country</TableCell>
-            <TableCell>IP address</TableCell>
+            <TableCell>name</TableCell>
+            <TableCell>country</TableCell>
+            <TableCell>health</TableCell>
+            <TableCell>connected</TableCell>
             <TableCell>Steam ID</TableCell>
-            <TableCell align="right">Position on the map</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.values(players).map((_player) => {
-            const player = _player as IRCONPlayer;
+          {Object.values(players).map((player) => {
             return (
               <TableRow key={player.id}>
-                <TableCell>{player.name}</TableCell>
-                <TableCell>{player.country}</TableCell>
-                <TableCell>{player.ip_address}</TableCell>
-                <TableCell>{player.id}</TableCell>
-                <TableCell align="right" style={{maxWidth: 10}}>
-                  <code >{player.position.join(", ")}</code>
+                <TableCell>
+                  <code>{player.name}</code>
                 </TableCell>
+                <TableCell>{player.country}</TableCell>
+                <TableCell>{player.health.toPrecision(4)}</TableCell>
+                <TableCell>{formatConnectedSeconds(player.connected_seconds)}</TableCell>
+                <TableCell>{player.id}</TableCell>
               </TableRow>
             );
           })}
