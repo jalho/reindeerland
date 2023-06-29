@@ -21,6 +21,8 @@ interface IRCONPlayer {
   ip_address: string;
   country: string;
   name: string;
+  connected_seconds: number;
+  ping: number;
 }
 
 interface IAdminUIRemoteState {

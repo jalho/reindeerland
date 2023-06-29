@@ -1,21 +1,32 @@
-import { playerlistpos } from "../parsers/rcon.js";
+import { playerlist, playerlistpos } from "../parsers/rcon.js";
 import _RCON from "./_RCON.js";
 import _Store from "./__Store.js";
 
 class RCONPlayers extends _RCON {
   protected async sync(): Promise<void> {
-    const { rconMessage, timestamp } = await this.sendRconCommand("playerlistpos");
-    const parsed = playerlistpos(rconMessage);
-    for (const playerPos of parsed) {
-      this._cache.set(playerPos.SteamID, {
-        country: "", // TODO!
-        health: -1, // TODO!
-        id: playerPos.SteamID,
-        ip_address: "", // TODO!
-        position: playerPos.POS,
-        rotation: playerPos.ROT,
-        name: playerPos.DisplayName,
-      });
+    // playerlistpos
+    const playerlistpos_response = await this.sendRconCommand("playerlistpos");
+    const playerlistpos_parsed = playerlistpos(playerlistpos_response.rconMessage);
+
+    // playerlist
+    const playerlist_response = await this.sendRconCommand("playerlist");
+    const playerlist_parsed = playerlist(playerlist_response.rconMessage);
+
+    for (const player of playerlist_parsed) {
+      const { POS, ROT } = playerlistpos_parsed[player.SteamID];
+      const { Address, ConnectedSeconds, DisplayName, Health, Ping } = player;
+      const rconPlayer: IRCONPlayer = {
+        connected_seconds: ConnectedSeconds,
+        country: "", // TODO
+        health: Health,
+        id: player.SteamID,
+        ip_address: Address,
+        name: DisplayName,
+        ping: Ping,
+        position: POS,
+        rotation: ROT,
+      };
+      this._cache.set(player.SteamID, rconPlayer);
     }
   }
 
