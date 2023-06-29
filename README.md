@@ -91,6 +91,8 @@ Required: `certbot`
    host -a _acme-challenge.sandbox.reindeerland.eu
    ```
 
+   or [https://toolbox.googleapps.com/apps/dig/#TXT/](https://toolbox.googleapps.com/apps/dig/#TXT/)
+
 5. Finally the TLS certificate and a usable TLS server private key should be in:
 
    ```
