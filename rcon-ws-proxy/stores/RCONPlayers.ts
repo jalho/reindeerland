@@ -20,7 +20,7 @@ class RCONPlayers extends _RCON {
     for (const player of playerlist_parsed) {
       const { POS, ROT } = playerlistpos_parsed[player.SteamID];
       const { Address, ConnectedSeconds, DisplayName, Health, Ping } = player;
-      const country = await this.resolveCountry(Address);
+      const country = await this.resolveCountry(player.SteamID, Address);
 
       const rconPlayer: IRCONPlayer = {
         connected_seconds: ConnectedSeconds,
@@ -37,8 +37,9 @@ class RCONPlayers extends _RCON {
     }
   }
 
-  private async resolveCountry(ip: string): Promise<string | null> {
-    // TODO: use cache
+  private async resolveCountry(steamdId: string, ip: string): Promise<string | null> {
+    // check cache first -- only request upstream if not cached
+    if (this._countryCache[steamdId]) return this._countryCache[steamdId];
 
     const { IPINFO_APIKEY } = process.env;
     if (!IPINFO_APIKEY) return null;
@@ -61,7 +62,9 @@ class RCONPlayers extends _RCON {
       r.end();
     });
 
-    return ipInfo?.country ?? null;
+    const { country } = ipInfo ?? {};
+    if (country) this._countryCache[steamdId] = country; // cache
+    return country ?? null;
   }
 
   public async findOne(entity: Pick<IRCONPlayer, "id">): Promise<IRCONPlayer | null> {

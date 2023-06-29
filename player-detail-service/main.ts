@@ -14,7 +14,7 @@ const logg = log4js
         type: "stdout",
       },
     },
-    categories: { default: { appenders: ["stdout"], level: "info" } },
+    categories: { default: { appenders: ["stdout"], level: "all" } },
   })
   .getLogger();
 
@@ -31,7 +31,7 @@ setInterval(() => {
 }, 1000 * 60 * 60 * 24);
 
 const s = http.createServer(async (i, o) => {
-  logg.trace("[%s] [%s] [%s]", new Date(), i.method, i.url);
+  logg.info("[%s] [%s] [%s]", new Date(), i.method, i.url);
 
   const apiKey = i.headers[API_KEY_HEADER_NAME];
   if (typeof apiKey !== "string" || !apiKey) {
