@@ -67,16 +67,18 @@ services:
     image: ghcr.io/jalho/reindeerland/tls-proxy:alpha-1
     container_name: tls-proxy
     hostname: tls-proxy
+    env_file:
+      - .env
     ports:
       - 443:443
     volumes:
       - type: bind
-        source: ~/temp-certbot/archive/sandbox.reindeerland.eu/fullchain1.pem
+        source: ${DOCKER_HOST_TLS_CERT_FILEPATH}
         target: /etc/nginx/tls.crt
         bind:
           create_host_path: false
       - type: bind
-        source: ~/temp-certbot/archive/sandbox.reindeerland.eu/privkey1.pem
+        source: ${DOCKER_HOST_TLS_KEY_FILEPATH}
         target: /etc/nginx/tls.key
         bind:
           create_host_path: false
