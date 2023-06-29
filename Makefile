@@ -6,9 +6,9 @@ all: /opt/run/rust-server/docker-compose.main.yaml \
 	 /opt/run/rust-server/steamcmd/rust/logs \
 	 /opt/run/rust-server/discord-hooks.json \
 	 /opt/run/rust-server/.env \
+	 /opt/run/rust-server/_scripts/wipe.sh \
 	 /opt/run/rust-server/tls/fullchain1.pem \
-	 /opt/run/rust-server/tls/privkey1.pem \
-	 /opt/run/rust-server/_scripts/wipe.sh
+	 /opt/run/rust-server/tls/privkey1.pem
 
 /opt/run/rust-server/docker-compose.main.yaml:
 	@wget https://github.com/jalho/reindeerland/raw/master/docker-compose.main.yaml
