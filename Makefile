@@ -21,8 +21,13 @@ all: /opt/run/rust-server/docker-compose.main.yaml \
 
 /opt/run/rust-server/steamcmd/rust:
 	@mkdir -p /opt/run/rust-server/steamcmd/rust/server/docker/cfg
+	@mkdir -p /opt/run/rust-server/steamcmd/rust/oxide/plugins
 	@wget https://github.com/jalho/reindeerland/raw/master/steamcmd-init/rust/server/docker/cfg/serverauto.cfg -O /opt/run/rust-server/steamcmd/rust/server/docker/cfg/serverauto.cfg
 	@wget https://github.com/jalho/reindeerland/raw/master/steamcmd-init/rust/server/docker/cfg/users.cfg -O /opt/run/rust-server/steamcmd/rust/server/docker/cfg/users.cfg
+	@wget https://github.com/jalho/reindeerland/raw/master/steamcmd-init/rust/oxide/oxide.config.json -O /opt/run/rust-server/steamcmd/rust/oxide/oxide.config.json
+	@wget https://umod.org/plugins/Vanish.cs -O /opt/run/rust-server/steamcmd/rust/oxide/plugins/Vanish.cs
+	@wget https://umod.org/plugins/NoGiveNotices.cs -O /opt/run/rust-server/steamcmd/rust/oxide/plugins/NoGiveNotices.cs
+	@wget https://umod.org/plugins/AdminRadar.cs -O /opt/run/rust-server/steamcmd/rust/oxide/plugins/AdminRadar.cs
 
 /opt/run/rust-server/iplocs.json:
 	@touch /opt/run/rust-server/iplocs.json
