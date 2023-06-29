@@ -61,6 +61,7 @@ if (!RCON_PASSWORD) throw new Error(`Expected env var RCON_PASSWORD`);
 const rconWsUpstreamUrl: URL = new URL(RCON_WS_UPSTREAM_URL);
 rconWsUpstreamUrl.pathname = RCON_PASSWORD;
 const rconWsUpstream = new WebSocket(rconWsUpstreamUrl);
+await new Promise((resolve) => rconWsUpstream.on("open", resolve));
 
 // stores
 const rconPlayers = new RCONPlayers(config.rconSyncIntervalMs, rconWsUpstream);
