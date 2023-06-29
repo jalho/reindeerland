@@ -35,5 +35,8 @@ all: /opt/run/rust-server/docker-compose.main.yaml \
 /opt/run/rust-server/steamcmd:
 	@mkdir -p /opt/run/rust-server/steamcmd
 
+/opt/run/rust-server/.env:
+	@wget https://github.com/jalho/reindeerland/raw/master/example.env -O /opt/run/rust-server/.env
+
 /opt/run/rust-server/_scripts/wipe.sh:
 	@wget https://github.com/jalho/reindeerland/raw/master/_scripts/wipe.sh

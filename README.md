@@ -19,7 +19,7 @@ Docker Compose version v2.18.1
 2. Define secret env vars and whatever else the `Makefile` didn't do.
 
    ```bash
-   cp example.env .env && vim .env
+   vim .env
    ```
 
 3. Start the composition detached and follow logs if you wish.
