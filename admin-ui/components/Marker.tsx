@@ -30,6 +30,7 @@ const Marker = (props: IMarker<IRCONPlayer>): React.JSX.Element => {
 
   return (
     <>
+      {/* marker */}
       <div
         style={{
           position: "absolute",
@@ -38,11 +39,13 @@ const Marker = (props: IMarker<IRCONPlayer>): React.JSX.Element => {
           backgroundColor: "red",
           left: left - MARKER_RADIUS / 2,
           top: top - MARKER_RADIUS / 2,
+          opacity: 0.85,
           borderRadius: "50%",
         }}
         onMouseOver={(e) => setHovered(true)}
         onMouseLeave={(e) => setHovered(false)}
       />
+      {/* tooltip */}
       {hovered && (
         <div
           style={{
@@ -50,11 +53,12 @@ const Marker = (props: IMarker<IRCONPlayer>): React.JSX.Element => {
             backgroundColor: "red",
             left: left + TOOLTIP_OFFSET,
             top: top - TOOLTIP_OFFSET,
+            padding: "0 1rem 0 1rem",
+            opacity: 0.75,
+            borderRadius: 2,
           }}
         >
-          {Object.entries(props.data).map(([k, v]) => (
-            <div key={props.data.id + k}>{k + ": " + v}</div>
-          ))}
+          <code>{props.data.name}</code>
         </div>
       )}
     </>
