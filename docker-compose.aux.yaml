@@ -88,3 +88,8 @@ services:
       rust-server-with-nc:
         condition: service_healthy
     container_name: logprocessor
+
+networks:
+  reindeerland-net:
+    name: reindeerland-net
+    external: true
