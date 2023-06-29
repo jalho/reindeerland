@@ -62,15 +62,6 @@ services:
       rust-server-with-nc:
         condition: service_healthy
   tls-proxy:
-    depends_on:
-      rcon-ws-proxy:
-        condition: service_healthy
-      map-service:
-        condition: service_healthy
-      admin-ui:
-        condition: service_healthy
-      player-detail-service:
-        condition: service_healthy
     image: ghcr.io/jalho/reindeerland/tls-proxy:alpha-1
     container_name: tls-proxy
     hostname: tls-proxy
