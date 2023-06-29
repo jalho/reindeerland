@@ -65,6 +65,9 @@ services:
         target: /etc/nginx/tls.key
         bind:
           create_host_path: false
+    depends_on:
+      rust-server-with-nc:
+        condition: service_healthy
   logprocessor:
     image: ghcr.io/jalho/reindeerland/logprocessor:alpha-1
     command: node main.mjs logs/ discord-hooks.json
