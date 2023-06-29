@@ -5,6 +5,7 @@ import log4js from "log4js";
 
 const API_KEY_HEADER_NAME = "x-ipinfo-apikey";
 const IP_QP_NAME = "ip";
+const MAX_UPSTREAM_QUERIES_PER_DAY = 500; // the free ipinfo API allows 50k per month or something
 
 const logg = log4js
   .configure({
@@ -21,6 +22,13 @@ const [, , PORT, STORE_FILE_PATH] = process.argv;
 fs.accessSync(STORE_FILE_PATH, fs.constants.R_OK);
 fs.accessSync(STORE_FILE_PATH, fs.constants.W_OK);
 logg.info("Store file '%s' is OK: readable & writeable", STORE_FILE_PATH);
+
+let dailyRequestsMade = 0;
+setInterval(() => {
+  const old = dailyRequestsMade;
+  dailyRequestsMade = 0;
+  logg.info("Daily requests counter reset -- was %d", old);
+}, 1000 * 60 * 60 * 24);
 
 const s = http.createServer(async (i, o) => {
   logg.info("[%s] [%s] [%s]", new Date(), i.method, i.url);
@@ -59,10 +67,17 @@ const s = http.createServer(async (i, o) => {
     return;
   } else logg.info("No cached IP info found -- proceeding to query upstream!");
 
-  // TODO: add ratelimiting; don't allow more than a small amount of requests per day
+  // ratelimiting; don't allow more than a small amount of requests per day
+  if (dailyRequestsMade >= MAX_UPSTREAM_QUERIES_PER_DAY) {
+    o.statusCode = 429;
+    logg.warn("Max number of requests made for today (%d/%d)", dailyRequestsMade, MAX_UPSTREAM_QUERIES_PER_DAY);
+    o.end();
+    return;
+  }
 
   const resolvedIp = await new Promise<{} | null>((resolve) => {
     const r = https.request(`https://ipinfo.io/${ip}?token=${apiKey}`);
+    dailyRequestsMade++;
     r.on("error", (error) => {
       logg.error(error);
       return resolve(null);
@@ -79,7 +94,7 @@ const s = http.createServer(async (i, o) => {
       });
     });
     r.end();
-    logg.info("Requesting from upstream...");
+    logg.info("Requesting from upstream (req no #%d for today)...", dailyRequestsMade);
   });
   logg.info("Got response %o", resolvedIp);
 
