@@ -14,6 +14,7 @@ class RCONPlayers extends _RCON {
         ip_address: "", // TODO!
         position: playerPos.POS,
         rotation: playerPos.ROT,
+        name: playerPos.DisplayName,
       });
     }
   }
