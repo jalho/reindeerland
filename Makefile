@@ -1,7 +1,7 @@
 all: /opt/run/rust-server/docker-compose.main.yaml \
 	 /opt/run/rust-server/docker-compose.aux.yaml \
 	 /opt/run/rust-server/discord-hooks.json \
-	 /opt/run/rust-server/steamcmd/rust/server/docker/cfg \
+	 /opt/run/rust-server/steamcmd/rust \
 	 /opt/run/rust-server/iplocs.json \
 	 /opt/run/rust-server/steamcmd/rust/logs \
 	 /opt/run/rust-server/discord-hooks.json \
