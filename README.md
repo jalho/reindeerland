@@ -16,7 +16,10 @@ Requirements: `docker`
    ```
 
 3. Make sure directories and files referenced in the `.env` file exist and
-   that secret keys are correct & sensible.
+   that secret keys are correct & sensible. You can use `make` as there is a
+   [`Makefile`](./Makefile) that at least defines what should be present.
+
+   TODO: Make the `Makefile` wget or generate the stuff required!
 
 4. Start the composition detached and follow logs if you wish.
 
