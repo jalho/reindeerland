@@ -60,6 +60,12 @@ Docker Compose version v2.18.1
 
    TODO: Add e.g. Steam IDP instead!
 
+7. Schedule weekly wipe with `crontab -e`:
+
+   ```
+   0 14 * * FRI timeout 1h bash /opt/run/rust-server/_scripts/wipe.sh /opt/run/rust-server/.env
+   ```
+
 # Components
 
 - [`admin-ui`](./admin-ui)
