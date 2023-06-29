@@ -18,6 +18,7 @@ services:
     hostname: player-detail-service
     container_name: player-detail-service
     image: player-detail-service:local
+    command: node main.js 80 /opt/server/store.dat
     volumes:
       - type: bind
         source: ~/temp/.dat

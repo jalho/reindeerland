@@ -8,5 +8,8 @@
     "prestart": "tsc",
     "start": "node dist/main.js",
     "build": "tsc"
+  },
+  "dependencies": {
+    "log4js": "6.9.1"
   }
 }
