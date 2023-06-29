@@ -5,6 +5,10 @@ import Marker from "./Marker";
 
 interface IProps {
   upstream: URL;
+  /**
+   * Size of the map image element rendered on the web page.
+   */
+  mapElementSizePx: number;
 }
 
 /**
@@ -13,27 +17,30 @@ interface IProps {
  * commands are relative to those dimensions. (Accurate as of Jun 2023)
  */
 const GAMEWORLD_SIZE = 5500;
-/**
- * Size of the map image element rendered on the web page.
- */
-const MAP_ELEMENT_SIZE = 1000;
 const GAMEWORLD_ORIGIN = GAMEWORLD_SIZE / 2;
-const SCALE = MAP_ELEMENT_SIZE / GAMEWORLD_SIZE;
 
 const WorldTool = (props: IProps): React.JSX.Element => {
+  const { mapElementSizePx } = props;
   const { protocol, host, pathname } = props.upstream;
   const players = useSelector((state: State) => state.players);
+  const scale = mapElementSizePx / GAMEWORLD_SIZE;
 
   return (
     <>
-      <div style={{ width: MAP_ELEMENT_SIZE, position: "relative" }}>
+      <div style={{ width: mapElementSizePx, position: "relative" }}>
         <img
           src={protocol + "//" + host + pathname}
           alt="Map of Reindeerland"
           style={{ width: "100%", position: "absolute" }}
         />
         {Object.values(players).map((p) => (
-          <Marker gameworldOrigin={GAMEWORLD_ORIGIN} markerGameworldCoordinates={p.position} scale={SCALE} key={p.id} data={p}/>
+          <Marker
+            gameworldOrigin={GAMEWORLD_ORIGIN}
+            markerGameworldCoordinates={p.position}
+            scale={scale}
+            key={p.id}
+            data={p}
+          />
         ))}
       </div>
       <p>TODO: Legends here.</p>

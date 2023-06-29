@@ -20,6 +20,7 @@ interface IRCONPlayer {
   rotation: [number, number, number];
   ip_address: string;
   country: string;
+  name: string;
 }
 
 interface IAdminUIRemoteState {

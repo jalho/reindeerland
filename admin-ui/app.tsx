@@ -2,12 +2,12 @@ import { Provider } from "react-redux";
 import React, { FC } from "react";
 import ReactDOM from "react-dom";
 import store from "./state/store";
-import RestrictedView from "./components/RestrictedView";
+import Dashboard from "./components/Dashboard";
 
 const App: FC = () => {
   return (
     <Provider store={store}>
-      <RestrictedView />
+      <Dashboard />
     </Provider>
   );
 };
