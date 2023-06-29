@@ -92,5 +92,5 @@ First disable TLS in loadbalancer, configure CORS dev policy and update the brow
 Then build images, start Docker composition, create a user and follow logs:
 
 ```bash
-docker compose down; make && SECRET_PASSWORD_HASH=secret1 SECRET_TOKEN_SIGNING=secret2 RCON_WS_UPSTREAM_URL=ws://some-private-rcon-host:28016 RCON_PASSWORD=secret3 IPINFO_APIKEY=secret4 docker compose up -d && sleep 5s; docker exec rcon-ws-proxy curl "http://localhost:90" -H "username: foo" -H "password: bar" && docker compose logs -f
+docker compose down; make && docker compose up -d && sleep 5s; docker exec rcon-ws-proxy curl "http://localhost:90" -H "username: foo" -H "password: bar" && docker compose logs -f
 ```

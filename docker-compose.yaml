@@ -8,10 +8,12 @@ services:
     container_name: map-service
     image: map-service:local
     command: node server.mjs 80 /opt/images
+    env_file:
+      - .env
     volumes:
       - type: bind
-        source: ~/images/map_4500_10443.png
-        target: /opt/images/map_4500_10443.png
+        source: ${DOCKER_HOST_MAP_IMAGE_DIR_PATH}
+        target: /opt/images/
         bind:
           create_host_path: false
   player-detail-service:
@@ -19,9 +21,11 @@ services:
     container_name: player-detail-service
     image: player-detail-service:local
     command: node main.js 80 /opt/server/ip-locs.json
+    env_file:
+      - .env
     volumes:
       - type: bind
-        source: ~/temp/ip-locs.json
+        source: ${DOCKER_HOST_IPINFO_DISK_STORE_FILEPATH}
         target: /opt/server/ip-locs.json
         bind:
           create_host_path: false
@@ -29,12 +33,8 @@ services:
     hostname: rcon-ws-proxy
     container_name: rcon-ws-proxy
     image: rcon-ws-proxy:local
-    environment:
-      - SECRET_PASSWORD_HASH=${SECRET_PASSWORD_HASH}
-      - SECRET_TOKEN_SIGNING=${SECRET_TOKEN_SIGNING}
-      - RCON_WS_UPSTREAM_URL=${RCON_WS_UPSTREAM_URL}
-      - RCON_PASSWORD=${RCON_PASSWORD}
-      - IPINFO_APIKEY=${IPINFO_APIKEY}
+    env_file:
+      - .env
   tls-proxy:
     depends_on:
       - rcon-ws-proxy
