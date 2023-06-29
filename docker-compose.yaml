@@ -58,6 +58,8 @@ services:
     image: ghcr.io/jalho/reindeerland/rcon-ws-proxy:alpha-1
     env_file:
       - .env
+    depends_on:
+      - reindeerland
   tls-proxy:
     depends_on:
       - rcon-ws-proxy
