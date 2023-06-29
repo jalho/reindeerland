@@ -7,11 +7,11 @@ services:
     hostname: map-service
     container_name: map-service
     image: map-service:local
-    # TODO: bind the directory from where to look for image, instead of a specific image file
+    command: node server.mjs 80 /opt/images
     volumes:
       - type: bind
         source: ~/images/map_4500_10443.png
-        target: /opt/map_4500_10443.png
+        target: /opt/images/map_4500_10443.png
         bind:
           create_host_path: false
   player-detail-service:
