@@ -5,11 +5,9 @@ import Box from "@mui/material/Box";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-import MenuIcon from "@mui/icons-material/Menu";
 import Playerlist from "./Playerlist";
 import WorldTool from "./WorldTool";
 import { MAP_UPSTREAM } from "../constants/upstreams";
@@ -49,7 +47,6 @@ const credentials: IConnectUpstreamCredentials = {
 };
 
 export default function Dashboard() {
-  const [drawerOpen, setDrawerOpen] = React.useState(true);
   const dispatch = useDispatch<Dispatch>();
 
   // TODO: dispatch when user has provided credentials
@@ -61,24 +58,12 @@ export default function Dashboard() {
     <ThemeProvider theme={defaultTheme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <AppBar position="absolute" open={drawerOpen}>
+        <AppBar position="absolute">
           <Toolbar
             sx={{
               pr: "24px", // keep right padding when drawer closed
             }}
           >
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={() => setDrawerOpen(!drawerOpen)}
-              sx={{
-                marginRight: "36px",
-                ...(drawerOpen && { display: "none" }),
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
             <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
               Reindeerland
             </Typography>
