@@ -43,8 +43,6 @@ const WorldTool = (props: IProps): React.JSX.Element => {
           />
         ))}
       </div>
-      <p>TODO: Legends here.</p>
-      <p>TODO: Controls here.</p>
     </>
   );
 };
