@@ -23,6 +23,7 @@ interface IRCONPlayer {
   name: string;
   connected_seconds: number;
   ping: number;
+  online: boolean;
 }
 
 interface IAdminUIRemoteState {

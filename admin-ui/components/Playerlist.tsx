@@ -10,19 +10,23 @@ import Title from "./Title";
 import { useSelector } from "react-redux";
 import { State } from "../state/store";
 
-function formatConnectedSeconds(connected_seconds: number) {
+function formatConnectedSeconds(connected_seconds: number, online: boolean) {
+  if (!online) return "offline";
   const seconds = connected_seconds % 60;
   return `${Math.floor(connected_seconds / 60)} min, ${seconds} sec`;
 }
 
 export default function Playerlist() {
   const players = useSelector<State>((s) => s.players) as { [id: string]: IRCONPlayer };
-  const playerCount = Object.keys(players).length;
-  if (playerCount < 1) return null;
+  const playerCountTotal = Object.keys(players).length;
+  const playerCountOnline = Object.values(players).filter((player) => player.online).length;
+  if (playerCountTotal < 1) return null;
 
   return (
     <>
-      <Title>{playerCount} connected players</Title>
+      <Title>
+        {playerCountOnline} connected players, {playerCountTotal} players in total
+      </Title>
       <Table>
         <TableHead>
           <TableRow>
@@ -42,7 +46,7 @@ export default function Playerlist() {
                 </TableCell>
                 <TableCell>{player.country}</TableCell>
                 <TableCell>{player.health.toPrecision(4)}</TableCell>
-                <TableCell>{formatConnectedSeconds(player.connected_seconds)}</TableCell>
+                <TableCell>{formatConnectedSeconds(player.connected_seconds, player.online)}</TableCell>
                 <TableCell>{player.id}</TableCell>
               </TableRow>
             );

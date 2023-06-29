@@ -17,7 +17,9 @@ class RCONPlayers extends _RCON {
     const playerlist_response = await this.sendRconCommand("playerlist");
     const playerlist_parsed = playerlist(playerlist_response.rconMessage);
 
+    const online: { [id: string]: true } = {};
     for (const player of playerlist_parsed) {
+      online[player.SteamID] = true;
       const { POS, ROT } = playerlistpos_parsed[player.SteamID] ?? {};
       const { Address, ConnectedSeconds, DisplayName, Health, Ping } = player;
       const country = await this.resolveCountry(player.SteamID, Address);
@@ -32,8 +34,19 @@ class RCONPlayers extends _RCON {
         ping: Ping,
         position: POS,
         rotation: ROT,
+        online: true,
       };
       this._cache.set(player.SteamID, rconPlayer);
+    }
+
+    // set offline status for disconnected players
+    for (const [id, player] of this._cache) {
+      if (online[id]) continue;
+      else if (player.online) {
+        player.online = false;
+        this._cache.set(id, player);
+        this._logg.info("Marked player offline: %s (Steam ID %s)", player.name, id);
+      }
     }
   }
 
