@@ -52,6 +52,14 @@ Docker Compose version v2.18.1
 
    TODO: Make `rcon-ws-proxy` issue the `rendermap` command on startup instead!
 
+6. Create a user for logging in to the `admin-ui`.
+
+   ```bash
+   docker exec rcon-ws-proxy curl "http://localhost:90" -H "username: foo" -H "password: bar"
+   ```
+
+   TODO: Add e.g. Steam IDP instead!
+
 # Components
 
 - [`admin-ui`](./admin-ui)
