@@ -51,10 +51,10 @@ else
 fi
 
 # always generate new seed
-logAndAlertDiscord "Generating new seed. Old seed was $(grep -oh "SEED=\w*" $DOCKER_HOST_RDS_COMPOSE_FILE_PATH)" $DOCKER_HOST_DISCORD_HOOKS_FILEPATH "RESTRICTED_ALERTS"
+logAndAlertDiscord "Generating new seed. Old seed was $(grep -oh "SEED=\w*" $ENVFILE)" $DOCKER_HOST_DISCORD_HOOKS_FILEPATH "RESTRICTED_ALERTS"
 SEED=$((1 + RANDOM % 2147483647))
-sed -i -E "s/RUST_SERVER_SEED=[[:digit:]]*$/RUST_SERVER_SEED=$SEED/" $DOCKER_HOST_RDS_COMPOSE_FILE_PATH
-logAndAlertDiscord "New seed is $(grep -oh "SEED=\w*" $DOCKER_HOST_RDS_COMPOSE_FILE_PATH)" $DOCKER_HOST_DISCORD_HOOKS_FILEPATH "RESTRICTED_ALERTS"
+sed -i -E "s/RUST_SERVER_SEED=[[:digit:]]*$/RUST_SERVER_SEED=$SEED/" $ENVFILE
+logAndAlertDiscord "New seed is $(grep -oh "SEED=\w*" $ENVFILE)" $DOCKER_HOST_DISCORD_HOOKS_FILEPATH "RESTRICTED_ALERTS"
 
 # clean up data
 if test -d $DOCKER_HOST_RDS_INSTANCE_DATA_DIRPATH; then
