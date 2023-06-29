@@ -18,11 +18,11 @@ services:
     hostname: player-detail-service
     container_name: player-detail-service
     image: player-detail-service:local
-    command: node main.js 80 /opt/server/store.dat
+    command: node main.js 80 /opt/server/ip-locs.json
     volumes:
       - type: bind
-        source: ~/temp/.dat
-        target: /opt/server/store.dat
+        source: ~/temp/ip-locs.json
+        target: /opt/server/ip-locs.json
         bind:
           create_host_path: false
   rcon-ws-proxy:

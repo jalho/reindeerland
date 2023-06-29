@@ -42,7 +42,23 @@ const s = http.createServer(async (i, o) => {
     return;
   }
 
-  // TODO: check cache first, and only query if not in cache
+  // check disk cache first, and only query if not in cache
+  let cached;
+  try {
+    cached = JSON.parse(fs.readFileSync(STORE_FILE_PATH).toString());
+  } catch (err_json) {
+    if (fs.statSync(STORE_FILE_PATH).size !== 0) {
+      throw new Error(`Store file '${STORE_FILE_PATH}' is not JSON and also not empty! Did you give the correct file?`);
+    }
+    cached = {}; // case empty file -- init cache
+  }
+  if (cached[ip]) {
+    o.setHeader("Content-Type", "application/json");
+    o.write(Buffer.from(JSON.stringify(cached[ip])));
+    o.end();
+    return;
+  } else logg.info("No cached IP info found -- proceeding to query upstream!");
+
   // TODO: add ratelimiting; don't allow more than a small amount of requests per day
 
   const resolvedIp = await new Promise<{} | null>((resolve) => {
@@ -78,5 +94,9 @@ const s = http.createServer(async (i, o) => {
   o.setHeader("Content-Type", "application/json");
   o.write(Buffer.from(JSON.stringify(resolvedIp)));
   o.end();
+  // store in disk cache
+  cached[ip] = resolvedIp;
+  fs.writeFileSync(STORE_FILE_PATH, Buffer.from(JSON.stringify(cached, null, 2)));
+  logg.info("Cached info for the queried IP");
 });
 s.listen(PORT ?? 80, () => logg.info("Listening %s", s.address()));
