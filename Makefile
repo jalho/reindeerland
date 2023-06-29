@@ -1,4 +1,5 @@
-all: /opt/run/rust-server/docker-compose.yaml \
+all: /opt/run/rust-server/docker-compose.main.yaml \
+	 /opt/run/rust-server/docker-compose.aux.yaml \
 	 /opt/run/rust-server/discord-hooks.json \
 	 /opt/run/rust-server/steamcmd/rust \
 	 /opt/run/rust-server/iplocs.json \
