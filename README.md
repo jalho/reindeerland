@@ -1,6 +1,14 @@
 # Usage
 
-Requirements: `docker`
+Requirements: `docker`, tested on 29 Jun 2023 using:
+
+```
+$ docker --version
+Docker version 24.0.2, build cb74dfc
+
+$ docker compose version
+Docker Compose version v2.18.1
+```
 
 1. Get the Docker composition definition file.
 
@@ -24,7 +32,7 @@ Requirements: `docker`
 4. Start the composition detached and follow logs if you wish.
 
    ```bash
-   docker compose -f docker-compose.main.yaml up -d && docker compose -f docker-compose.aux.yaml up -d
+   docker compose -f docker-compose.main.yaml up -d --wait && docker compose -f docker-compose.aux.yaml up -d
    ```
 
    ```bash
