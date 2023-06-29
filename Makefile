@@ -1,4 +1,7 @@
-all-images: admin-ui-image map-service-image rcon-ws-proxy-image tls-proxy-image player-detail-service-image logprocessor-image rust-server-with-nc-image
+all-images: steamcmd admin-ui-image map-service-image rcon-ws-proxy-image tls-proxy-image player-detail-service-image logprocessor-image rust-server-with-nc-image
+
+steamcmd:
+	@test -d steamcmd || cp -r steamcmd-init steamcmd
 
 admin-ui-image:
 	@cd admin-ui && npm install
