@@ -2,6 +2,7 @@ all-images: steamcmd admin-ui-image map-service-image rcon-ws-proxy-image tls-pr
 
 steamcmd:
 	@test -d steamcmd || cp -r steamcmd-init steamcmd
+	@test -d steamcmd/rust/logs || mkdir -p steamcmd/rust/logs
 
 admin-ui-image:
 	@cd admin-ui && npm install
@@ -27,5 +28,5 @@ player-detail-service-image:
 logprocessor-image:
 	@docker build -t logprocessor:local -f logprocessor/Dockerfile logprocessor
 
-rust-server-with-nc-image
+rust-server-with-nc-image:
 	@docker build -t rust-server-with-nc:local -f rust-server-with-nc/Dockerfile rust-server-with-nc
