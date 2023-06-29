@@ -18,7 +18,7 @@ class RCONPlayers extends _RCON {
     const playerlist_parsed = playerlist(playerlist_response.rconMessage);
 
     for (const player of playerlist_parsed) {
-      const { POS, ROT } = playerlistpos_parsed[player.SteamID];
+      const { POS, ROT } = playerlistpos_parsed[player.SteamID] ?? {};
       const { Address, ConnectedSeconds, DisplayName, Health, Ping } = player;
       const country = await this.resolveCountry(player.SteamID, Address);
 
