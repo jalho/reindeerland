@@ -28,6 +28,19 @@ Requirements: `docker`
    docker compose logs -f
    ```
 
+5. Ask _RustDedicated_ to render the gameworld map as a .PNG image.
+
+   ```bash
+   docker exec reindeerland rcon rendermap
+   ```
+
+   N.B. this should be done as soon as possible after each wipe because as of
+   Jun 2023 the operations seems to cause all players to be kicked out of the
+   server. That's probably a bug kinda feature in _RustDedicated_ but it is what
+   it is...
+
+   TODO: Make `rcon-ws-proxy` issue the `rendermap` command on startup instead!
+
 # Components
 
 - [`admin-ui`](./admin-ui)
