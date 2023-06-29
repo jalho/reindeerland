@@ -1,5 +1,7 @@
 services:
   admin-ui:
+    networks:
+      reindeerland-net: null
     hostname: admin-ui
     container_name: admin-ui
     image: ghcr.io/jalho/reindeerland/admin-ui:alpha-1
