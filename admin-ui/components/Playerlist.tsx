@@ -9,6 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import Title from "./Title";
 import { useSelector } from "react-redux";
 import { State } from "../state/store";
+import COUNTRY_FLAG_EMOJI_UNICODE_MAP from "../constants/country-flag-emojis";
 
 function formatConnectedSeconds(connected_seconds: number, online: boolean) {
   if (!online) return "offline";
@@ -44,7 +45,7 @@ export default function Playerlist() {
                 <TableCell>
                   <code>{player.name}</code>
                 </TableCell>
-                <TableCell>{player.country}</TableCell>
+                <TableCell style={{ fontSize: "2rem" }}>{COUNTRY_FLAG_EMOJI_UNICODE_MAP[player.country]}</TableCell>
                 <TableCell>{player.health.toPrecision(4)}</TableCell>
                 <TableCell>{formatConnectedSeconds(player.connected_seconds, player.online)}</TableCell>
                 <TableCell>{player.id}</TableCell>
