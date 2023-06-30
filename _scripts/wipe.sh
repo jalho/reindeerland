@@ -57,14 +57,8 @@ fi
 
 # start up the instance
 logAndAlertDiscord "Starting the Docker composition..." $DISCORD_WEBHOOK_RESTRICTED_ALERTS
-docker compose -f $DOCKER_HOST_RDS_COMPOSE_FILE_PATH up -d --wait && docker compose -f $DOCKER_HOST_AUX_COMPOSE_FILE_PATH up -d
-STARTUP_EXIT_CODE=$?
-if [ $STARTUP_EXIT_CODE -eq 0 ]; then
-    logAndAlertDiscord "Docker composition started." $DISCORD_WEBHOOK_RESTRICTED_ALERTS
-else
-    logAndAlertDiscord "Startup operation exited with code $STARTUP_EXIT_CODE" $DISCORD_WEBHOOK_RESTRICTED_ALERTS
-    exit $STARTUP_EXIT_CODE
-fi
+docker compose -f $DOCKER_HOST_RDS_COMPOSE_FILE_PATH up -d --wait 2>&1 | tee -a $LOGFILE
+docker compose -f $DOCKER_HOST_AUX_COMPOSE_FILE_PATH up -d 2>&1 | tee -a $LOGFILE
 
 docker exec reindeerland rcon rendermap
 
