@@ -78,9 +78,9 @@ Docker Compose version v2.18.1
 - [`rcon-ws-proxy`](./rcon-ws-proxy)
 
   Accepts WebSocket connections from the `admin-ui` for authorized users.
-  Expects specific auth headers in `/login` request, and specific auth cookies
-  in subsequent WebSocket upgrade request. The cookies are set in response to
-  the login request.
+  Expects specific auth headers in `/login` request, and specific auth query params
+  in subsequent WebSocket upgrade request. Values for the auth query paramas are
+  sent in response to the login request.
 
   Users can be created via a private HTTP API:
 
