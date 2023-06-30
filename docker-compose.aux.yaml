@@ -40,7 +40,7 @@ services:
   tls-proxy:
     networks:
       reindeerland-net: null
-    image: ghcr.io/jalho/reindeerland/tls-proxy:alpha-2
+    image: ghcr.io/jalho/reindeerland/tls-proxy:alpha-3
     container_name: tls-proxy
     hostname: tls-proxy
     env_file:
