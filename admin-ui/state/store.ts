@@ -8,6 +8,10 @@ const upstream = new Upstream(RCON_UPSTREAM_LOGIN, RCON_UPSTREAM_WS);
 
 interface IAdminUIState {
   connected: boolean;
+  /**
+   * Health of each player on previous (idx 0) and current (idx 1) update.
+   */
+  healthDelta: { [playerId: string]: [number, number] };
 }
 
 const initialState: IAdminUIRemoteState & IAdminUIState = {
@@ -15,6 +19,7 @@ const initialState: IAdminUIRemoteState & IAdminUIState = {
   connected: false,
   players: {},
   tcs: {},
+  healthDelta: {},
 };
 
 const serverInfo = createSlice({
@@ -22,8 +27,18 @@ const serverInfo = createSlice({
   initialState,
   reducers: {
     messageReceived: (state, action: PayloadAction<any>) => {
-      const payload: IAdminUIRemoteState = JSON.parse(action.payload);
-      Object.assign(state, payload);
+      const remoteUpdatePayload: IAdminUIRemoteState = JSON.parse(action.payload);
+
+      // for each player in remote update payload, assign new healthDelta current value and put old to previous
+      const healthDelta: IAdminUIState["healthDelta"] = {};
+      for (const playerRemoteUpdate of Object.values(remoteUpdatePayload.players)) {
+        healthDelta[playerRemoteUpdate.id] = [
+          healthDelta[playerRemoteUpdate.id]?.[1] ?? playerRemoteUpdate.health,
+          playerRemoteUpdate.health,
+        ];
+      }
+
+      Object.assign(state, remoteUpdatePayload, { healthDelta });
     },
   },
   extraReducers: (builder) => {
