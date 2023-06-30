@@ -5,8 +5,8 @@ import log4js from "log4js";
 import type { WebSocketServer, WebSocket } from "ws";
 import Users, { IUser } from "../stores/Users.js";
 
-const TOKEN_COOKIE_NAME = "token";
-const SIG_COOKIE_NAME = "sig";
+const TOKEN_QP_NAME = "token";
+const SIG_QP_NAME = "sig";
 const SECRET_ENV_VAR_PASSWORD_HASH = "SECRET_PASSWORD_HASH";
 const SECRET_ENV_VAR_TOKEN_SIGNING = "SECRET_TOKEN_SIGNING";
 const HMAC_ALGORITHM = "sha512";
@@ -52,26 +52,20 @@ function checkSignature(logger: log4js.Logger, token: Token, actualSig: Buffer):
 }
 
 /**
- * Parse auth cookies.
+ * Parse auth from query params.
  */
 function parseAuthorization(logger: log4js.Logger, request: IncomingMessage): Parsed | false {
   try {
-    const cookies = request.headers.cookie?.split(";").map((c) => c.trim());
-    if (!cookies) {
-      logger.warn("Expected %s and %s cookies", TOKEN_COOKIE_NAME, SIG_COOKIE_NAME);
-      return false;
-    }
-    const tokenCookie = cookies.find((c) => c.startsWith(TOKEN_COOKIE_NAME + "="));
-    const sigCookie = cookies.find((c) => c.startsWith(SIG_COOKIE_NAME + "="));
-    if (tokenCookie && sigCookie) {
-      const token = tokenCookie.substring((TOKEN_COOKIE_NAME + "=").length);
-      const sig = sigCookie.substring((SIG_COOKIE_NAME + "=").length);
+    const _url = new URL(request.url ?? "", "http://localhost");
+    const token = _url.searchParams.get(TOKEN_QP_NAME);
+    const sig = _url.searchParams.get(SIG_QP_NAME);
+    if (token && sig) {
       return {
         token: JSON.parse(Buffer.from(token, "base64").toString()),
         signature: Buffer.from(sig, "base64"),
       };
     } else {
-      logger.warn("Missing %s and/or %s cookies", TOKEN_COOKIE_NAME, SIG_COOKIE_NAME);
+      logger.warn("Missing %s and/or %s query params", TOKEN_QP_NAME, SIG_QP_NAME);
       return false;
     }
   } catch (e) {
@@ -159,12 +153,8 @@ async function handleLogin(logger: log4js.Logger, req: IncomingMessage, res: Ser
     const sigSecret = getSecret("token signing");
     const sig = hash(token_base64, sigSecret);
     const sig_base64 = sig.toString("base64");
-    res.statusCode = 204;
-    res.setHeader("Set-Cookie", [
-      `${TOKEN_COOKIE_NAME}=${token_base64}; HttpOnly`,
-      `${SIG_COOKIE_NAME}=${sig_base64}; HttpOnly`,
-    ]);
-    res.end();
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({ [TOKEN_QP_NAME]: token_base64, [SIG_QP_NAME]: sig_base64 }));
   } else {
     logger.warn("Invalid username or password");
     res.statusCode = 401;
