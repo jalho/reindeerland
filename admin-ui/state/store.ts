@@ -16,6 +16,12 @@ export interface IAdminUIState {
    * Time window for which changes in health are accumulated per player.
    */
   healthDeltaWindowMs: number;
+  /**
+   * Minimum value for player's health delta within a time window required
+   * to trigger functionality in UI (e.g. highlight it briefly by flashing an
+   * element or something).
+   */
+  healthDeltaMinThreshold: number;
 }
 
 const initialState: IAdminUIRemoteState & IAdminUIState = {
@@ -25,6 +31,7 @@ const initialState: IAdminUIRemoteState & IAdminUIState = {
   tcs: {},
   healthDeltas: {},
   healthDeltaWindowMs: 1000,
+  healthDeltaMinThreshold: 5,
 };
 
 const serverInfo = createSlice({

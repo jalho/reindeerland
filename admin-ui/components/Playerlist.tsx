@@ -25,9 +25,13 @@ function formatHealthDelta(delta: number): string {
 
 export default function Playerlist() {
   const players = useSelector<State, IAdminUIRemoteState["players"]>((s) => s.players);
-  const { healthDeltas } = useSelector<State, Pick<IAdminUIState, "healthDeltaWindowMs" | "healthDeltas">>((s) => ({
+  const { healthDeltas, healthDeltaMinThreshold } = useSelector<
+    State,
+    Pick<IAdminUIState, "healthDeltaWindowMs" | "healthDeltas" | "healthDeltaMinThreshold">
+  >((s) => ({
     healthDeltas: s.healthDeltas,
     healthDeltaWindowMs: s.healthDeltaWindowMs,
+    healthDeltaMinThreshold: s.healthDeltaMinThreshold,
   }));
   const playerCountTotal = Object.keys(players).length;
   const playerCountOnline = Object.values(players).filter((player) => player.online).length;
@@ -59,7 +63,7 @@ export default function Playerlist() {
                 </TableCell>
                 <TableCell style={{ fontSize: "2rem" }}>{COUNTRY_FLAG_EMOJI_UNICODE_MAP[player.country]}</TableCell>
                 <TableCell>
-                  {healthDelta !== 0 && (
+                  {healthDelta !== 0 && Math.abs(healthDelta) >= healthDeltaMinThreshold && (
                     <div
                       style={{ fontSize: "0.75rem", fontWeight: "bolder", color: healthDelta > 0 ? "green" : "red" }}
                     >
