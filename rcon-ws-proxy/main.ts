@@ -89,8 +89,7 @@ logger.info("Pruning dead connections every %d ms", config.deadConnectionsPruneI
 publicAuthApi.on("upgrade", handleUpgrade(logger, publicRconSyncServer));
 publicAuthApi.on("request", (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "https://admin.reindeerland.eu");
-  res.setHeader("Access-Control-Allow-Header", "x-rcon-ws-proxy-username");
-  res.setHeader("Access-Control-Allow-Header", "x-rcon-ws-proxy-password");
+  res.setHeader("Access-Control-Allow-Headers", "x-rcon-ws-proxy-username, x-rcon-ws-proxy-password");
   if (req.method === "OPTIONS") {
     res.statusCode = 204;
     res.end();
