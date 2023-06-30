@@ -67,7 +67,7 @@ class Upstream {
     const urlWithAuthQps = new URL(this._wsRconUrl);
     urlWithAuthQps.searchParams.set(TOKEN_QP_NAME, auth[TOKEN_QP_NAME]);
     urlWithAuthQps.searchParams.set(SIG_QP_NAME, auth[SIG_QP_NAME]);
-    const s = new WebSocket(this._wsRconUrl);
+    const s = new WebSocket(urlWithAuthQps);
     return new Promise((resolve, reject) => {
       s.addEventListener("open", () => {
         this._socket = s;
