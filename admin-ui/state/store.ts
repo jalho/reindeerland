@@ -9,9 +9,13 @@ const upstream = new Upstream(RCON_UPSTREAM_LOGIN, RCON_UPSTREAM_WS);
 interface IAdminUIState {
   connected: boolean;
   /**
-   * Health of each player on previous (idx 0) and current (idx 1) update.
+   * Health of each player before and currently.
    */
-  healthDelta: { [playerId: string]: [number, number] };
+  healthDelta: { [playerId: string]: [timestampBefore: number, valueBefore: number, valueNow: number] };
+  /**
+   * Time window for which changes in health are accumulated per player.
+   */
+  healthDeltaWindowMs: number;
 }
 
 const initialState: IAdminUIRemoteState & IAdminUIState = {
@@ -20,6 +24,7 @@ const initialState: IAdminUIRemoteState & IAdminUIState = {
   players: {},
   tcs: {},
   healthDelta: {},
+  healthDeltaWindowMs: 1000,
 };
 
 const serverInfo = createSlice({
@@ -30,15 +35,20 @@ const serverInfo = createSlice({
       const remoteUpdatePayload: IAdminUIRemoteState = JSON.parse(action.payload);
 
       // for each player in remote update payload, assign new healthDelta current value and put old to previous
-      const healthDelta: IAdminUIState["healthDelta"] = {};
-      for (const playerRemoteUpdate of Object.values(remoteUpdatePayload.players)) {
-        healthDelta[playerRemoteUpdate.id] = [
-          healthDelta[playerRemoteUpdate.id]?.[1] ?? playerRemoteUpdate.health,
-          playerRemoteUpdate.health,
-        ];
+      for (const player of Object.values(remoteUpdatePayload.players)) {
+        // init...
+        if (!state.healthDelta[player.id]) {
+          state.healthDelta[player.id] = [remoteUpdatePayload.lastSyncTsMs, player.health, player.health];
+        }
+
+        // ...or update if time window is full
+        else if (remoteUpdatePayload.lastSyncTsMs - state.healthDelta[player.id][0] > state.healthDeltaWindowMs) {
+          const [, , oldHealth] = state.healthDelta[player.id];
+          state.healthDelta[player.id] = [remoteUpdatePayload.lastSyncTsMs, oldHealth, player.health];
+        }
       }
 
-      Object.assign(state, remoteUpdatePayload, { healthDelta });
+      Object.assign(state, remoteUpdatePayload);
     },
   },
   extraReducers: (builder) => {
