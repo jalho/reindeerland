@@ -22,7 +22,10 @@ Docker Compose version v2.18.1
    vim .env
    ```
 
-3. Start the composition detached and follow logs if you wish.
+   Create TLS cert and key for the `tls-proxy`. See `Makefile` for filesystem paths.
+   Instructions for getting TLS cert manually using `certbot` are in this README too.
+
+4. Start the composition detached and follow logs if you wish.
 
    ```bash
    docker compose -f docker-compose.main.yaml up -d --wait && docker compose -f docker-compose.aux.yaml up -d
@@ -32,7 +35,7 @@ Docker Compose version v2.18.1
    docker compose -f docker-compose.main.yaml -f docker-compose.aux.yaml logs -f
    ```
 
-4. Ask _RustDedicated_ to render the gameworld map as a .PNG image.
+5. Ask _RustDedicated_ to render the gameworld map as a .PNG image.
 
    ```bash
    docker exec reindeerland rcon rendermap
@@ -45,7 +48,7 @@ Docker Compose version v2.18.1
 
    TODO: Make `rcon-ws-proxy` issue the `rendermap` command on startup instead!
 
-5. Create a user for logging in to the `admin-ui`.
+6. Create a user for logging in to the `admin-ui`.
 
    ```bash
    docker exec rcon-ws-proxy curl "http://localhost:90" -H "username: foo" -H "password: bar"
@@ -53,11 +56,13 @@ Docker Compose version v2.18.1
 
    TODO: Add e.g. Steam IDP instead!
 
-6. Schedule weekly wipe with `crontab -e`:
+7. Schedule weekly wipe with `crontab -e`.
 
    ```
    0 14 * * FRI timeout 1h bash /opt/run/rust-server/_scripts/wipe.sh /opt/run/rust-server/.env
    ```
+
+   The script removes instance data conditionally based on date and does what the above steps do, i.e. restarts the Docker composition, issues map rendering command, creates admin users etc.
 
 # Components
 
