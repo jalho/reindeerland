@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "prestart": "tsc",
-    "start": "node main.js",
+    "start": "node dist/main.js",
     "build": "tsc",
     "test": "tsc && mocha"
   },
