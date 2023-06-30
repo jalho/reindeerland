@@ -22,7 +22,9 @@ function positionOnMap(
   return [scale * (gameworldOrigin + gameWorld_x), scale * (gameworldOrigin - gameWorld_y)];
 }
 
-const Marker = (props: IMarker<IRCONPlayer>): React.JSX.Element => {
+const Marker = (props: IMarker<IRCONPlayer>): React.JSX.Element | null => {
+  if (!props.markerGameworldCoordinates) return null;
+
   const [x, z, y] = props.markerGameworldCoordinates;
   const [hovered, setHovered] = React.useState<boolean>(false);
 
