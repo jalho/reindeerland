@@ -54,6 +54,9 @@ if test -d $DOCKER_HOST_RDS_INSTANCE_DATA_DIRPATH; then
 else
     echo "[$(date)] Cleanable data dir $DOCKER_HOST_RDS_INSTANCE_DATA_DIRPATH does not exist" 2>&1 | tee -a $LOGFILE
 fi
+# remove old map image
+logAndAlertDiscord "Removing old rendered map images..." $DISCORD_WEBHOOK_RESTRICTED_ALERTS
+rm $DOCKER_HOST_MAP_IMAGE_DIR_PATH/map*.png 2>&1 | tee -a $LOGFILE
 
 # start up the instance
 logAndAlertDiscord "Starting the Docker composition..." $DISCORD_WEBHOOK_RESTRICTED_ALERTS
