@@ -6,7 +6,7 @@ import { RCON_UPSTREAM_LOGIN, RCON_UPSTREAM_WS } from "../constants/upstreams";
 
 const upstream = new Upstream(RCON_UPSTREAM_LOGIN, RCON_UPSTREAM_WS);
 
-interface IAdminUIState {
+export interface IAdminUIState {
   connected: boolean;
   /**
    * Health of each player before and currently.
