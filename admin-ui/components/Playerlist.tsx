@@ -25,10 +25,10 @@ function formatHealthDelta(delta: number): string {
 
 export default function Playerlist() {
   const players = useSelector<State, IAdminUIRemoteState["players"]>((s) => s.players);
-  const [healths, healthDeltaTimeWindowMs] = useSelector<
-    State,
-    [IAdminUIState["healthDelta"], IAdminUIState["healthDeltaWindowMs"]]
-  >((s) => [s.healthDelta, s.healthDeltaWindowMs]);
+  const { healthDeltas } = useSelector<State, Pick<IAdminUIState, "healthDeltaWindowMs" | "healthDeltas">>((s) => ({
+    healthDeltas: s.healthDeltas,
+    healthDeltaWindowMs: s.healthDeltaWindowMs,
+  }));
   const playerCountTotal = Object.keys(players).length;
   const playerCountOnline = Object.values(players).filter((player) => player.online).length;
   if (playerCountTotal < 1) return null;
@@ -50,7 +50,7 @@ export default function Playerlist() {
         </TableHead>
         <TableBody>
           {Object.values(players).map((player) => {
-            const [, previousHealth, currentHealth] = healths[player.id] ?? [-1, player.health, player.health];
+            const [, previousHealth, currentHealth] = healthDeltas[player.id] ?? [-1, player.health, player.health];
             const healthDelta = currentHealth - previousHealth;
             return (
               <TableRow key={player.id}>

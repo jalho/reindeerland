@@ -11,7 +11,7 @@ export interface IAdminUIState {
   /**
    * Health of each player before and currently.
    */
-  healthDelta: { [playerId: string]: [timestampBefore: number, valueBefore: number, valueNow: number] };
+  healthDeltas: { [playerId: string]: [timestampBefore: number, valueBefore: number, valueNow: number] };
   /**
    * Time window for which changes in health are accumulated per player.
    */
@@ -23,7 +23,7 @@ const initialState: IAdminUIRemoteState & IAdminUIState = {
   connected: false,
   players: {},
   tcs: {},
-  healthDelta: {},
+  healthDeltas: {},
   healthDeltaWindowMs: 1000,
 };
 
@@ -37,14 +37,14 @@ const serverInfo = createSlice({
       // for each player in remote update payload, assign new healthDelta current value and put old to previous
       for (const player of Object.values(remoteUpdatePayload.players)) {
         // init...
-        if (!state.healthDelta[player.id]) {
-          state.healthDelta[player.id] = [remoteUpdatePayload.lastSyncTsMs, player.health, player.health];
+        if (!state.healthDeltas[player.id]) {
+          state.healthDeltas[player.id] = [remoteUpdatePayload.lastSyncTsMs, player.health, player.health];
         }
 
         // ...or update if time window is full
-        else if (remoteUpdatePayload.lastSyncTsMs - state.healthDelta[player.id][0] > state.healthDeltaWindowMs) {
-          const [, , oldHealth] = state.healthDelta[player.id];
-          state.healthDelta[player.id] = [remoteUpdatePayload.lastSyncTsMs, oldHealth, player.health];
+        else if (remoteUpdatePayload.lastSyncTsMs - state.healthDeltas[player.id][0] > state.healthDeltaWindowMs) {
+          const [, , oldHealth] = state.healthDeltas[player.id];
+          state.healthDeltas[player.id] = [remoteUpdatePayload.lastSyncTsMs, oldHealth, player.health];
         }
       }
 
