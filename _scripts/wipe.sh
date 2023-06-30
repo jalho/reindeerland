@@ -37,14 +37,8 @@ logAndAlertDiscord "Wipe script initiated" $DISCORD_WEBHOOK_RESTRICTED_ALERTS
 
 # shut down the instance
 logAndAlertDiscord "Shutting down the server..." $DISCORD_WEBHOOK_RESTRICTED_ALERTS
-docker compose -f $DOCKER_HOST_RDS_COMPOSE_FILE_PATH down && docker compose -f $DOCKER_HOST_AUX_COMPOSE_FILE_PATH down
-SHUTDOWN_EXIT_CODE=$?
-if [ $SHUTDOWN_EXIT_CODE -eq 0 ]; then
-    logAndAlertDiscord "Instance shut down successfully" $DISCORD_WEBHOOK_RESTRICTED_ALERTS
-else
-    logAndAlertDiscord "Shutdown operation exited with code $SHUTDOWN_EXIT_CODE" $DISCORD_WEBHOOK_RESTRICTED_ALERTS
-    exit $SHUTDOWN_EXIT_CODE
-fi
+docker compose -f $DOCKER_HOST_RDS_COMPOSE_FILE_PATH down 2>&1 | tee -a $LOGFILE
+docker compose -f $DOCKER_HOST_AUX_COMPOSE_FILE_PATH down 2>&1 | tee -a $LOGFILE
 
 # always generate new seed
 logAndAlertDiscord "Generating new seed. Old seed was $(grep -oh "SEED=\w*" $ENVFILE)" $DISCORD_WEBHOOK_RESTRICTED_ALERTS
