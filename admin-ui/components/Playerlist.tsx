@@ -17,6 +17,12 @@ function formatConnectedSeconds(connected_seconds: number, online: boolean) {
   return `${Math.floor(connected_seconds / 60)} min, ${seconds} sec`;
 }
 
+function formatHealthDelta(delta: number): string {
+  if (delta === 0) return "=";
+  else if (delta > 0) return "+" + delta.toFixed(2).toString();
+  else return delta.toFixed(2).toString(); // case delta < 0
+}
+
 export default function Playerlist() {
   const players = useSelector<State, IAdminUIRemoteState["players"]>((s) => s.players);
   const [healths, healthDeltaTimeWindowMs] = useSelector<
@@ -53,7 +59,14 @@ export default function Playerlist() {
                 </TableCell>
                 <TableCell style={{ fontSize: "2rem" }}>{COUNTRY_FLAG_EMOJI_UNICODE_MAP[player.country]}</TableCell>
                 <TableCell>
-                  {player.health.toPrecision(4)} ({healthDelta} in the last {healthDeltaTimeWindowMs} milliseconds)
+                  {healthDelta !== 0 && (
+                    <div
+                      style={{ fontSize: "0.75rem", fontWeight: "bolder", color: healthDelta > 0 ? "green" : "red" }}
+                    >
+                      {formatHealthDelta(healthDelta)}
+                    </div>
+                  )}
+                  <div>{player.health.toPrecision(4)}</div>
                 </TableCell>
                 <TableCell>{formatConnectedSeconds(player.connected_seconds, player.online)}</TableCell>
                 <TableCell>{player.id}</TableCell>
