@@ -88,7 +88,14 @@ logger.info("Pruning dead connections every %d ms", config.deadConnectionsPruneI
 
 publicAuthApi.on("upgrade", handleUpgrade(logger, publicRconSyncServer));
 publicAuthApi.on("request", (req, res) => {
-  if (req.method === "POST" && req.url === "/login") {
+  res.setHeader("Access-Control-Allow-Origin", "https://admin.reindeerland.eu");
+  res.setHeader("Access-Control-Allow-Header", "x-rcon-ws-proxy-username");
+  res.setHeader("Access-Control-Allow-Header", "x-rcon-ws-proxy-password");
+  if (req.method === "OPTIONS") {
+    res.statusCode = 204;
+    res.end();
+    return;
+  } else if (req.method === "POST" && req.url === "/login") {
     handleLogin(logger, req, res, userStore);
   } else {
     logger.warn("Received unknown request for %s %s", req.method, req.url);
