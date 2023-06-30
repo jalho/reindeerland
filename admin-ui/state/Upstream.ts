@@ -2,6 +2,8 @@
 
 const HEADERNAME_USERNAME: TAuthHeader = "x-rcon-ws-proxy-username";
 const HEADERNAME_PASSWORD: TAuthHeader = "x-rcon-ws-proxy-password";
+const TOKEN_QP_NAME = "token";
+const SIG_QP_NAME = "sig";
 
 /**
  * Credentials needed for connecting to upstream.
@@ -27,8 +29,8 @@ class Upstream {
 
     // TODO: use Steam as IDP instead, don't do login in admin-ui at all
     let loginStatus: number | null = null;
+    let auth: {} | null = null;
     try {
-      // upstream is expected to set auth cookies in response to this
       const response = await fetch(this._loginUrl, {
         method: "POST",
         headers: {
@@ -36,6 +38,7 @@ class Upstream {
           [HEADERNAME_PASSWORD]: credentials.password, // TODO: remove admin-ui login altogether; use Steam as IDP instead
         },
       });
+      auth = await response.json();
       loginStatus = response.status;
     } catch (err_login) {
       // fetch resolves as soon as the server responds with headers
@@ -46,7 +49,7 @@ class Upstream {
       );
     }
 
-    const expectedStatus = 204;
+    const expectedStatus = 200;
     if (loginStatus !== expectedStatus) {
       console.error(
         "Expected login response status to be %d, instead got %d. Not proceeding to connect!",
@@ -56,6 +59,14 @@ class Upstream {
       throw new Error("Could not login!");
     }
 
+    if (!auth) {
+      console.error("Didn't get an auth payload from upstream!");
+      throw new Error("Could not login!");
+    }
+
+    const urlWithAuthQps = new URL(this._wsRconUrl);
+    urlWithAuthQps.searchParams.set(TOKEN_QP_NAME, auth[TOKEN_QP_NAME]);
+    urlWithAuthQps.searchParams.set(SIG_QP_NAME, auth[SIG_QP_NAME]);
     const s = new WebSocket(this._wsRconUrl);
     return new Promise((resolve, reject) => {
       s.addEventListener("open", () => {
