@@ -8,6 +8,7 @@ import { handleUpgrade, handleLogin, IAuthorizedConnection } from "./handlers/au
 import Users from "./stores/Users.js";
 import handlePrivateAdminRequest from "./handlers/register-user.js";
 import RCONPlayers from "./stores/RCONPlayers.js";
+import RCONToolcupboards from "./stores/RCONToolcupboards.js";
 
 const config = {
   /**
@@ -65,6 +66,7 @@ await new Promise((resolve) => rconWsUpstream.on("open", resolve));
 
 // stores
 const rconPlayers = new RCONPlayers(config.rconSyncIntervalMs, rconWsUpstream);
+const rconTcs = new RCONToolcupboards(config.rconSyncIntervalMs, rconWsUpstream);
 const userStore = new Users();
 logger.info("Syncing local RCON store caches every %d ms", config.rconSyncIntervalMs);
 
@@ -79,7 +81,7 @@ export type TConnections = typeof connections;
 export type TIdentifiedSocket = WebSocket & { clientId: string };
 
 // send state updates regularly to all clients
-setInterval(syncRcon(connections, { rconPlayers }), config.clientUpdateIntervalMs);
+setInterval(syncRcon(connections, { rconPlayers, rconTcs }), config.clientUpdateIntervalMs);
 logger.info("Sending updates to all clients every %d ms", config.clientUpdateIntervalMs);
 
 // prune dead connections regularly

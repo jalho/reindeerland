@@ -3,6 +3,7 @@ import crypto from "node:crypto";
 import { TConnections } from "../main.js";
 import WebSocket from "ws";
 import RCONPlayers from "../stores/RCONPlayers.js";
+import RCONToolcupboards from "../stores/RCONToolcupboards.js";
 
 // TODO: log warning after timeout if ack not received
 const makeAckListener = (syn: string, connection: TConnections[string], logger: Log4js.Logger) => {
@@ -22,6 +23,7 @@ const syncRcon =
     connections: TConnections,
     stores: {
       rconPlayers: RCONPlayers;
+      rconTcs: RCONToolcupboards;
     }
   ) =>
   async () => {
@@ -29,7 +31,7 @@ const syncRcon =
     const syn = crypto.randomUUID();
 
     const players: IAdminUIRemoteState["players"] = await stores.rconPlayers.findMany();
-    const tcs: IAdminUIRemoteState["tcs"] = {}; // TODO: get from RCON
+    const tcs: IAdminUIRemoteState["tcs"] = await stores.rconTcs.findMany();
 
     const payload: IAdminUIRemoteState & Pick<ISynAck, "syn"> = {
       lastSyncTsMs: Date.now(),

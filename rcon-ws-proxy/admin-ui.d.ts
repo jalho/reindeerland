@@ -42,7 +42,7 @@ interface IAdminUIRemoteState {
   lastSyncTsMs: number;
 
   players: { [id: string]: IRCONPlayer };
-  tcs: { [id: string]: Record<string, unknown> };
+  tcs: { [id: string]: IRCONToolCupboard };
 }
 
 type TAuthHeader = "x-rcon-ws-proxy-username" | "x-rcon-ws-proxy-password";
