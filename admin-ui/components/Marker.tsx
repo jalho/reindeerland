@@ -32,20 +32,22 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
 
   let active: boolean;
   let activeColor: string;
+  let label: string;
+  let zIndex: number;
   // case player
   if ("online" in props.data) {
     active = props.data.online;
     activeColor = "red";
+    label = props.data.name;
+    zIndex = 2;
   }
   // case TC
   else {
     active = !props.data.destroyed;
     activeColor = "cyan";
+    label = "TC " + props.data.id;
+    zIndex = 1;
   }
-
-  let label: string;
-  if ("name" in props.data) label = props.data.name; // case player
-  else label = "TC" + props.data.id; // case TC
 
   return (
     <>
@@ -60,6 +62,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
           top: top - MARKER_RADIUS / 2,
           opacity: 0.85,
           borderRadius: "50%",
+          zIndex,
         }}
         onMouseOver={(e) => setHovered(true)}
         onMouseLeave={(e) => setHovered(false)}
@@ -75,6 +78,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
             padding: "0 1rem 0 1rem",
             opacity: 0.75,
             borderRadius: 2,
+            zIndex,
           }}
         >
           <code>{label}</code>
