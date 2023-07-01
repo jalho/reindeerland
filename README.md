@@ -25,7 +25,7 @@ Docker Compose version v2.18.1
    Create TLS cert and key for the `tls-proxy`. See `Makefile` for filesystem paths.
    Instructions for getting TLS cert manually using `certbot` are in this README too.
 
-4. Start the composition detached and follow logs if you wish.
+3. Start the composition detached and follow logs if you wish.
 
    ```bash
    docker compose -f docker-compose.main.yaml up -d --wait && docker compose -f docker-compose.aux.yaml up -d
@@ -35,7 +35,7 @@ Docker Compose version v2.18.1
    docker compose -f docker-compose.main.yaml -f docker-compose.aux.yaml logs -f
    ```
 
-5. Ask _RustDedicated_ to render the gameworld map as a .PNG image.
+4. Ask _RustDedicated_ to render the gameworld map as a .PNG image.
 
    ```bash
    docker exec reindeerland rcon rendermap
@@ -48,7 +48,7 @@ Docker Compose version v2.18.1
 
    TODO: Make `rcon-ws-proxy` issue the `rendermap` command on startup instead!
 
-6. Create a user for logging in to the `admin-ui`.
+5. Create a user for logging in to the `admin-ui`.
 
    ```bash
    docker exec rcon-ws-proxy curl "http://localhost:90" -H "username: foo" -H "password: bar"
@@ -56,7 +56,7 @@ Docker Compose version v2.18.1
 
    TODO: Add e.g. Steam IDP instead!
 
-7. Schedule weekly wipe with `crontab -e`.
+6. Schedule weekly wipe with `crontab -e`.
 
    ```
    0 14 * * FRI timeout 1h bash /opt/run/rust-server/_scripts/wipe.sh /opt/run/rust-server/.env
@@ -147,3 +147,14 @@ Required: `certbot`
 # Development
 
 First disable TLS in loadbalancer, configure CORS dev policy and update the browser web UI app's upstreams to target the loadbalancer. Then build images with those changes, start Docker composition, create a user and follow logs.
+
+To build images and publish them to GHCR, do e.g.:
+
+```
+cd rcon-ws-proxy && npm run build && docker build --tag ghcr.io/jalho/reindeerland/rcon-ws-proxy:alpha-10 .
+export CR_PAT=TOKEN
+echo $CR_PAT | docker login ghcr.io -u jalho --password-stdin
+docker push ghcr.io/jalho/reindeerland/rcon-ws-proxy:alpha-10
+```
+
+where `TOKEN` is a GitHub _Personal access token_ of type _classic_ with permission `write:packages`.
