@@ -22,6 +22,10 @@ export interface IAdminUIState {
    * element or something).
    */
   healthDeltaMinThreshold: number;
+  /**
+   * Whether to show TCs on the map.
+   */
+  showTcs: boolean;
 }
 
 const initialState: IAdminUIRemoteState & IAdminUIState = {
@@ -32,6 +36,7 @@ const initialState: IAdminUIRemoteState & IAdminUIState = {
   healthDeltas: {},
   healthDeltaWindowMs: 1000,
   healthDeltaMinThreshold: 5,
+  showTcs: false,
 };
 
 const serverInfo = createSlice({

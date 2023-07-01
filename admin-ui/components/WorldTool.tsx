@@ -22,11 +22,15 @@ const GAMEWORLD_ORIGIN = GAMEWORLD_SIZE / 2;
 const WorldTool = (props: IProps): React.JSX.Element => {
   const { mapElementSizePx } = props;
   const { protocol, host, pathname } = props.upstream;
-  const { players, tcs } = useSelector<State, Pick<IAdminUIRemoteState, "players" | "tcs">>((state: State) => ({players: state.players, tcs: state.tcs}));
+  const { players, tcs, showTcs } = useSelector<State, Pick<State, "players" | "tcs" | "showTcs">>((state: State) => ({
+    players: state.players,
+    tcs: state.tcs,
+    showTcs: state.showTcs,
+  }));
   const scale = mapElementSizePx / GAMEWORLD_SIZE;
 
   const markerables: Array<IRCONPlayer | IRCONToolCupboard> = Object.values(players);
-  markerables.push(...Object.values(tcs));
+  if (showTcs) markerables.push(...Object.values(tcs));
 
   return (
     <>
