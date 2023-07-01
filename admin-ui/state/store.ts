@@ -27,6 +27,11 @@ export interface IAdminUIState {
    */
   showTcs: boolean;
   /**
+   * TC authorized players count threshold after which some UI functionality is
+   * triggered (e.g. show marker with different color).
+   */
+  tcMaxAuthedPlayersThreshold: number;
+  /**
    * Last positions of players.
    */
   playerTrails: { [id: string]: Array<IRCONPlayer["position"]> };
@@ -47,6 +52,7 @@ const initialState: IAdminUIRemoteState & IAdminUIState = {
   showTcs: true,
   playerTrails: {},
   maxPlayerTrailLength: 200,
+  tcMaxAuthedPlayersThreshold: 1,
 };
 
 const serverInfo = createSlice({

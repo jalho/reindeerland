@@ -1,6 +1,8 @@
 /// <reference types="../../rcon-ws-proxy/admin-ui.d.ts" />
 
 import React from "react";
+import { useSelector } from "react-redux";
+import { State } from "../state/store";
 
 const MARKER_RADIUS = 10;
 const TOOLTIP_OFFSET = 10;
@@ -32,6 +34,9 @@ function formatTcLabel(tc: IRCONToolCupboard): string {
 
 const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Element | null => {
   if (!props.markerGameworldCoordinates) return null;
+  const { tcMaxAuthedPlayersThreshold } = useSelector<State, Pick<State, "tcMaxAuthedPlayersThreshold">>((s) => ({
+    tcMaxAuthedPlayersThreshold: s.tcMaxAuthedPlayersThreshold,
+  }));
 
   const [x, z, y] = props.markerGameworldCoordinates;
   const [hovered, setHovered] = React.useState<boolean>(false);
@@ -42,6 +47,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
   let activeColor: string;
   let label: string;
   let zIndex: number;
+  let tooltipTextColor: string = "black";
   // case player
   if ("online" in props.data) {
     active = props.data.online;
@@ -52,7 +58,8 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
   // case TC
   else {
     active = !props.data.destroyed;
-    activeColor = "cyan";
+    activeColor = props.data.authed_players_count > tcMaxAuthedPlayersThreshold ? "blue" : "cyan";
+    if (props.data.authed_players_count > tcMaxAuthedPlayersThreshold) tooltipTextColor = "white";
     label = formatTcLabel(props.data);
     zIndex = 1;
   }
@@ -87,6 +94,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
             opacity: 0.75,
             borderRadius: 2,
             zIndex,
+            color: tooltipTextColor,
           }}
         >
           {label}
