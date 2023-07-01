@@ -46,7 +46,7 @@ const initialState: IAdminUIRemoteState & IAdminUIState = {
   healthDeltaMinThreshold: 5,
   showTcs: true,
   playerTrails: {},
-  maxPlayerTrailLength: 50,
+  maxPlayerTrailLength: 200,
 };
 
 const serverInfo = createSlice({
