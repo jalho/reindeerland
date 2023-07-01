@@ -21,6 +21,7 @@ const GAMEWORLD_ORIGIN = GAMEWORLD_SIZE / 2;
 
 const WorldTool = (props: IProps): React.JSX.Element => {
   const { mapElementSizePx } = props;
+  const { protocol, host, pathname } = props.upstream;
   const { players, tcs } = useSelector<State, Pick<IAdminUIRemoteState, "players" | "tcs">>((state: State) => ({players: state.players, tcs: state.tcs}));
   const scale = mapElementSizePx / GAMEWORLD_SIZE;
 
