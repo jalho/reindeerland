@@ -26,6 +26,14 @@ export interface IAdminUIState {
    * Whether to show TCs on the map.
    */
   showTcs: boolean;
+  /**
+   * Last positions of players.
+   */
+  playerTrails: { [id: string]: Array<IRCONPlayer["position"]> };
+  /**
+   * How many last positions of each player to include in trail.
+   */
+  maxPlayerTrailLength: number;
 }
 
 const initialState: IAdminUIRemoteState & IAdminUIState = {
@@ -37,6 +45,8 @@ const initialState: IAdminUIRemoteState & IAdminUIState = {
   healthDeltaWindowMs: 1000,
   healthDeltaMinThreshold: 5,
   showTcs: true,
+  playerTrails: {},
+  maxPlayerTrailLength: 50,
 };
 
 const serverInfo = createSlice({
@@ -46,17 +56,29 @@ const serverInfo = createSlice({
     messageReceived: (state, action: PayloadAction<any>) => {
       const remoteUpdatePayload: IAdminUIRemoteState = JSON.parse(action.payload);
 
-      // for each player in remote update payload, assign new healthDelta current value and put old to previous
+      /**
+       * For each player in remote update payload
+       *  1) update health delta for accumulating time window
+       *  2) update trails (i.e. last positions on the map)
+       */
       for (const player of Object.values(remoteUpdatePayload.players)) {
-        // init...
+        // healthDelta
+        // init
         if (!state.healthDeltas[player.id]) {
           state.healthDeltas[player.id] = [remoteUpdatePayload.lastSyncTsMs, player.health, player.health];
         }
-
-        // ...or update if time window is full
+        // update if time window is full
         else if (remoteUpdatePayload.lastSyncTsMs - state.healthDeltas[player.id][0] > state.healthDeltaWindowMs) {
           const [, , oldHealth] = state.healthDeltas[player.id];
           state.healthDeltas[player.id] = [remoteUpdatePayload.lastSyncTsMs, oldHealth, player.health];
+        }
+
+        // trail
+        if (!state.playerTrails[player.id]) state.playerTrails[player.id] = [player.position]; // init
+        // update
+        else {
+          if (state.playerTrails[player.id].length > state.maxPlayerTrailLength) state.playerTrails[player.id].shift();
+          state.playerTrails[player.id].push(player.position);
         }
       }
 
