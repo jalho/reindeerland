@@ -34,7 +34,7 @@ services:
       reindeerland-net: null
     hostname: rcon-ws-proxy
     container_name: rcon-ws-proxy
-    image: ghcr.io/jalho/reindeerland/rcon-ws-proxy:alpha-10
+    image: ghcr.io/jalho/reindeerland/rcon-ws-proxy:alpha-11
     env_file:
       - .env
   tls-proxy:
