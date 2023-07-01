@@ -4,6 +4,7 @@ import { State } from "../state/store";
 import Marker from "./Marker";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import Trail from "./Trail";
 
 interface IProps {
   upstream: URL;
@@ -36,10 +37,14 @@ const WorldTool = (props: IProps): React.JSX.Element => {
    */
   const mapElementSizePx = screenSize.width;
   const { protocol, host, pathname } = props.upstream;
-  const { players, tcs, showTcs } = useSelector<State, Pick<State, "players" | "tcs" | "showTcs">>((state: State) => ({
+  const { players, tcs, showTcs, playerTrails } = useSelector<
+    State,
+    Pick<State, "players" | "tcs" | "showTcs" | "playerTrails">
+  >((state: State) => ({
     players: state.players,
     tcs: state.tcs,
     showTcs: state.showTcs,
+    playerTrails: state.playerTrails,
   }));
   const scale = mapElementSizePx / GAMEWORLD_SIZE;
 
@@ -67,6 +72,15 @@ const WorldTool = (props: IProps): React.JSX.Element => {
               scale={scale}
               key={p.id}
               data={p}
+            />
+          ))}
+          {Object.values(players).map((p) => (
+            <Trail
+              key={p.id}
+              gameworldOrigin={GAMEWORLD_ORIGIN}
+              scale={scale}
+              trailGameworldCoordinates={playerTrails[p.id]}
+              playerId={p.id}
             />
           ))}
         </div>
