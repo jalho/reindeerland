@@ -13,8 +13,13 @@ import COUNTRY_FLAG_EMOJI_UNICODE_MAP from "../constants/country-flag-emojis";
 
 function formatConnectedSeconds(connected_seconds: number, online: boolean) {
   if (!online) return "offline";
-  const seconds = connected_seconds % 60;
-  return `${Math.floor(connected_seconds / 60)} min, ${seconds} sec`;
+  if (connected_seconds < 60 * 60) {
+    const seconds = connected_seconds % 60;
+    return `${Math.floor(connected_seconds / 60)} min, ${seconds} sec`;
+  } else {
+    const minutes = (connected_seconds / 60) % 60;
+    return `${Math.floor(connected_seconds / (60 * 60))} h, ${minutes} min`;
+  }
 }
 
 function formatHealthDelta(delta: number): string {
