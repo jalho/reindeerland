@@ -12,7 +12,7 @@ interface IncomingRCONMessage {
   timestamp: number;
 }
 
-abstract class _RCON extends __Store<IRCONPlayer> {
+abstract class _RCON<T extends { id: string; }> extends __Store<T> {
   private _rconCommandIdx = -1;
   private _upstream: WebSocket.WebSocket;
 

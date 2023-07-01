@@ -26,6 +26,15 @@ interface IRCONPlayer {
   online: boolean;
 }
 
+interface IRCONToolCupboard {
+  /** Entity ID */
+  id: string;
+  /** x, y, z as reported by RustDedicated by RCON command `listtoolcupboards`. */
+  position: [number, number, number];
+  authed_players_count: number;
+  destroyed: boolean;
+}
+
 interface IAdminUIRemoteState {
   /**
    * The last time the remote state was synced, in milliseconds since the epoch.

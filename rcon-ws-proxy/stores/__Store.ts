@@ -3,7 +3,7 @@ import { IUser } from "./Users.js";
 
 interface IStore<Entity extends { id: string }> {
   findOne(entity: Pick<IUser, "id">): Promise<Entity | null>;
-  findMany(entity: Partial<Entity>): Promise<{ [id: string]: Record<string, unknown> }>;
+  findMany(entity: Partial<Entity>): Promise<{ [id: string]: Entity }>;
 }
 
 abstract class _Store<Entity extends { id: string }> implements IStore<Entity> {
@@ -15,7 +15,11 @@ abstract class _Store<Entity extends { id: string }> implements IStore<Entity> {
     this._logg = log4js.getLogger(this.constructor.name);
   }
 
-  public abstract findOne(entity: Pick<IUser, "id">): Promise<Entity | null>;
+  public findOne(searchable: Pick<IUser, "id">): Promise<Entity | null> {
+    const found = this._cache.get(searchable.id);
+    return Promise.resolve(found ?? null);
+  }
+
   /**
    * @param entity matcher; `null | undefined` means get all
    */

@@ -126,3 +126,34 @@ export const playerlist = (str: string): Array<Iplayerlist> => {
     };
   });
 };
+
+interface Ilisttoolcupboards {
+  EntityId: string;
+  Position: [number, number, number];
+  Authed: number;
+}
+const listtoolcupboards_re = /^(\d+)\s+\(([-\d.]+,\s+[-\d.]+,\s+[-\d.]+)\)\s+(\d+)$/;
+
+/**
+ * @example
+ * EntityId Position               Authed
+ * 70784    (-627.7, 3.3, -1234.3) 1
+ */
+export const listtoolcupboards = (str: string): { [id: string]: Ilisttoolcupboards } => {
+  const parsed: { [id: string]: Ilisttoolcupboards } = {};
+  const lines = str.split("\n");
+  for (let line of lines) {
+    line = line.trim();
+    const mg = line.match(listtoolcupboards_re);
+    if (mg === null) continue;
+    const [, entityId, posStr, authCountStr] = mg;
+    const [_x, _z, _y] = posStr.split(",").map((s) => s.trim());
+    const tc: Ilisttoolcupboards = {
+      Authed: parseInt(authCountStr),
+      Position: [parseFloat(_x), parseFloat(_z), parseFloat(_y)],
+      EntityId: entityId,
+    };
+    parsed[entityId] = tc;
+  }
+  return parsed;
+};

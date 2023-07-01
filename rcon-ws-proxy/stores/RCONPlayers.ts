@@ -5,7 +5,7 @@ import _RCON from "./_RCON.js";
 import _Store from "./__Store.js";
 import http from "node:http";
 
-class RCONPlayers extends _RCON {
+class RCONPlayers extends _RCON<IRCONPlayer> {
   private _countryCache: { [steamId: string]: string } = {};
 
   protected async sync(): Promise<void> {
@@ -80,17 +80,11 @@ class RCONPlayers extends _RCON {
     return country ?? null;
   }
 
-  public async findOne(entity: Pick<IRCONPlayer, "id">): Promise<IRCONPlayer | null> {
-    const user = this._cache.get(entity.id);
-    if (!user) return null;
-    else return user;
-  }
-
   public async findMany(entity?: Partial<IRCONPlayer> | null): Promise<{ [id: string]: IRCONPlayer }> {
     if (entity) throw new Error("Not implemented");
     else {
       const all: { [id: string]: IRCONPlayer } = {};
-      for (const [key, value] of this._cache) all[key] = value;
+      for (const [key, entity] of this._cache) all[key] = entity;
       return all;
     }
   }
