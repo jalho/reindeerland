@@ -22,6 +22,14 @@ function positionOnMap(
   return [scale * (gameworldOrigin + gameWorld_x), scale * (gameworldOrigin - gameWorld_y)];
 }
 
+function formatTcLabel(tc: IRCONToolCupboard): string {
+  let str: string = "";
+  if (tc.destroyed) str += "destroyed ";
+  str += "TC";
+  if (!tc.destroyed) str += ` with ${tc.authed_players_count} players authorized`;
+  return str;
+}
+
 const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Element | null => {
   if (!props.markerGameworldCoordinates) return null;
 
@@ -45,7 +53,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
   else {
     active = !props.data.destroyed;
     activeColor = "cyan";
-    label = `TC with ${props.data.authed_players_count} players authorized`;
+    label = formatTcLabel(props.data);
     zIndex = 1;
   }
 
@@ -81,7 +89,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
             zIndex,
           }}
         >
-          <code>{label}</code>
+          {label}
         </div>
       )}
     </>
