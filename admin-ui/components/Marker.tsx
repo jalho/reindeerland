@@ -45,7 +45,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
   else {
     active = !props.data.destroyed;
     activeColor = "cyan";
-    label = "TC " + props.data.id;
+    label = `TC with ${props.data.authed_players_count} players authorized`;
     zIndex = 1;
   }
 
