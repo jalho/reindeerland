@@ -31,12 +31,21 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
   const [left, top] = positionOnMap(props.scale, props.gameworldOrigin, x, y);
 
   let active: boolean;
-  if ("online" in props.data) active = props.data.online;
-  else active = !props.data.destroyed;
+  let activeColor: string;
+  // case player
+  if ("online" in props.data) {
+    active = props.data.online;
+    activeColor = "red";
+  }
+  // case TC
+  else {
+    active = !props.data.destroyed;
+    activeColor = "cyan";
+  }
 
   let label: string;
-  if ("name" in props.data) label = props.data.name;
-  else label = props.data.id;
+  if ("name" in props.data) label = props.data.name; // case player
+  else label = "TC" + props.data.id; // case TC
 
   return (
     <>
@@ -46,7 +55,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
           position: "absolute",
           width: MARKER_RADIUS,
           height: MARKER_RADIUS,
-          backgroundColor: active ? "red" : "gray",
+          backgroundColor: active ? activeColor : "gray",
           left: left - MARKER_RADIUS / 2,
           top: top - MARKER_RADIUS / 2,
           opacity: 0.85,
@@ -60,7 +69,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
         <div
           style={{
             position: "absolute",
-            backgroundColor: active ? "red" : "gray",
+            backgroundColor: active ? activeColor : "gray",
             left: left + TOOLTIP_OFFSET,
             top: top - TOOLTIP_OFFSET,
             padding: "0 1rem 0 1rem",

@@ -36,7 +36,7 @@ const initialState: IAdminUIRemoteState & IAdminUIState = {
   healthDeltas: {},
   healthDeltaWindowMs: 1000,
   healthDeltaMinThreshold: 5,
-  showTcs: false,
+  showTcs: true,
 };
 
 const serverInfo = createSlice({
