@@ -21,9 +21,11 @@ const GAMEWORLD_ORIGIN = GAMEWORLD_SIZE / 2;
 
 const WorldTool = (props: IProps): React.JSX.Element => {
   const { mapElementSizePx } = props;
-  const { protocol, host, pathname } = props.upstream;
-  const players = useSelector((state: State) => state.players);
+  const { players, tcs } = useSelector<State, Pick<IAdminUIRemoteState, "players" | "tcs">>((state: State) => ({players: state.players, tcs: state.tcs}));
   const scale = mapElementSizePx / GAMEWORLD_SIZE;
+
+  const markerables: Array<IRCONPlayer | IRCONToolCupboard> = Object.values(players);
+  markerables.push(...Object.values(tcs));
 
   return (
     <>
@@ -33,7 +35,7 @@ const WorldTool = (props: IProps): React.JSX.Element => {
           alt="Map of Reindeerland"
           style={{ width: "100%", position: "absolute" }}
         />
-        {Object.values(players).map((p) => (
+        {markerables.map((p) => (
           <Marker
             gameworldOrigin={GAMEWORLD_ORIGIN}
             markerGameworldCoordinates={p.position}
