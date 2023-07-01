@@ -23,6 +23,13 @@ function formatHealthDelta(delta: number): string {
   else return delta.toFixed(2).toString(); // case delta < 0
 }
 
+function sortPlayersPerConnectedTime(a: IRCONPlayer, b: IRCONPlayer): number {
+  const _a = a.online ? a.connected_seconds : Infinity;
+  const _b = b.online ? b.connected_seconds : Infinity;
+  if (_a === _b) return 0;
+  return _a - _b;
+}
+
 export default function Playerlist() {
   const players = useSelector<State, IAdminUIRemoteState["players"]>((s) => s.players);
   const { healthDeltas, healthDeltaMinThreshold } = useSelector<
@@ -53,30 +60,32 @@ export default function Playerlist() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.values(players).map((player) => {
-            const [, previousHealth, currentHealth] = healthDeltas[player.id] ?? [-1, player.health, player.health];
-            const healthDelta = currentHealth - previousHealth;
-            return (
-              <TableRow key={player.id}>
-                <TableCell>
-                  <code>{player.name}</code>
-                </TableCell>
-                <TableCell style={{ fontSize: "2rem" }}>{COUNTRY_FLAG_EMOJI_UNICODE_MAP[player.country]}</TableCell>
-                <TableCell>
-                  {healthDelta !== 0 && Math.abs(healthDelta) >= healthDeltaMinThreshold && (
-                    <div
-                      style={{ fontSize: "0.75rem", fontWeight: "bolder", color: healthDelta > 0 ? "green" : "red" }}
-                    >
-                      {formatHealthDelta(healthDelta)}
-                    </div>
-                  )}
-                  <div>{player.health.toPrecision(4)}</div>
-                </TableCell>
-                <TableCell>{formatConnectedSeconds(player.connected_seconds, player.online)}</TableCell>
-                <TableCell>{player.id}</TableCell>
-              </TableRow>
-            );
-          })}
+          {Object.values(players)
+            .sort(sortPlayersPerConnectedTime)
+            .map((player) => {
+              const [, previousHealth, currentHealth] = healthDeltas[player.id] ?? [-1, player.health, player.health];
+              const healthDelta = currentHealth - previousHealth;
+              return (
+                <TableRow key={player.id}>
+                  <TableCell>
+                    <code>{player.name}</code>
+                  </TableCell>
+                  <TableCell style={{ fontSize: "2rem" }}>{COUNTRY_FLAG_EMOJI_UNICODE_MAP[player.country]}</TableCell>
+                  <TableCell>
+                    {healthDelta !== 0 && Math.abs(healthDelta) >= healthDeltaMinThreshold && (
+                      <div
+                        style={{ fontSize: "0.75rem", fontWeight: "bolder", color: healthDelta > 0 ? "green" : "red" }}
+                      >
+                        {formatHealthDelta(healthDelta)}
+                      </div>
+                    )}
+                    <div>{player.health.toPrecision(4)}</div>
+                  </TableCell>
+                  <TableCell>{formatConnectedSeconds(player.connected_seconds, player.online)}</TableCell>
+                  <TableCell>{player.id}</TableCell>
+                </TableRow>
+              );
+            })}
         </TableBody>
       </Table>
     </>
