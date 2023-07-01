@@ -2,6 +2,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { State } from "../state/store";
 import Marker from "./Marker";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
 
 interface IProps {
   upstream: URL;
@@ -45,24 +47,31 @@ const WorldTool = (props: IProps): React.JSX.Element => {
   if (showTcs) markerables.push(...Object.values(tcs));
 
   return (
-    <>
-      <div style={{ width: mapElementSizePx, position: "relative" }}>
-        <img
-          src={protocol + "//" + host + pathname}
-          alt="Map of Reindeerland"
-          style={{ width: "100%", position: "absolute" }}
-        />
-        {markerables.map((p) => (
-          <Marker
-            gameworldOrigin={GAMEWORLD_ORIGIN}
-            markerGameworldCoordinates={p.position}
-            scale={scale}
-            key={p.id}
-            data={p}
+    <Grid item>
+      <Paper
+        style={{
+          width: mapElementSizePx,
+          height: mapElementSizePx,
+        }}
+      >
+        <div style={{ width: mapElementSizePx, position: "relative" }}>
+          <img
+            src={protocol + "//" + host + pathname}
+            alt="Map of Reindeerland"
+            style={{ width: "100%", position: "absolute" }}
           />
-        ))}
-      </div>
-    </>
+          {markerables.map((p) => (
+            <Marker
+              gameworldOrigin={GAMEWORLD_ORIGIN}
+              markerGameworldCoordinates={p.position}
+              scale={scale}
+              key={p.id}
+              data={p}
+            />
+          ))}
+        </div>
+      </Paper>
+    </Grid>
   );
 };
 

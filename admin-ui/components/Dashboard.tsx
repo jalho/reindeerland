@@ -75,11 +75,7 @@ export default function Dashboard() {
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
               <Grid container spacing={3} justifyContent={"center"}>
                 {/* Map */}
-                <Grid item>
-                  <Paper>
-                    <WorldTool upstream={MAP_UPSTREAM} />
-                  </Paper>
-                </Grid>
+                <WorldTool upstream={MAP_UPSTREAM} />
 
                 {/* Player list */}
                 <Grid item xs={12}>
