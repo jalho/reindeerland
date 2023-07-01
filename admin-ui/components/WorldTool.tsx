@@ -5,10 +5,6 @@ import Marker from "./Marker";
 
 interface IProps {
   upstream: URL;
-  /**
-   * Size of the map image element rendered on the web page.
-   */
-  mapElementSizePx: number;
 }
 
 /**
@@ -20,7 +16,23 @@ const GAMEWORLD_SIZE = 5500;
 const GAMEWORLD_ORIGIN = GAMEWORLD_SIZE / 2;
 
 const WorldTool = (props: IProps): React.JSX.Element => {
-  const { mapElementSizePx } = props;
+  const [screenSize, setScreenSize] = React.useState(getDimensions());
+  function getDimensions() {
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
+  }
+  React.useEffect(() => {
+    const updateDimension = () => setScreenSize(getDimensions());
+    window.addEventListener("resize", updateDimension);
+    return () => window.removeEventListener("resize", updateDimension);
+  }, [screenSize]);
+
+  /**
+   * Size of the map image element rendered on the web page.
+   */
+  const mapElementSizePx = screenSize.width;
   const { protocol, host, pathname } = props.upstream;
   const { players, tcs, showTcs } = useSelector<State, Pick<State, "players" | "tcs" | "showTcs">>((state: State) => ({
     players: state.players,

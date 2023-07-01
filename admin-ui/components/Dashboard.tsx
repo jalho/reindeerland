@@ -15,8 +15,6 @@ import { State } from "../state/store";
 import { useSelector } from "react-redux";
 import Login from "./Login";
 
-const MAP_ELEMENT_SIZE = 500;
-
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
@@ -78,14 +76,7 @@ export default function Dashboard() {
               <Grid container spacing={3} justifyContent={"center"}>
                 {/* Map */}
                 <Grid item>
-                  <Paper
-                    style={{
-                      width: MAP_ELEMENT_SIZE,
-                      height: MAP_ELEMENT_SIZE,
-                    }}
-                  >
-                    <WorldTool upstream={MAP_UPSTREAM} mapElementSizePx={MAP_ELEMENT_SIZE} />
-                  </Paper>
+                  <WorldTool upstream={MAP_UPSTREAM} />
                 </Grid>
 
                 {/* Player list */}
