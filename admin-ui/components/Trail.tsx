@@ -27,6 +27,7 @@ const Trail = (props: ITrail): React.JSX.Element | null => {
   return (
     <>
       {props.trailGameworldCoordinates.map((pos, idx) => {
+        if (!pos) return null;
         const [x, z, y] = pos;
         const [left, top] = positionOnMap(props.scale, props.gameworldOrigin, x, y);
         return (
