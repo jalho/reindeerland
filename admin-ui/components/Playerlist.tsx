@@ -17,7 +17,7 @@ function formatConnectedSeconds(connected_seconds: number, online: boolean) {
     const seconds = connected_seconds % 60;
     return `${Math.floor(connected_seconds / 60)} min, ${seconds} sec`;
   } else {
-    const minutes = (connected_seconds / 60) % 60;
+    const minutes = Math.floor(connected_seconds / 60) % 60;
     return `${Math.floor(connected_seconds / (60 * 60))} h, ${minutes} min`;
   }
 }
