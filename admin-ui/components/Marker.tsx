@@ -3,8 +3,10 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { State } from "../state/store";
+import HomeIcon from "@mui/icons-material/Home";
 
-const MARKER_RADIUS = 10;
+const PLAYER_MARKER_RADIUS = 10;
+const TC_MARKER_RADIUS = 15;
 const TOOLTIP_OFFSET = 10;
 
 interface IMarker<Data> {
@@ -47,34 +49,23 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
   let activeColor: string;
   let label: string;
   let zIndex: number;
-  let tooltipTextColor: string = "black";
+  let tooltipTextColor: string = "white";
+  let icon: JSX.Element;
   // case player
   if ("online" in props.data) {
     active = props.data.online;
     activeColor = "red";
     label = props.data.name;
     zIndex = 2;
-  }
-  // case TC
-  else {
-    active = !props.data.destroyed;
-    activeColor = props.data.authed_players_count > tcMaxAuthedPlayersThreshold ? "blue" : "cyan";
-    if (props.data.authed_players_count > tcMaxAuthedPlayersThreshold) tooltipTextColor = "white";
-    label = formatTcLabel(props.data);
-    zIndex = 1;
-  }
-
-  return (
-    <>
-      {/* marker */}
+    icon = (
       <div
         style={{
           position: "absolute",
-          width: MARKER_RADIUS,
-          height: MARKER_RADIUS,
+          width: PLAYER_MARKER_RADIUS,
+          height: PLAYER_MARKER_RADIUS,
           backgroundColor: active ? activeColor : "gray",
-          left: left - MARKER_RADIUS / 2,
-          top: top - MARKER_RADIUS / 2,
+          left: left - PLAYER_MARKER_RADIUS / 2,
+          top: top - PLAYER_MARKER_RADIUS / 2,
           opacity: 0.85,
           borderRadius: "50%",
           zIndex,
@@ -82,6 +73,39 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
         onMouseOver={(e) => setHovered(true)}
         onMouseLeave={(e) => setHovered(false)}
       />
+    );
+  }
+  // case TC
+  else {
+    active = !props.data.destroyed;
+    activeColor = props.data.authed_players_count > tcMaxAuthedPlayersThreshold ? "darkblue" : "darkgreen";
+    activeColor = active ? activeColor : "gray";
+    label = formatTcLabel(props.data);
+    zIndex = 1;
+    icon = (
+      <HomeIcon
+        style={{
+          position: "absolute",
+          width: TC_MARKER_RADIUS,
+          height: TC_MARKER_RADIUS,
+          backgroundColor: "white",
+          color: active ? activeColor : "gray",
+          left: left - TC_MARKER_RADIUS / 2,
+          top: top - TC_MARKER_RADIUS / 2,
+          opacity: 0.6,
+          borderRadius: "50%",
+          zIndex,
+        }}
+        onMouseOver={(e) => setHovered(true)}
+        onMouseLeave={(e) => setHovered(false)}
+      />
+    );
+  }
+
+  return (
+    <>
+      {/* marker */}
+      {icon}
       {/* tooltip */}
       {hovered && (
         <div
