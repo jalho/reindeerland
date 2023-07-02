@@ -74,7 +74,7 @@ const WorldTool = (props: IProps): React.JSX.Element => {
               data={p}
             />
           ))}
-          {players.map((p: IRCONPlayer) => (
+          {players.filter(p => p.online).map((p: IRCONPlayer) => (
             <Trail
               key={p.id}
               gameworldOrigin={GAMEWORLD_ORIGIN}
