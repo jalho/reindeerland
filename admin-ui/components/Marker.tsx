@@ -81,6 +81,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
         onMouseLeave={() => {
           if (playerIsManuallySelected) dispatch(unselectPlayer(props.data.id));
         }}
+        onClick={() => navigator.clipboard.writeText(`teleportpos ${props.data.position.join(",")}`)}
       />
     );
   }
@@ -107,6 +108,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
         }}
         onMouseOver={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
+        onClick={() => navigator.clipboard.writeText(`teleportpos ${props.data.position.join(",")}`)}
       />
     );
   }
