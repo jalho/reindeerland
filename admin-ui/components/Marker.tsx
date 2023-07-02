@@ -43,6 +43,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
 
   const [x, z, y] = props.markerGameworldCoordinates;
   const [hovered, setHovered] = React.useState<boolean>(false);
+  const [markerClicked, setMarkerClicked] = React.useState<boolean>(false);
 
   const [left, top] = positionOnMap(props.scale, props.gameworldOrigin, x, y);
 
@@ -74,6 +75,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
         }}
         onMouseOver={(e) => setHovered(true)}
         onMouseLeave={(e) => setHovered(false)}
+        onClick={() => setMarkerClicked(!markerClicked)}
       />
     );
   }
@@ -100,6 +102,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
         }}
         onMouseOver={(e) => setHovered(true)}
         onMouseLeave={(e) => setHovered(false)}
+        onClick={() => setMarkerClicked(!markerClicked)}
       />
     );
   }
@@ -109,7 +112,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
       {/* marker */}
       {icon}
       {/* tooltip */}
-      {hovered && (
+      {(markerClicked || hovered) && (
         <div
           style={{
             position: "absolute",
