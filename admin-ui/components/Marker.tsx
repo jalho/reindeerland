@@ -40,6 +40,8 @@ function formatTcLabel(tc: IRCONToolCupboard): string {
 const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Element | null => {
   if (!props.markerGameworldCoordinates) return null;
 
+  const copyTeleportposCommandToClipboard = () =>
+    navigator.clipboard.writeText(`teleportpos ${props.data.position.join(",")}`);
   const dispatch = useDispatch();
   const { tcMaxAuthedPlayersThreshold, markerStyles } = useSelector<
     State,
@@ -81,7 +83,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
         onMouseLeave={() => {
           if (playerIsManuallySelected) dispatch(unselectPlayer(props.data.id));
         }}
-        onClick={() => navigator.clipboard.writeText(`teleportpos ${props.data.position.join(",")}`)}
+        onClick={copyTeleportposCommandToClipboard}
       />
     );
   }
@@ -108,7 +110,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
         }}
         onMouseOver={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        onClick={() => navigator.clipboard.writeText(`teleportpos ${props.data.position.join(",")}`)}
+        onClick={copyTeleportposCommandToClipboard}
       />
     );
   }
@@ -133,6 +135,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
             zIndex: 3,
             color: "white",
           }}
+          onClick={copyTeleportposCommandToClipboard}
         >
           <h1 style={{ flex: 1 }}>
             {country} {label}
