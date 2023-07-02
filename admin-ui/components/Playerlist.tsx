@@ -78,6 +78,7 @@ export default function Playerlist() {
                 onMouseOver={() => dispatch(selectPlayer(player.id))}
                 onMouseLeave={() => dispatch(unselectPlayer(player.id))}
                 style={{ ...rowStyleCommon, backgroundColor: currentlySelected[player.id] ? "lightgrey" : "white" }}
+                onClick={() => navigator.clipboard.writeText(`teleportpos ${player.position.join(",")}`)}
               >
                 <TableCell>
                   <code>{player.name}</code>
