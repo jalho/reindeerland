@@ -1,10 +1,10 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { IAdminUIState, closeSettingsModal } from "../state/slices/local";
 import { State } from "../state/store";
 import Marker from "./Marker";
+import Grid from "@mui/material/Grid";
 
 const style = {
   position: "absolute" as "absolute",
@@ -111,16 +111,17 @@ export default function Settings() {
   const handleClose = () => dispatch(closeSettingsModal());
 
   return (
-    <div>
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
+    <Modal open={open} onClose={handleClose}>
+      <Grid sx={style} container direction={"row"}>
+        <Grid container direction={"row"} justifyContent={"center"}>
           <GameworldSample image="map-samples/desert.png" />
           <GameworldSample image="map-samples/grass.png" />
           <GameworldSample image="map-samples/launch-site.png" />
           <GameworldSample image="map-samples/snow.png" />
           <GameworldSample image="map-samples/water.png" />
-        </Box>
-      </Modal>
-    </div>
+        </Grid>
+        <Grid item>TODO: settings controls here!</Grid>
+      </Grid>
+    </Modal>
   );
 }
