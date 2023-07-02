@@ -38,11 +38,13 @@ function formatTcLabel(tc: IRCONToolCupboard): string {
 
 const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Element | null => {
   if (!props.markerGameworldCoordinates) return null;
-  const { tcMaxAuthedPlayersThreshold } = useSelector<State, Pick<IAdminUIState, "tcMaxAuthedPlayersThreshold">>(
-    (s) => ({
-      tcMaxAuthedPlayersThreshold: s.uiSettings.tcMaxAuthedPlayersThreshold,
-    })
-  );
+  const { tcMaxAuthedPlayersThreshold, markerStyles } = useSelector<
+    State,
+    Pick<IAdminUIState, "tcMaxAuthedPlayersThreshold" | "markerStyles">
+  >((s) => ({
+    tcMaxAuthedPlayersThreshold: s.uiSettings.tcMaxAuthedPlayersThreshold,
+    markerStyles: s.uiSettings.markerStyles,
+  }));
 
   const [x, z, y] = props.markerGameworldCoordinates;
   const [hovered, setHovered] = React.useState<boolean>(false);
@@ -50,16 +52,12 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
 
   const [left, top] = positionOnMap(props.scale, props.gameworldOrigin, x, y);
 
-  let active: boolean;
-  let activeColor: string;
   let label: string;
   let zIndex: number;
-  let tooltipTextColor: string = "white";
   let icon: JSX.Element;
   // case player
   if ("online" in props.data) {
-    active = props.data.online;
-    activeColor = "red";
+    const playerMarkerStyles = props.data.online ? markerStyles.player.online : markerStyles.player.offline;
     label = props.data.name;
     zIndex = 2;
     icon = (
@@ -68,13 +66,11 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
           position: "absolute",
           width: PLAYER_MARKER_RADIUS,
           height: PLAYER_MARKER_RADIUS,
-          backgroundColor: "white",
-          color: active ? activeColor : "gray",
           left: left - PLAYER_MARKER_RADIUS / 2,
           top: top - PLAYER_MARKER_RADIUS / 2,
-          opacity: 0.6,
           borderRadius: "50%",
           zIndex,
+          ...playerMarkerStyles,
         }}
         onMouseOver={(e) => setHovered(true)}
         onMouseLeave={(e) => setHovered(false)}
@@ -84,9 +80,11 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
   }
   // case TC
   else {
-    active = !props.data.destroyed;
-    activeColor = props.data.authed_players_count > tcMaxAuthedPlayersThreshold ? "darkblue" : "darkgreen";
-    activeColor = active ? activeColor : "gray";
+    const tcMarkerStyles = props.data.destroyed
+      ? markerStyles.tc.offline
+      : props.data.authed_players_count > tcMaxAuthedPlayersThreshold
+      ? markerStyles.tc.highlighted
+      : markerStyles.tc.online;
     label = formatTcLabel(props.data);
     zIndex = 1;
     icon = (
@@ -95,13 +93,11 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
           position: "absolute",
           width: TC_MARKER_RADIUS,
           height: TC_MARKER_RADIUS,
-          backgroundColor: "white",
-          color: active ? activeColor : "gray",
           left: left - TC_MARKER_RADIUS / 2,
           top: top - TC_MARKER_RADIUS / 2,
-          opacity: 0.6,
           borderRadius: "50%",
           zIndex,
+          ...tcMarkerStyles,
         }}
         onMouseOver={(e) => setHovered(true)}
         onMouseLeave={(e) => setHovered(false)}
@@ -119,14 +115,14 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
         <div
           style={{
             position: "absolute",
-            backgroundColor: active ? activeColor : "gray",
+            backgroundColor: "white",
             left: left + TOOLTIP_OFFSET,
             top: top - TOOLTIP_OFFSET,
             padding: "0 1rem 0 1rem",
             opacity: 0.75,
             borderRadius: 2,
             zIndex,
-            color: tooltipTextColor,
+            color: "black",
           }}
         >
           {label}

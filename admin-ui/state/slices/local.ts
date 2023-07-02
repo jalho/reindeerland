@@ -1,5 +1,6 @@
 /// <reference types="../../../rcon-ws-proxy/admin-ui.d.ts" />
 
+import * as React from "react";
 import { createSlice } from "@reduxjs/toolkit";
 
 /**
@@ -43,16 +44,62 @@ export interface IAdminUIState {
    * Whether UI settings modal is open.
    */
   settingsModalOpen: boolean;
+  /**
+   * Styles for map markers.
+   */
+  markerStyles: Record<
+    "player" | "tc",
+    Record<
+      "online" | "offline" | "highlighted",
+      Pick<Required<React.CSSProperties>, "backgroundColor" | "color" | "opacity">
+    >
+  >;
 }
 
 const initialState: Pick<
   IAdminUIState,
-  "healthDeltaMinThreshold" | "showTcs" | "tcMaxAuthedPlayersThreshold" | "settingsModalOpen"
+  "healthDeltaMinThreshold" | "showTcs" | "tcMaxAuthedPlayersThreshold" | "settingsModalOpen" | "markerStyles"
 > = {
   healthDeltaMinThreshold: 5,
   showTcs: true,
   tcMaxAuthedPlayersThreshold: 1,
   settingsModalOpen: false,
+  markerStyles: {
+    player: {
+      offline: {
+        backgroundColor: "white",
+        color: "gray",
+        opacity: 0.6,
+      },
+      online: {
+        backgroundColor: "white",
+        color: "red",
+        opacity: 0.6,
+      },
+      highlighted: {
+        backgroundColor: "white",
+        color: "blue",
+        opacity: 0.6,
+      },
+    },
+    tc: {
+      offline: {
+        backgroundColor: "white",
+        color: "gray",
+        opacity: 0.6,
+      },
+      online: {
+        backgroundColor: "white",
+        color: "green",
+        opacity: 0.6,
+      },
+      highlighted: {
+        backgroundColor: "white",
+        color: "blue",
+        opacity: 0.6,
+      },
+    },
+  },
 };
 
 export const uiSettings = createSlice({
