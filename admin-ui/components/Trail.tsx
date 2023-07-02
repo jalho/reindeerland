@@ -42,7 +42,7 @@ const Trail = (props: ITrail): React.JSX.Element | null => {
               top: top - TRAIL_RADIUS / 2,
               opacity: 0.5,
               borderRadius: "50%",
-              zIndex: 2,
+              zIndex: 1,
             }}
           />
         );

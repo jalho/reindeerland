@@ -4,8 +4,9 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { State } from "../state/store";
 import HomeIcon from "@mui/icons-material/Home";
+import BoyIcon from '@mui/icons-material/Boy';
 
-const PLAYER_MARKER_RADIUS = 10;
+const PLAYER_MARKER_RADIUS = 15;
 const TC_MARKER_RADIUS = 15;
 const TOOLTIP_OFFSET = 10;
 
@@ -58,15 +59,16 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
     label = props.data.name;
     zIndex = 2;
     icon = (
-      <div
+      <BoyIcon
         style={{
           position: "absolute",
           width: PLAYER_MARKER_RADIUS,
           height: PLAYER_MARKER_RADIUS,
-          backgroundColor: active ? activeColor : "gray",
+          backgroundColor: "white",
+          color: active ? activeColor : "gray",
           left: left - PLAYER_MARKER_RADIUS / 2,
           top: top - PLAYER_MARKER_RADIUS / 2,
-          opacity: 0.85,
+          opacity: 0.6,
           borderRadius: "50%",
           zIndex,
         }}
