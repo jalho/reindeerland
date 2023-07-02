@@ -4,7 +4,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { State } from "../state/store";
 import HomeIcon from "@mui/icons-material/Home";
-import BoyIcon from '@mui/icons-material/Boy';
+import BoyIcon from "@mui/icons-material/Boy";
+import { IAdminUIState } from "../state/slices/local";
 
 const PLAYER_MARKER_RADIUS = 15;
 const TC_MARKER_RADIUS = 15;
@@ -37,9 +38,11 @@ function formatTcLabel(tc: IRCONToolCupboard): string {
 
 const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Element | null => {
   if (!props.markerGameworldCoordinates) return null;
-  const { tcMaxAuthedPlayersThreshold } = useSelector<State, Pick<State, "tcMaxAuthedPlayersThreshold">>((s) => ({
-    tcMaxAuthedPlayersThreshold: s.tcMaxAuthedPlayersThreshold,
-  }));
+  const { tcMaxAuthedPlayersThreshold } = useSelector<State, Pick<IAdminUIState, "tcMaxAuthedPlayersThreshold">>(
+    (s) => ({
+      tcMaxAuthedPlayersThreshold: s.uiSettings.tcMaxAuthedPlayersThreshold,
+    })
+  );
 
   const [x, z, y] = props.markerGameworldCoordinates;
   const [hovered, setHovered] = React.useState<boolean>(false);

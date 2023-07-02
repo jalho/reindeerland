@@ -39,12 +39,15 @@ const WorldTool = (props: IProps): React.JSX.Element => {
   const { protocol, host, pathname } = props.upstream;
   const { players, tcs, showTcs, playerTrails } = useSelector<
     State,
-    Pick<State, "showTcs" | "playerTrails"> & { players: Array<IRCONPlayer>; tcs: Array<IRCONToolCupboard> }
+    Pick<State["serverInfo"] & State["uiSettings"], "showTcs" | "playerTrails"> & {
+      players: Array<IRCONPlayer>;
+      tcs: Array<IRCONToolCupboard>;
+    }
   >((state: State) => ({
-    players: Object.values(state.players),
-    tcs: Object.values(state.tcs),
-    showTcs: state.showTcs,
-    playerTrails: state.playerTrails,
+    players: Object.values(state.serverInfo.players),
+    tcs: Object.values(state.serverInfo.tcs),
+    showTcs: state.uiSettings.showTcs,
+    playerTrails: state.serverInfo.playerTrails,
   }));
   const scale = mapElementSizePx / GAMEWORLD_SIZE;
 
@@ -74,15 +77,17 @@ const WorldTool = (props: IProps): React.JSX.Element => {
               data={p}
             />
           ))}
-          {players.filter(p => p.online).map((p: IRCONPlayer) => (
-            <Trail
-              key={p.id}
-              gameworldOrigin={GAMEWORLD_ORIGIN}
-              scale={scale}
-              trailGameworldCoordinates={playerTrails[p.id]}
-              playerId={p.id}
-            />
-          ))}
+          {players
+            .filter((p) => p.online)
+            .map((p: IRCONPlayer) => (
+              <Trail
+                key={p.id}
+                gameworldOrigin={GAMEWORLD_ORIGIN}
+                scale={scale}
+                trailGameworldCoordinates={playerTrails[p.id]}
+                playerId={p.id}
+              />
+            ))}
         </div>
       </Paper>
     </Grid>

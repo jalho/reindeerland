@@ -8,8 +8,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Title from "./Title";
 import { useSelector } from "react-redux";
-import { IAdminUIState, State } from "../state/store";
+import { State } from "../state/store";
 import COUNTRY_FLAG_EMOJI_UNICODE_MAP from "../constants/country-flag-emojis";
+import { IAdminUIState } from "../state/slices/local";
 
 function formatConnectedSeconds(connected_seconds: number, online: boolean) {
   if (!online) return "offline";
@@ -36,14 +37,14 @@ function sortPlayersPerConnectedTime(a: IRCONPlayer, b: IRCONPlayer): number {
 }
 
 export default function Playerlist() {
-  const players = useSelector<State, IAdminUIRemoteState["players"]>((s) => s.players);
+  const players = useSelector<State, IAdminUIRemoteState["players"]>((s) => s.serverInfo.players);
   const { healthDeltas, healthDeltaMinThreshold } = useSelector<
     State,
     Pick<IAdminUIState, "healthDeltaWindowMs" | "healthDeltas" | "healthDeltaMinThreshold">
   >((s) => ({
-    healthDeltas: s.healthDeltas,
-    healthDeltaWindowMs: s.healthDeltaWindowMs,
-    healthDeltaMinThreshold: s.healthDeltaMinThreshold,
+    healthDeltas: s.serverInfo.healthDeltas,
+    healthDeltaWindowMs: s.serverInfo.healthDeltaWindowMs,
+    healthDeltaMinThreshold: s.uiSettings.healthDeltaMinThreshold,
   }));
   const playerCountTotal = Object.keys(players).length;
   const playerCountOnline = Object.values(players).filter((player) => player.online).length;

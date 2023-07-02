@@ -40,7 +40,7 @@ const defaultTheme = createTheme();
 
 export default function Dashboard() {
   const loggedIn = useSelector<State, boolean>((s) => {
-    return s.connected && s.lastSyncTsMs > 0;
+    return s.serverInfo.connected && s.serverInfo.lastSyncTsMs > 0;
   });
 
   return (
