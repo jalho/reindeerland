@@ -6,10 +6,10 @@ import { State } from "../state/store";
 import HomeIcon from "@mui/icons-material/Home";
 import BoyIcon from "@mui/icons-material/Boy";
 import { IAdminUIState, selectPlayer, unselectPlayer } from "../state/slices/local";
+import COUNTRY_FLAG_EMOJI_UNICODE_MAP from "../constants/country-flag-emojis";
 
 const PLAYER_MARKER_RADIUS = 15;
 const TC_MARKER_RADIUS = 15;
-const TOOLTIP_OFFSET = 10;
 
 interface IMarker<Data> {
   scale: number;
@@ -106,6 +106,8 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
     );
   }
 
+  let country: string | null = "country" in props.data ? COUNTRY_FLAG_EMOJI_UNICODE_MAP[props.data.country] : null;
+
   return (
     <>
       {/* marker */}
@@ -115,17 +117,21 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
         <div
           style={{
             position: "absolute",
-            backgroundColor: "white",
-            left: left + TOOLTIP_OFFSET,
-            top: top - TOOLTIP_OFFSET,
+            backgroundColor: "black",
+            top,
+            left,
             padding: "0 1rem 0 1rem",
             opacity: 0.75,
             borderRadius: 2,
-            zIndex,
-            color: "black",
+            zIndex: 3,
+            color: "white",
+            // display: "flex",
+            // flexDirection: "column",
           }}
         >
-          {label}
+          <h1 style={{ flex: 1 }}>
+            {country} {label}
+          </h1>
         </div>
       )}
     </>
