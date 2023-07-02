@@ -41,7 +41,7 @@ const WorldTool = (props: IProps): React.JSX.Element => {
     State,
     Pick<State, "showTcs" | "playerTrails"> & { players: Array<IRCONPlayer>; tcs: Array<IRCONToolCupboard> }
   >((state: State) => ({
-    players: Object.values(players),
+    players: Object.values(state.players),
     tcs: Object.values(state.tcs),
     showTcs: state.showTcs,
     playerTrails: state.playerTrails,
