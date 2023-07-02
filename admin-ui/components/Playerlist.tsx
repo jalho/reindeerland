@@ -69,6 +69,7 @@ export default function Playerlist() {
         </TableHead>
         <TableBody>
           {players.sort(sortPlayersPerConnectedTime).map((player) => {
+            const rowStyleCommon = { opacity: player.online ? 1 : 0.45 };
             const [, previousHealth, currentHealth] = healthDeltas[player.id] ?? [-1, player.health, player.health];
             const healthDelta = currentHealth - previousHealth;
             return (
@@ -76,7 +77,7 @@ export default function Playerlist() {
                 key={player.id}
                 onMouseOver={() => dispatch(selectPlayer(player.id))}
                 onMouseLeave={() => dispatch(unselectPlayer(player.id))}
-                style={{ backgroundColor: currentlySelected[player.id] ? "lightgrey" : "white" }}
+                style={{ ...rowStyleCommon, backgroundColor: currentlySelected[player.id] ? "lightgrey" : "white" }}
               >
                 <TableCell>
                   <code>{player.name}</code>
