@@ -54,16 +54,27 @@ export interface IAdminUIState {
       Pick<Required<React.CSSProperties>, "backgroundColor" | "color" | "opacity">
     >
   >;
+  /**
+   * Player that have been selected manually (e.g. by clicking map marker or
+   * name in the player listing).
+   */
+  manuallySelectedPlayers: { [id: string]: boolean };
 }
 
 const initialState: Pick<
   IAdminUIState,
-  "healthDeltaMinThreshold" | "showTcs" | "tcMaxAuthedPlayersThreshold" | "settingsModalOpen" | "markerStyles"
+  | "healthDeltaMinThreshold"
+  | "showTcs"
+  | "tcMaxAuthedPlayersThreshold"
+  | "settingsModalOpen"
+  | "markerStyles"
+  | "manuallySelectedPlayers"
 > = {
   healthDeltaMinThreshold: 5,
   showTcs: true,
   tcMaxAuthedPlayersThreshold: 1,
   settingsModalOpen: false,
+  manuallySelectedPlayers: {},
   markerStyles: {
     player: {
       offline: {
@@ -112,10 +123,16 @@ export const uiSettings = createSlice({
     closeSettingsModal: (state) => {
       state.settingsModalOpen = !state.settingsModalOpen;
     },
+    selectPlayer: (state, action: { payload: string }) => {
+      state.manuallySelectedPlayers[action.payload] = true;
+    },
+    unselectPlayer: (state, action: { payload: string }) => {
+      state.manuallySelectedPlayers[action.payload] = false;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { openSettingsModal, closeSettingsModal } = uiSettings.actions;
+export const { openSettingsModal, closeSettingsModal, selectPlayer, unselectPlayer } = uiSettings.actions;
 
 export default uiSettings.reducer;

@@ -1,11 +1,11 @@
 /// <reference types="../../rcon-ws-proxy/admin-ui.d.ts" />
 
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { State } from "../state/store";
 import HomeIcon from "@mui/icons-material/Home";
 import BoyIcon from "@mui/icons-material/Boy";
-import { IAdminUIState } from "../state/slices/local";
+import { IAdminUIState, selectPlayer, unselectPlayer } from "../state/slices/local";
 
 const PLAYER_MARKER_RADIUS = 15;
 const TC_MARKER_RADIUS = 15;
@@ -38,6 +38,8 @@ function formatTcLabel(tc: IRCONToolCupboard): string {
 
 const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Element | null => {
   if (!props.markerGameworldCoordinates) return null;
+
+  const dispatch = useDispatch();
   const { tcMaxAuthedPlayersThreshold, markerStyles } = useSelector<
     State,
     Pick<IAdminUIState, "tcMaxAuthedPlayersThreshold" | "markerStyles">
@@ -45,10 +47,10 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
     tcMaxAuthedPlayersThreshold: s.uiSettings.tcMaxAuthedPlayersThreshold,
     markerStyles: s.uiSettings.markerStyles,
   }));
+  const playerIsManuallySelected = useSelector<State>((s) => s.uiSettings.manuallySelectedPlayers[props.data.id]);
 
   const [x, z, y] = props.markerGameworldCoordinates;
   const [hovered, setHovered] = React.useState<boolean>(false);
-  const [markerClicked, setMarkerClicked] = React.useState<boolean>(false);
 
   const [left, top] = positionOnMap(props.scale, props.gameworldOrigin, x, y);
 
@@ -74,7 +76,10 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
         }}
         onMouseOver={(e) => setHovered(true)}
         onMouseLeave={(e) => setHovered(false)}
-        onClick={() => setMarkerClicked(!markerClicked)}
+        onClick={() => {
+          if (playerIsManuallySelected) dispatch(unselectPlayer(props.data.id));
+          else dispatch(selectPlayer(props.data.id));
+        }}
       />
     );
   }
@@ -101,7 +106,6 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
         }}
         onMouseOver={(e) => setHovered(true)}
         onMouseLeave={(e) => setHovered(false)}
-        onClick={() => setMarkerClicked(!markerClicked)}
       />
     );
   }
@@ -111,7 +115,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
       {/* marker */}
       {icon}
       {/* tooltip */}
-      {(markerClicked || hovered) && (
+      {(playerIsManuallySelected || hovered) && (
         <div
           style={{
             position: "absolute",
