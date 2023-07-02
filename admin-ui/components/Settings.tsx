@@ -24,9 +24,9 @@ const SAMPLE_DATA: Array<IRCONPlayer | IRCONToolCupboard> = [
     connected_seconds: 1,
     country: "FI",
     health: 100.0,
-    id: "12345678901234567",
+    id: "player id 1",
     ip_address: "192.168.0.123",
-    name: "player name 1",
+    name: "sample player name 1",
     online: true,
     ping: 1,
     position: [0, 0, 0],
@@ -36,9 +36,9 @@ const SAMPLE_DATA: Array<IRCONPlayer | IRCONToolCupboard> = [
     connected_seconds: 1,
     country: "SE",
     health: 50.0,
-    id: "12345678901234568",
+    id: "player id 2",
     ip_address: "192.168.0.124",
-    name: "player name 2",
+    name: "sample player name 2",
     online: true,
     ping: 64,
     position: [0, 0, -15],
@@ -48,7 +48,7 @@ const SAMPLE_DATA: Array<IRCONPlayer | IRCONToolCupboard> = [
     connected_seconds: 1,
     country: "NO",
     health: 25.0,
-    id: "12345678901234569",
+    id: "sample player id 3",
     ip_address: "192.168.0.125",
     name: "player name 3",
     online: false,
@@ -60,7 +60,7 @@ const SAMPLE_DATA: Array<IRCONPlayer | IRCONToolCupboard> = [
     connected_seconds: 1,
     country: "DE",
     health: 25.0,
-    id: "12345678901234560",
+    id: "sample player id 4",
     ip_address: "192.168.0.126",
     name: "player name 4",
     online: true,
@@ -71,19 +71,19 @@ const SAMPLE_DATA: Array<IRCONPlayer | IRCONToolCupboard> = [
   {
     authed_players_count: 1,
     destroyed: false,
-    id: "1234567",
+    id: "sample tc id 1",
     position: [-30, 0, -20],
   },
   {
     authed_players_count: 10,
     destroyed: false,
-    id: "8901234",
+    id: "sample tc id 2",
     position: [30, 0, 20],
   },
   {
     authed_players_count: 1,
     destroyed: true,
-    id: "3468979",
+    id: "sample tc id 3",
     position: [30, 0, -20],
   },
 ];
@@ -99,6 +99,7 @@ const GameworldSample = (props: { image: string }): JSX.Element => {
           scale={1}
           gameworldOrigin={MAP_SAMPLE_SIZE_PX / 2}
           markerGameworldCoordinates={n.position}
+          disableTooltip
         />
       ))}
     </div>

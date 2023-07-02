@@ -17,6 +17,7 @@ interface IMarker<Data> {
   /** x, z, y */
   markerGameworldCoordinates: [number, number, number];
   data: Data;
+  disableTooltip?: boolean;
 }
 
 function positionOnMap(
@@ -74,8 +75,12 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
           zIndex,
           ...playerMarkerStyles,
         }}
-        onMouseOver={() => dispatch(selectPlayer(props.data.id))}
-        onMouseLeave={() => dispatch(unselectPlayer(props.data.id))}
+        onMouseOver={() => {
+          if (!playerIsManuallySelected) dispatch(selectPlayer(props.data.id));
+        }}
+        onMouseLeave={() => {
+          if (playerIsManuallySelected) dispatch(unselectPlayer(props.data.id));
+        }}
       />
     );
   }
@@ -113,7 +118,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
       {/* marker */}
       {icon}
       {/* tooltip */}
-      {(playerIsManuallySelected || hovered) && (
+      {(playerIsManuallySelected || hovered) && !props.disableTooltip && (
         <div
           style={{
             position: "absolute",
@@ -125,8 +130,6 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
             borderRadius: 2,
             zIndex: 3,
             color: "white",
-            // display: "flex",
-            // flexDirection: "column",
           }}
         >
           <h1 style={{ flex: 1 }}>
