@@ -6,19 +6,18 @@ import store from "../store";
 
 const upstream = new Upstream(RCON_UPSTREAM_LOGIN, RCON_UPSTREAM_WS);
 
-const initialState: IAdminUIRemoteState & IAdminUIState = {
-  lastSyncTsMs: -1,
-  connected: false,
-  players: {},
-  tcs: {},
-  healthDeltas: {},
-  healthDeltaWindowMs: 1000,
-  healthDeltaMinThreshold: 5,
-  showTcs: true,
-  playerTrails: {},
-  maxPlayerTrailLength: 200,
-  tcMaxAuthedPlayersThreshold: 1,
-};
+const initialState: IAdminUIRemoteState &
+  Pick<IAdminUIState, "connected" | "healthDeltas" | "healthDeltaWindowMs" | "playerTrails" | "maxPlayerTrailLength"> =
+  {
+    lastSyncTsMs: -1,
+    connected: false,
+    players: {},
+    tcs: {},
+    healthDeltas: {},
+    healthDeltaWindowMs: 1000,
+    playerTrails: {},
+    maxPlayerTrailLength: 200,
+  };
 
 const serverInfo = createSlice({
   name: "serverInfo",
@@ -89,4 +88,4 @@ const connectUpstream = createAsyncThunk<void, IConnectUpstreamCredentials>(
 export { connectUpstream };
 
 /** Remote server info slice of the global state. */
-export default serverInfo;
+export default serverInfo.reducer;

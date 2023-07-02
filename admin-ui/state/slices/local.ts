@@ -1,5 +1,11 @@
 /// <reference types="../../../rcon-ws-proxy/admin-ui.d.ts" />
 
+import { createSlice } from "@reduxjs/toolkit";
+
+/**
+ * Local state either completely locally generated or derived from remote state
+ * over time.
+ */
 export interface IAdminUIState {
   connected: boolean;
   /**
@@ -34,3 +40,30 @@ export interface IAdminUIState {
    */
   maxPlayerTrailLength: number;
 }
+
+const initialState: Pick<IAdminUIState, "healthDeltaMinThreshold" | "showTcs" | "tcMaxAuthedPlayersThreshold"> = {
+  healthDeltaMinThreshold: 5,
+  showTcs: true,
+  tcMaxAuthedPlayersThreshold: 1,
+};
+
+export const uiSettings = createSlice({
+  name: "counter",
+  initialState: initialState,
+  reducers: {
+    increment: (state) => {
+      state.tcMaxAuthedPlayersThreshold += 1;
+    },
+    decrement: (state) => {
+      state.tcMaxAuthedPlayersThreshold -= 1;
+    },
+    incrementByAmount: (state, action) => {
+      state.tcMaxAuthedPlayersThreshold += action.payload;
+    },
+  },
+});
+
+// Action creators are generated for each case reducer function
+export const { increment, decrement, incrementByAmount } = uiSettings.actions;
+
+export default uiSettings.reducer;
