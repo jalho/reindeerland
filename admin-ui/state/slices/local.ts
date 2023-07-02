@@ -39,31 +39,36 @@ export interface IAdminUIState {
    * How many last positions of each player to include in trail.
    */
   maxPlayerTrailLength: number;
+  /**
+   * Whether UI settings modal is open.
+   */
+  settingsModalOpen: boolean;
 }
 
-const initialState: Pick<IAdminUIState, "healthDeltaMinThreshold" | "showTcs" | "tcMaxAuthedPlayersThreshold"> = {
+const initialState: Pick<
+  IAdminUIState,
+  "healthDeltaMinThreshold" | "showTcs" | "tcMaxAuthedPlayersThreshold" | "settingsModalOpen"
+> = {
   healthDeltaMinThreshold: 5,
   showTcs: true,
   tcMaxAuthedPlayersThreshold: 1,
+  settingsModalOpen: false,
 };
 
 export const uiSettings = createSlice({
   name: "counter",
   initialState: initialState,
   reducers: {
-    increment: (state) => {
-      state.tcMaxAuthedPlayersThreshold += 1;
+    openSettingsModal: (state) => {
+      state.settingsModalOpen = !state.settingsModalOpen;
     },
-    decrement: (state) => {
-      state.tcMaxAuthedPlayersThreshold -= 1;
-    },
-    incrementByAmount: (state, action) => {
-      state.tcMaxAuthedPlayersThreshold += action.payload;
+    closeSettingsModal: (state) => {
+      state.settingsModalOpen = !state.settingsModalOpen;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = uiSettings.actions;
+export const { openSettingsModal, closeSettingsModal } = uiSettings.actions;
 
 export default uiSettings.reducer;

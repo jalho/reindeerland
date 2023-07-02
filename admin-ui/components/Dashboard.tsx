@@ -8,12 +8,16 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import SettingsIcon from "@mui/icons-material/Settings";
 import Playerlist from "./Playerlist";
 import WorldTool from "./WorldTool";
 import { MAP_UPSTREAM } from "../constants/upstreams";
 import { State } from "../state/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Login from "./Login";
+import Settings from "./Settings";
+import { openSettingsModal } from "../state/slices/local";
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -39,6 +43,8 @@ const AppBar = styled(MuiAppBar, {
 const defaultTheme = createTheme();
 
 export default function Dashboard() {
+  const dispatch = useDispatch();
+  const handleOpen = () => dispatch(openSettingsModal());
   const loggedIn = useSelector<State, boolean>((s) => {
     return s.serverInfo.connected && s.serverInfo.lastSyncTsMs > 0;
   });
@@ -59,6 +65,9 @@ export default function Dashboard() {
               <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
                 Reindeerland
               </Typography>
+              <Button onClick={handleOpen} style={{ color: "white" }}>
+                <SettingsIcon />
+              </Button>
             </Toolbar>
           </AppBar>
           <Box
@@ -74,6 +83,8 @@ export default function Dashboard() {
             <Toolbar />
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
               <Grid container spacing={3} justifyContent={"center"}>
+                <Settings />
+
                 {/* Map */}
                 <WorldTool upstream={MAP_UPSTREAM} />
 
