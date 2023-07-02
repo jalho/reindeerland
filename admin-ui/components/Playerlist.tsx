@@ -7,10 +7,10 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Title from "./Title";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { State } from "../state/store";
 import COUNTRY_FLAG_EMOJI_UNICODE_MAP from "../constants/country-flag-emojis";
-import { IAdminUIState } from "../state/slices/local";
+import { IAdminUIState, selectPlayer, unselectPlayer } from "../state/slices/local";
 
 function formatConnectedSeconds(connected_seconds: number, online: boolean) {
   if (!online) return "offline";
@@ -37,7 +37,9 @@ function sortPlayersPerConnectedTime(a: IRCONPlayer, b: IRCONPlayer): number {
 }
 
 export default function Playerlist() {
+  const dispatch = useDispatch();
   const players = useSelector<State, Array<IRCONPlayer>>((s) => Object.values(s.serverInfo.players));
+  const currentlySelected = useSelector<State>((s) => s.uiSettings.manuallySelectedPlayers) as any; // TODO: fix typing
   const { healthDeltas, healthDeltaMinThreshold } = useSelector<
     State,
     Pick<IAdminUIState, "healthDeltaWindowMs" | "healthDeltas" | "healthDeltaMinThreshold">
@@ -70,7 +72,12 @@ export default function Playerlist() {
             const [, previousHealth, currentHealth] = healthDeltas[player.id] ?? [-1, player.health, player.health];
             const healthDelta = currentHealth - previousHealth;
             return (
-              <TableRow key={player.id}>
+              <TableRow
+                key={player.id}
+                onMouseOver={() => dispatch(selectPlayer(player.id))}
+                onMouseLeave={() => dispatch(unselectPlayer(player.id))}
+                style={{ backgroundColor: currentlySelected[player.id] ? "lightgrey" : "white" }}
+              >
                 <TableCell>
                   <code>{player.name}</code>
                 </TableCell>

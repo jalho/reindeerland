@@ -74,12 +74,8 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
           zIndex,
           ...playerMarkerStyles,
         }}
-        onMouseOver={(e) => setHovered(true)}
-        onMouseLeave={(e) => setHovered(false)}
-        onClick={() => {
-          if (playerIsManuallySelected) dispatch(unselectPlayer(props.data.id));
-          else dispatch(selectPlayer(props.data.id));
-        }}
+        onMouseOver={() => dispatch(selectPlayer(props.data.id))}
+        onMouseLeave={() => dispatch(unselectPlayer(props.data.id))}
       />
     );
   }
@@ -104,8 +100,8 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
           zIndex,
           ...tcMarkerStyles,
         }}
-        onMouseOver={(e) => setHovered(true)}
-        onMouseLeave={(e) => setHovered(false)}
+        onMouseOver={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       />
     );
   }
