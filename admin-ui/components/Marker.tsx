@@ -11,6 +11,12 @@ import COUNTRY_FLAG_EMOJI_UNICODE_MAP from "../constants/country-flag-emojis";
 const PLAYER_MARKER_RADIUS = 15;
 const TC_MARKER_RADIUS = 15;
 
+const Z_INDEXES = {
+  playerMarker: 3,
+  tcMarker: 2,
+  tooltip: 1,
+} as const;
+
 interface IMarker<Data> {
   scale: number;
   gameworldOrigin: number;
@@ -64,7 +70,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
   if ("online" in props.data) {
     const playerMarkerStyles = props.data.online ? markerStyles.player.online : markerStyles.player.offline;
     label = props.data.name;
-    zIndex = 2;
+    zIndex = Z_INDEXES.playerMarker;
     icon = (
       <BoyIcon
         style={{
@@ -95,7 +101,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
       ? markerStyles.tc.highlighted
       : markerStyles.tc.online;
     label = formatTcLabel(props.data);
-    zIndex = 1;
+    zIndex = Z_INDEXES.tcMarker;
     icon = (
       <HomeIcon
         style={{
@@ -132,7 +138,7 @@ const Marker = (props: IMarker<IRCONPlayer | IRCONToolCupboard>): React.JSX.Elem
             padding: "0 1rem 0 1rem",
             opacity: 0.75,
             borderRadius: 2,
-            zIndex: 3,
+            zIndex: Z_INDEXES.tooltip,
             color: "white",
           }}
           onClick={copyTeleportposCommandToClipboard}
