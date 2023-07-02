@@ -8,8 +8,9 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { useDispatch } from "react-redux";
-import { Dispatch, connectUpstream } from "../state/store";
+import { Dispatch } from "../state/store";
 import { IConnectUpstreamCredentials } from "../state/Upstream";
+import { connectUpstream } from "../state/slices/remote";
 
 export default function Login() {
   const dispatch = useDispatch<Dispatch>();
