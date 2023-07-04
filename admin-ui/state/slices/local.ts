@@ -28,6 +28,10 @@ export interface IAdminUIState {
    */
   showTcs: "activeOnly" | "all" | "none";
   /**
+   * Whether to show players on the map.
+   */
+  showPlayers: "activeOnly" | "all" | "none";
+  /**
    * TC authorized players count threshold after which some UI functionality is
    * triggered (e.g. show marker with different color).
    */
@@ -65,6 +69,7 @@ const initialState: Pick<
   IAdminUIState,
   | "healthDeltaMinThreshold"
   | "showTcs"
+  | "showPlayers"
   | "tcMaxAuthedPlayersThreshold"
   | "settingsModalOpen"
   | "markerStyles"
@@ -72,6 +77,7 @@ const initialState: Pick<
 > = {
   healthDeltaMinThreshold: 5,
   showTcs: "activeOnly",
+  showPlayers: "activeOnly",
   tcMaxAuthedPlayersThreshold: 1,
   settingsModalOpen: false,
   manuallySelectedPlayers: {},
@@ -132,10 +138,13 @@ export const uiSettings = createSlice({
     setShowTcs: (state, action: { payload: IAdminUIState["showTcs"] }) => {
       state.showTcs = action.payload;
     },
+    setShowPlayers: (state, action: { payload: IAdminUIState["showPlayers"] }) => {
+      state.showPlayers = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { openSettingsModal, closeSettingsModal, selectPlayer, unselectPlayer, setShowTcs } = uiSettings.actions;
+export const { openSettingsModal, closeSettingsModal, selectPlayer, unselectPlayer, setShowTcs, setShowPlayers } = uiSettings.actions;
 
 export default uiSettings.reducer;

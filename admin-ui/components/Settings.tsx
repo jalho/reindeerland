@@ -1,13 +1,14 @@
 import * as React from "react";
 import Modal from "@mui/material/Modal";
 import { useDispatch, useSelector } from "react-redux";
-import { IAdminUIState, closeSettingsModal, setShowTcs } from "../state/slices/local";
+import { IAdminUIState, closeSettingsModal, setShowPlayers, setShowTcs } from "../state/slices/local";
 import { State } from "../state/store";
 import Marker from "./Marker";
 import Grid from "@mui/material/Grid";
 import Checkbox from "@mui/material/Checkbox";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import { Typography } from "@mui/material";
 
 const style = {
   position: "absolute" as "absolute",
@@ -111,23 +112,27 @@ const GameworldSample = (props: { image: string }): JSX.Element => {
 
 export default function Settings() {
   const open = useSelector<State, IAdminUIState["settingsModalOpen"]>((s) => s.uiSettings.settingsModalOpen);
-  const showTcs = useSelector<State, IAdminUIState["showTcs"]>((s) => s.uiSettings.showTcs);
+  const [showTcs, showPlayers] = useSelector<State, [IAdminUIState["showTcs"], IAdminUIState["showPlayers"]]>((s) => [
+    s.uiSettings.showTcs,
+    s.uiSettings.showPlayers,
+  ]);
   const dispatch = useDispatch();
   const handleClose = () => dispatch(closeSettingsModal());
 
   return (
     <Modal open={open} onClose={handleClose}>
       <Grid sx={style} container direction={"row"}>
-        <Grid container direction={"row"} justifyContent={"center"}>
-          {/* <GameworldSample image="map-samples/desert.png" />
+        {/* TODO: add marker color pickers */}
+        {/* <GameworldSample image="map-samples/desert.png" />
           <GameworldSample image="map-samples/grass.png" />
           <GameworldSample image="map-samples/launch-site.png" />
           <GameworldSample image="map-samples/snow.png" />
           <GameworldSample image="map-samples/water.png" /> */}
-        </Grid>
         <FormGroup>
+          {/* TODO: switch to radio */}
+          <Typography>TC controls</Typography>
           <FormControlLabel
-            label="show all TCs"
+            label="show all"
             control={
               <Checkbox
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
@@ -138,13 +143,39 @@ export default function Settings() {
             }
           />
           <FormControlLabel
-            label="show active TCs only"
+            label="show active only"
             control={
               <Checkbox
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                   dispatch(setShowTcs(event.target.checked ? "activeOnly" : "none"))
                 }
                 checked={showTcs === "activeOnly"}
+              />
+            }
+          />
+        </FormGroup>
+        <FormGroup>
+          {/* TODO: switch to radio */}
+          <Typography>Player controls</Typography>
+          <FormControlLabel
+            label="show also disconnect locations"
+            control={
+              <Checkbox
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  dispatch(setShowPlayers(event.target.checked ? "all" : "none"))
+                }
+                checked={showPlayers === "all"}
+              />
+            }
+          />
+          <FormControlLabel
+            label="show online only"
+            control={
+              <Checkbox
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  dispatch(setShowPlayers(event.target.checked ? "activeOnly" : "none"))
+                }
+                checked={showPlayers === "activeOnly"}
               />
             }
           />

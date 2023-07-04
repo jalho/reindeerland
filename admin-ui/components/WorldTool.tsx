@@ -37,26 +37,34 @@ const WorldTool = (props: IProps): React.JSX.Element => {
    */
   const mapElementSizePx = screenSize.width;
   const { protocol, host, pathname } = props.upstream;
-  const { players, allTcs, activeTcs, showTcs, playerTrails } = useSelector<
+  const { allPlayers, activePlayers, allTcs, activeTcs, showTcs, playerTrails, showPlayers } = useSelector<
     State,
-    Pick<State["serverInfo"] & State["uiSettings"], "showTcs" | "playerTrails"> & {
-      players: Array<IRCONPlayer>;
+    Pick<State["serverInfo"] & State["uiSettings"], "showTcs" | "playerTrails" | "showPlayers"> & {
+      allPlayers: Array<IRCONPlayer>;
+      activePlayers: Array<IRCONPlayer>;
       allTcs: Array<IRCONToolCupboard>;
       activeTcs: Array<IRCONToolCupboard>;
     }
-  >((state: State) => {
+  >((state) => {
     const allTcs = Object.values(state.serverInfo.tcs);
+    const allPlayers = Object.values(state.serverInfo.players);
     return {
-      players: Object.values(state.serverInfo.players),
+      allPlayers,
+      activePlayers: allPlayers.filter((player) => player.online),
       allTcs,
       activeTcs: allTcs.filter((tc) => !tc.destroyed),
       showTcs: state.uiSettings.showTcs,
       playerTrails: state.serverInfo.playerTrails,
+      showPlayers: state.uiSettings.showPlayers,
     };
   });
   const scale = mapElementSizePx / GAMEWORLD_SIZE;
 
-  const markerables: Array<IRCONPlayer | IRCONToolCupboard> = players;
+  const markerables: Array<IRCONPlayer | IRCONToolCupboard> = [];
+
+  if (showPlayers === "all") markerables.push(...allPlayers);
+  else if (showPlayers === "activeOnly") markerables.push(...activePlayers);
+
   if (showTcs === "all") markerables.push(...allTcs);
   else if (showTcs === "activeOnly") markerables.push(...activeTcs);
 
@@ -83,17 +91,15 @@ const WorldTool = (props: IProps): React.JSX.Element => {
               data={p}
             />
           ))}
-          {players
-            .filter((p) => p.online)
-            .map((p: IRCONPlayer) => (
-              <Trail
-                key={p.id}
-                gameworldOrigin={GAMEWORLD_ORIGIN}
-                scale={scale}
-                trailGameworldCoordinates={playerTrails[p.id]}
-                playerId={p.id}
-              />
-            ))}
+          {activePlayers.map((p: IRCONPlayer) => (
+            <Trail
+              key={p.id}
+              gameworldOrigin={GAMEWORLD_ORIGIN}
+              scale={scale}
+              trailGameworldCoordinates={playerTrails[p.id]}
+              playerId={p.id}
+            />
+          ))}
         </div>
       </Paper>
     </Grid>
