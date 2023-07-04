@@ -37,22 +37,28 @@ const WorldTool = (props: IProps): React.JSX.Element => {
    */
   const mapElementSizePx = screenSize.width;
   const { protocol, host, pathname } = props.upstream;
-  const { players, tcs, showTcs, playerTrails } = useSelector<
+  const { players, allTcs, activeTcs, showTcs, playerTrails } = useSelector<
     State,
     Pick<State["serverInfo"] & State["uiSettings"], "showTcs" | "playerTrails"> & {
       players: Array<IRCONPlayer>;
-      tcs: Array<IRCONToolCupboard>;
+      allTcs: Array<IRCONToolCupboard>;
+      activeTcs: Array<IRCONToolCupboard>;
     }
-  >((state: State) => ({
-    players: Object.values(state.serverInfo.players),
-    tcs: Object.values(state.serverInfo.tcs),
-    showTcs: state.uiSettings.showTcs,
-    playerTrails: state.serverInfo.playerTrails,
-  }));
+  >((state: State) => {
+    const allTcs = Object.values(state.serverInfo.tcs);
+    return {
+      players: Object.values(state.serverInfo.players),
+      allTcs,
+      activeTcs: allTcs.filter((tc) => !tc.destroyed),
+      showTcs: state.uiSettings.showTcs,
+      playerTrails: state.serverInfo.playerTrails,
+    };
+  });
   const scale = mapElementSizePx / GAMEWORLD_SIZE;
 
   const markerables: Array<IRCONPlayer | IRCONToolCupboard> = players;
-  if (showTcs) markerables.push(...tcs);
+  if (showTcs === "all") markerables.push(...allTcs);
+  else if (showTcs === "activeOnly") markerables.push(...activeTcs);
 
   return (
     <Grid item>

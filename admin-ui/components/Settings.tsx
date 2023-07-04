@@ -1,10 +1,13 @@
 import * as React from "react";
 import Modal from "@mui/material/Modal";
 import { useDispatch, useSelector } from "react-redux";
-import { IAdminUIState, closeSettingsModal } from "../state/slices/local";
+import { IAdminUIState, closeSettingsModal, setShowTcs } from "../state/slices/local";
 import { State } from "../state/store";
 import Marker from "./Marker";
 import Grid from "@mui/material/Grid";
+import Checkbox from "@mui/material/Checkbox";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 const style = {
   position: "absolute" as "absolute",
@@ -108,6 +111,7 @@ const GameworldSample = (props: { image: string }): JSX.Element => {
 
 export default function Settings() {
   const open = useSelector<State, IAdminUIState["settingsModalOpen"]>((s) => s.uiSettings.settingsModalOpen);
+  const showTcs = useSelector<State, IAdminUIState["showTcs"]>((s) => s.uiSettings.showTcs);
   const dispatch = useDispatch();
   const handleClose = () => dispatch(closeSettingsModal());
 
@@ -115,13 +119,36 @@ export default function Settings() {
     <Modal open={open} onClose={handleClose}>
       <Grid sx={style} container direction={"row"}>
         <Grid container direction={"row"} justifyContent={"center"}>
-          <GameworldSample image="map-samples/desert.png" />
+          {/* <GameworldSample image="map-samples/desert.png" />
           <GameworldSample image="map-samples/grass.png" />
           <GameworldSample image="map-samples/launch-site.png" />
           <GameworldSample image="map-samples/snow.png" />
-          <GameworldSample image="map-samples/water.png" />
+          <GameworldSample image="map-samples/water.png" /> */}
         </Grid>
-        <Grid item>TODO: settings controls here!</Grid>
+        <FormGroup>
+          <FormControlLabel
+            label="show all TCs"
+            control={
+              <Checkbox
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  dispatch(setShowTcs(event.target.checked ? "all" : "none"))
+                }
+                checked={showTcs === "all"}
+              />
+            }
+          />
+          <FormControlLabel
+            label="show active TCs only"
+            control={
+              <Checkbox
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  dispatch(setShowTcs(event.target.checked ? "activeOnly" : "none"))
+                }
+                checked={showTcs === "activeOnly"}
+              />
+            }
+          />
+        </FormGroup>
       </Grid>
     </Modal>
   );
