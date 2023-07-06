@@ -1,31 +1,19 @@
-## File Watcher
+# `logprocessor`
 
-This is a simple file watcher program implemented in Go that monitors a specified directory for file changes using the `fsnotify` package. When a new file is created or an existing file is modified within the directory, it invokes a callback function and provides information about the event.
+`logprocessor` is a Go program that monitors a directory for file modifications and triggers a callback function when changes occur. It provides the ability to react to file changes and process the added content.
 
-### How It Works
+## Design
 
-1. The program starts by checking if a directory path is provided as a command-line argument. If no path is provided, it prints a message requesting a directory path and exits.
+The program is implemented using the Go programming language and utilizes the `fsnotify` package for file system notifications. It follows a simple design that allows users to specify a directory to watch and define a callback function to handle file modifications. The program leverages the `filepath.Walk` function to traverse the directory and initialize the initial state of each file, storing the content for comparison during subsequent modifications.
 
-2. The `watchDirectory` function is responsible for setting up the file watcher and handling the events.
+When a file is modified, the program checks the file's previous state and reads its content. It then compares the previous and new content to determine the added content. If there is any added content, the program invokes the callback function, passing the `fsnotify.Event` and the added content as arguments.
 
-   - It creates a new `fsnotify.Watcher` instance to monitor file events.
+To handle scenarios where new files are added after the initial traversal, the program dynamically creates a file state when encountering new files during the `fsnotify` event handling. This ensures that modifications to newly added files are properly tracked.
 
-   - It walks through the specified directory recursively using the `filepath.Walk` function. For each file encountered, it checks if it's not a directory and calls the provided callback function with a synthetic create event.
+## Usage
 
-   - If any errors occur during directory access or event processing, appropriate error messages are printed.
+Run the program, providing the directory path to monitor as a command-line argument. For example:
 
-   - A separate goroutine is spawned to handle events received from the watcher. It continuously listens for file events and invokes the callback function accordingly. If any errors occur while watching for events, they are printed.
-
-   - Finally, the directory is added to the watcher, and the function waits for a signal on the `done` channel to keep the program running.
-
-3. In the `main` function, a callback function is defined to handle file events. It prints information about the file that was created or modified.
-
-4. The `watchDirectory` function is called with the provided directory path and the defined callback function to initiate the file monitoring.
-
-### How It's Designed
-
-The program is designed to provide a simple file watching functionality in Go. It follows a modular approach, encapsulating the file watching logic within the `watchDirectory` function and utilizing the `fsnotify` package for event handling.
-
-The `watchDirectory` function takes a directory path and a callback function as parameters. It sets up the file watcher, walks through the directory to handle existing files, and continuously listens for file events using a goroutine. It also handles errors related to the watcher and directory access.
-
-The `main` function serves as the entry point of the program. It checks for the presence of a directory path and defines the callback function to be executed when file events occur. It then calls the `watchDirectory` function with the provided directory path and callback to initiate the file monitoring.
+```
+./main /path/to/directory
+```
