@@ -16,13 +16,12 @@ func watchDirectory(directoryPath string, callback func(fsnotify.Event)) {
 	}
 	defer watcher.Close()
 
-	// Käy läpi hakemiston tiedostot rekursiivisesti
 	err = filepath.Walk(directoryPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		// Jos kyseessä ei ole hakemisto, kutsu annettua callback-funktiota
+		// call the cb with a synthetic create event
 		if !info.IsDir() {
 			callback(fsnotify.Event{
 				Name: path,
@@ -40,6 +39,10 @@ func watchDirectory(directoryPath string, callback func(fsnotify.Event)) {
 
 	done := make(chan bool)
 
+	/*
+	 * Spawn separate goroutine to handle events received from the watcher. It
+	 * continuously listens for file events and invokes the cb accordingly.
+	 */
 	go func() {
 		for {
 			select {
@@ -47,7 +50,6 @@ func watchDirectory(directoryPath string, callback func(fsnotify.Event)) {
 				if !ok {
 					return
 				}
-				// Kutsu annettua callback-funktiota kun tapahtuma havaitaan
 				callback(event)
 			case err, ok := <-watcher.Errors:
 				if !ok {
@@ -58,7 +60,7 @@ func watchDirectory(directoryPath string, callback func(fsnotify.Event)) {
 		}
 	}()
 
-	// Lisää hakemisto tarkkailijaan
+	// add the whole directory to the watcher
 	err = watcher.Add(directoryPath)
 	if err != nil {
 		fmt.Printf("Error adding directory to watcher: %s\n", err)
@@ -78,7 +80,8 @@ func main() {
 
 	directoryPath := os.Args[1]
 
-	// Callback-funktio, joka tulostaa tapahtuman tiedot
+	// cb for handling change events
+	// TODO: implement further functionality based on what the added content is
 	callback := func(event fsnotify.Event) {
 		action := "created"
 		if event.Op&fsnotify.Write == fsnotify.Write {
@@ -88,6 +91,6 @@ func main() {
 		fmt.Printf("File %s was %s\n", event.Name, action)
 	}
 
-	// Käynnistä hakemiston tarkkailu
+	// start watching
 	watchDirectory(directoryPath, callback)
 }
