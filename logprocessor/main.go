@@ -10,7 +10,7 @@ import (
 )
 
 type FileState struct {
-	Content []byte
+	Length int64
 }
 
 func watchDirectory(directoryPath string, callback func(fsnotify.Event, []byte)) {
@@ -29,14 +29,8 @@ func watchDirectory(directoryPath string, callback func(fsnotify.Event, []byte))
 		}
 
 		if !info.IsDir() {
-			content, err := ioutil.ReadFile(path)
-			if err != nil {
-				fmt.Printf("Error reading file: %s\n", err)
-				return nil
-			}
-
 			fileStates[filepath.Clean(path)] = &FileState{
-				Content: content,
+				Length: info.Size(),
 			}
 		}
 
@@ -59,9 +53,9 @@ func watchDirectory(directoryPath string, callback func(fsnotify.Event, []byte))
 				}
 
 				if event.Op&fsnotify.Write == fsnotify.Write {
-					content, err := ioutil.ReadFile(event.Name)
+					info, err := os.Stat(event.Name)
 					if err != nil {
-						fmt.Printf("Error reading file: %s\n", err)
+						fmt.Printf("Error getting file info: %s\n", err)
 						continue
 					}
 
@@ -72,13 +66,21 @@ func watchDirectory(directoryPath string, callback func(fsnotify.Event, []byte))
 						fileStates[filepath.Clean(event.Name)] = state
 					}
 
-					additiveContent := getAdditiveContent(state.Content, content)
-					if len(additiveContent) > 0 {
-						callback(event, additiveContent)
-					}
+					if info.Size() > state.Length {
+						content, err := ioutil.ReadFile(event.Name)
+						if err != nil {
+							fmt.Printf("Error reading file: %s\n", err)
+							continue
+						}
 
-					// Update the file state
-					state.Content = content
+						additiveContent := content[state.Length:]
+						if len(additiveContent) > 0 {
+							callback(event, additiveContent)
+						}
+
+						// Update the file state
+						state.Length = info.Size()
+					}
 				}
 
 			case err, ok := <-watcher.Errors:
@@ -99,19 +101,6 @@ func watchDirectory(directoryPath string, callback func(fsnotify.Event, []byte))
 	fmt.Printf("Watching directory: %s\n", directoryPath)
 
 	<-done
-}
-
-func getAdditiveContent(previousContent, newContent []byte) []byte {
-	var additiveContent []byte
-
-	newContentLength := len(newContent)
-	previousContentLength := len(previousContent)
-
-	if newContentLength > previousContentLength {
-		additiveContent = newContent[previousContentLength:]
-	}
-
-	return additiveContent
 }
 
 func main() {
