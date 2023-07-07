@@ -45,8 +45,8 @@ const defaultTheme = createTheme();
 export default function Dashboard() {
   const dispatch = useDispatch();
   const handleOpen = () => dispatch(openSettingsModal());
-  const loggedIn = useSelector<State, boolean>((s) => {
-    return s.serverInfo.connected && s.serverInfo.lastSyncTsMs > 0;
+  const [loggedIn, lastSyncTsMs] = useSelector<State, [boolean, number]>((s) => {
+    return [s.serverInfo.connected && s.serverInfo.lastSyncTsMs > 0, s.serverInfo.lastSyncTsMs];
   });
 
   return (
@@ -63,7 +63,7 @@ export default function Dashboard() {
               }}
             >
               <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
-                Reindeerland
+                Last synced {new Date(lastSyncTsMs).toString()}
               </Typography>
               <Button onClick={handleOpen} style={{ color: "white" }}>
                 <SettingsIcon />
