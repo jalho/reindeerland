@@ -18,9 +18,10 @@ RCON WebSocket Proxy.
 - Upstream State Segment Synchronizer (USSS)
 
   - multiple instances
+  - each instance connects to RDS using a WebSocket
   - each instance is in charge of synchronizing a piece of RDS' state
   - each instance has independent configuration for
-    - sync frequency
+    - sync frequency in range 100-1000 ms
     - state persistence and storage medium
     - upstream reconnect attempt policy
   - each instance maintains connection to the RCON upstream
@@ -34,9 +35,10 @@ RCON WebSocket Proxy.
 - Downstream State Synchronizer (DSS)
 
   - maintains connections to multiple connected downstreams (i.e. web clients)
+    - each downstream connects to DSS using a WebSocket
     - detects when a downstream disconnects and adjusts accordingly
   - get sendable state from ISR and sends it to all connected clients
-    - sync frequency is configurable
+    - sync frequency is configurable in range 100-1000 ms
 
 - WebSocket Gateway (WSG)
   - evaluates auth and handles WebSocket connection upgrade based on that
