@@ -1,17 +1,11 @@
+use log::{debug, info};
 use std::sync::mpsc;
 use std::thread;
 use std::time::Duration;
 
-struct USSSStaticOpts {
-    upstream_address: &'static str,
-    rcon_password: &'static str,
-}
-const USSS_STATIC_OPTS: USSSStaticOpts = USSSStaticOpts {
-    upstream_address: "ws://localhost:8081",
-    rcon_password: "TODO",
-};
-fn get_usss_static_opts() -> USSSStaticOpts {
-    return USSS_STATIC_OPTS;
+pub struct USSSStaticOpts {
+    pub upstream_address: &'static str,
+    pub rcon_password: &'static str,
 }
 
 pub struct USSSInstanceOpts {
@@ -19,16 +13,23 @@ pub struct USSSInstanceOpts {
     pub upstream_state_sync_interval_ms: u64,
     pub tx: mpsc::Sender<String>,
 }
-pub fn start(opts: USSSInstanceOpts) -> thread::JoinHandle<()> {
-    let h = thread::spawn(move || work(opts));
+pub fn start(
+    instance_opts: USSSInstanceOpts,
+    static_opts: USSSStaticOpts,
+) -> thread::JoinHandle<()> {
+    info!(
+        "Starting '{}' in a new thread, sync interval: {} ms",
+        instance_opts.upstream_command, instance_opts.upstream_state_sync_interval_ms
+    );
+    debug!(
+        "upstream_address: '{}', rcon_password: '{}'",
+        static_opts.upstream_address, static_opts.rcon_password
+    );
+
+    let h = thread::spawn(move || work(instance_opts, static_opts));
     return h;
 }
-fn work(opts: USSSInstanceOpts) {
-    let usss_static_opts: USSSStaticOpts = get_usss_static_opts();
-    println!(
-        "TODO: send cmd '{}' to upstream '{}' using password '{}'",
-        opts.upstream_command, usss_static_opts.upstream_address, usss_static_opts.rcon_password
-    );
+fn work(opts: USSSInstanceOpts, _static_opts: USSSStaticOpts) {
     // TODO: get data from upstream
     // TODO: parse data and send it via tx
     let vals = vec![
