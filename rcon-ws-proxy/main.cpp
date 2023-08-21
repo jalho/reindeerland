@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -49,14 +50,9 @@ int main()
 
         std::cout << "Client connected" << std::endl;
 
-        // Echo data received from the client
-        char buffer[1024];
-        ssize_t bytesRead;
-
-        while ((bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0)) > 0)
-        {
-            send(clientSocket, buffer, bytesRead, 0);
-        }
+        // Handle the HTTP request (minimal response)
+        const char *response = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\n\r\nHello, World!";
+        send(clientSocket, response, strlen(response), 0);
 
         std::cout << "Client disconnected" << std::endl;
 
