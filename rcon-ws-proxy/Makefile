@@ -1,2 +1,2 @@
-a.out: main.cpp
-	clang++ main.cpp util/str.cpp util/str.hpp
+a.out: src/main.cpp
+	clang++ src/main.cpp src/util/str.cpp src/util/str.hpp
