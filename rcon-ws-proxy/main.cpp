@@ -51,8 +51,8 @@ int main()
         std::cout << "Client connected" << std::endl;
 
         // Handle the HTTP request (minimal response)
-        const char *response = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\n\r\nHello, World!";
-        send(clientSocket, response, strlen(response), 0);
+        std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\n\r\nHello, World!";
+        send(clientSocket, response.c_str(), response.length(), 0);
 
         std::cout << "Client disconnected" << std::endl;
 
