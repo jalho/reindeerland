@@ -6,18 +6,25 @@
 
 #include "util/str.hpp"
 
-int main()
+class Server
 {
+public:
+    int start();
+    Server() {}
+private:
     int server_socket, client_socket;
     struct sockaddr_in server_addr, client_addr;
     socklen_t addr_size = sizeof(struct sockaddr_in);
+};
+int Server::start() {
+    std::cout << "Starting server..." << std::endl;
 
     // Create a socket
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (server_socket == -1)
     {
         perror("Error creating socket");
-        return 1;
+        return -1;
     }
 
     // Bind the socket to an IP address and port
@@ -28,14 +35,14 @@ int main()
     if (bind(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
     {
         perror("Error binding socket");
-        return 1;
+        return -1;
     }
 
     // Listen for incoming connections
     if (listen(server_socket, 5) == -1)
     {
         perror("Error listening");
-        return 1;
+        return -1;
     }
 
     std::cout << "Server is listening on port 8080..." << std::endl;
@@ -64,9 +71,12 @@ int main()
         // Close the client socket
         close(client_socket);
     }
+}
 
-    // Close the server socket
-    close(server_socket);
-
+int main()
+{
+    Server server = Server();
+    server.start();
+    // TODO: implement server.close() that closes the server socket!
     return 0;
 }
