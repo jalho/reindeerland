@@ -76,8 +76,11 @@ int main()
         std::cout << "Client connected" << std::endl;
 
         // Handle the HTTP request (minimal response)
-        std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 13\r\n\r\nHello, World!";
-        send(client_socket, response.c_str(), response.length(), 0);
+        std::string response_content = "foo bar";
+        std::string response_template = "HTTP/1.1 200 OK\r\nContent-Length: [content_len]\r\n\r\n[content]";
+        std::pair<std::string, int> response = subst_get_len(response_template, "[content]", response_content);
+        response = subst_get_len(response.first, "[content_len]", std::to_string(response_content.length()));
+        send(client_socket, response.first.c_str(), response.second, 0);
 
         std::cout << "Client disconnected" << std::endl;
 
