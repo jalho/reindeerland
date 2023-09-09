@@ -35,6 +35,7 @@ int main()
 		int client_fd = accept(server_fd, &client_saddr, &client_saddr_sz);
 		if (client_fd < 0)
 			return RWP_SERVER_CANNOT_ACCEPT;
+		// TODO: multithread
 		rwp_handle_connection(&client_fd);
 	}
 	return 0;
