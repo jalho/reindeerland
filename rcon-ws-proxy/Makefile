@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -g
-SOURCES = rcon-ws-proxy.h main.c
+SOURCES = main.c gateway.h gateway.c
 OBJECTS = $(SOURCES:.c=.o)
 EXECUTABLE = rcon-ws-proxy
 
