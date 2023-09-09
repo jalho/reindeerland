@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include <string.h>
 
-int rwp_handle_connection(int *client_fd);
+/**
+ * Handle an accepted client connection.
+ */
+void rwp_handle_connection(int *client_fd);
 
 #endif

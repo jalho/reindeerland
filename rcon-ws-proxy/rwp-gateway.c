@@ -1,7 +1,7 @@
 #include "rwp-gateway.h"
 #include "rwp-log.h"
 
-int rwp_handle_connection(int *client_fd)
+void rwp_handle_connection(int *client_fd)
 {
 	rwp_log("Handling a connection\n");
 	rwp_log("Writing something to the connected client socket...\n");
@@ -16,5 +16,4 @@ int rwp_handle_connection(int *client_fd)
 		rwp_log("Failed to close!\n");
 	else
 		rwp_log("Closed successfully!\n");
-	return 0;
 }
