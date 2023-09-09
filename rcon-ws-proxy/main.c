@@ -5,6 +5,7 @@
 #include "rwp-errors.h"
 #include "gateway.h"
 #include "server.h"
+#include "rwp-log.h"
 
 /**
  * TCP server.
@@ -30,7 +31,7 @@ int main()
 	socklen_t client_saddr_sz = sizeof client_saddr;
 	while (1)
 	{
-		printf("Waiting for new connections...\n");
+		rwp_log("Waiting for new connections...\n");
 		int client_fd = accept(server_fd, &client_saddr, &client_saddr_sz);
 		if (client_fd < 0)
 			return RWP_SERVER_CANNOT_ACCEPT;

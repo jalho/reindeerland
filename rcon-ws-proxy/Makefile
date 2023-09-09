@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g
-SOURCES = main.c server.c gateway.c
+SOURCES = main.c server.c gateway.c rwp-log.c
 OBJECTS = $(SOURCES:.c=.o)
 EXECUTABLE = rcon-ws-proxy
 
