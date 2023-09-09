@@ -3,8 +3,8 @@
 #include <stdio.h>
 
 #include "rwp-errors.h"
-#include "gateway.h"
-#include "server.h"
+#include "rwp-gateway.h"
+#include "rwp-server.h"
 #include "rwp-log.h"
 
 /**

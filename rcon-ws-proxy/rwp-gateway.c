@@ -1,4 +1,4 @@
-#include "gateway.h"
+#include "rwp-gateway.h"
 #include "rwp-log.h"
 
 int rwp_handle_connection(int *client_fd)

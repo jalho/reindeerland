@@ -1,4 +1,4 @@
-#include "server.h"
+#include "rwp-server.h"
 
 int rwp_server_init(int *server_socket, struct sockaddr_in *server_address)
 {
@@ -13,5 +13,6 @@ int rwp_server_init(int *server_socket, struct sockaddr_in *server_address)
 
 int rwp_server_shutdown()
 {
-	return -1; // TODO: close the server socket
+	return -1; // TODO: do a graceful shutdown; close server socket and whatnot
+			   // N.B.: requires adding interrupt signal handling to main...
 }
