@@ -1,11 +1,11 @@
-#include <sys/socket.h>
 #include <netinet/in.h>
 #include <stdio.h>
+#include <sys/socket.h>
 
 #include "rwp-errors.h"
 #include "rwp-gateway.h"
-#include "rwp-server.h"
 #include "rwp-log.h"
+#include "rwp-server.h"
 
 /**
  * TCP server.
