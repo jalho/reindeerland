@@ -1,5 +1,5 @@
-#ifndef RWP_SERVER_H
-#define RWP_SERVER_H
+#ifndef RWP_GATEWAY_H
+#define RWP_GATEWAY_H
 
 #include <stdio.h>
 #include <unistd.h>

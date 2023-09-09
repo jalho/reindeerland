@@ -2,6 +2,7 @@
 #include <netinet/in.h>
 #include <stdio.h>
 #include "gateway.h"
+#include "server.h"
 
 /**
  * TCP server.
@@ -18,20 +19,17 @@ int main()
 		.sin_addr.s_addr = INADDR_ANY,
 	};
 
-	if (bind(server_fd, (struct sockaddr *)&server_saddr, sizeof(server_saddr)) < 0)
+	if (rwp_server_init(&server_fd, &server_saddr) < 0)
 		return 2;
-
-	if (listen(server_fd, 10) < 0)
-		return 3;
 
 	struct sockaddr client_saddr = {};
 	socklen_t client_saddr_sz = sizeof client_saddr;
 	while (1)
 	{
-		printf("Listening for new connections...\n");
+		printf("Waiting for new connections...\n");
 		int client_fd = accept(server_fd, &client_saddr, &client_saddr_sz);
 		if (client_fd < 0)
-			return 4;
+			return 3;
 		rwp_handle_connection(&client_fd);
 	}
 	return 0;
