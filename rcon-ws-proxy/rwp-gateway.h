@@ -8,6 +8,6 @@
 /**
  * Handle an accepted client connection.
  */
-void rwp_handle_connection(int *client_fd);
+void* rwp_handle_connection(void *client_fd);
 
 #endif

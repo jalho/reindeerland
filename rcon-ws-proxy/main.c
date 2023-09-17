@@ -1,15 +1,13 @@
 #include <netinet/in.h>
 #include <stdio.h>
 #include <sys/socket.h>
+#include <pthread.h>
 
 #include "rwp-errors.h"
 #include "rwp-gateway.h"
 #include "rwp-log.h"
 #include "rwp-server.h"
 
-/**
- * TCP server.
- */
 int main()
 {
 	int server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -35,8 +33,10 @@ int main()
 		int client_fd = accept(server_fd, &client_saddr, &client_saddr_sz);
 		if (client_fd < 0)
 			return RWP_SERVER_CANNOT_ACCEPT;
-		// TODO: multithread
-		rwp_handle_connection(&client_fd);
+		pthread_t handler_id;
+		int status = pthread_create(&handler_id, NULL, &rwp_handle_connection, &client_fd);
+		if (status == 0) rwp_log("Handling in a separate thread!\n");
+		else rwp_log("Failed to handle concurrently!\n");
 	}
 	return 0;
 }
