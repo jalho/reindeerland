@@ -1,4 +1,7 @@
+# C build
 *.o
 rcon-ws-proxy
-tags
 
+# other development artifacts
+tags
+*.vscode
