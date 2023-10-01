@@ -28,3 +28,18 @@ TODO!
 ## conventions
 
 - The function name prefix `rwp_` stands for `rcon-ws-proxy`.
+
+## spec
+
+As of 1 Oct 2023 I've been developing this with the following toolchain and environment:
+
+```
+$ gcc --version
+gcc (GCC) 13.2.1 20230801
+
+$ ldd --version | grep libc
+ldd (GNU libc) 2.38
+
+$ uname -r
+6.4.12-arch1-1
+```
