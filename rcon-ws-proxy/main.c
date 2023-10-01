@@ -72,7 +72,7 @@ int main()
 		if (signal_info_buf.ssi_signo == SIGINT)
 		{
 			rwp_log("Got SIGINT\n");
-			// TODO: gracefully shut down the server and anything else set up!
+			rwp_server_shutdown();
 			return RWP_ERR_TODO;
 		}
 

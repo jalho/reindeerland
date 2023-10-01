@@ -12,9 +12,9 @@ int rwp_server_init(int *server_socket, struct sockaddr_in *server_address)
 	return 0;
 }
 
-void* rwp_server_shutdown()
+int rwp_server_shutdown()
 {
 	rwp_log("Shutting down the server...\n");
 	// TODO: do a graceful shutdown; close server socket and whatnot
-	return (void*)NULL;
+	return RWP_ERR_TODO;
 }
