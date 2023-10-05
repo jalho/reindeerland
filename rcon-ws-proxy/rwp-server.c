@@ -14,7 +14,10 @@ int rwp_server_init(int *server_socket, struct sockaddr_in *server_address)
 int rwp_server_shutdown()
 {
 	rwp_log("Shutting down the server...\n");
-	// TODO: do a graceful shutdown; close server socket and whatnot
+	// TODO: do a graceful shutdown;
+	//	- close the server socket
+	//	- close any client sockets
+	//  - close any connected upstream stores (not event implemented yet!)
 	return RWP_ERR_TODO;
 }
 
