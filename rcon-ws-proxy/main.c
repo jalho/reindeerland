@@ -17,13 +17,13 @@ int main()
 
 	// block the signals so they aren't handled the default way
 	if (sigprocmask(SIG_BLOCK, &signal_sink_mask, NULL) == -1)
-		return RWP_ERR_TODO;
+		return RWP_PROC_CANNOT_BLOCK_SIGNAL;
 
 	// create the "signal sink"
 	int signal_sink_fd;
 	signal_sink_fd = signalfd(-1, &signal_sink_mask, 0);
 	if (signal_sink_fd == -1)
-		return RWP_ERR_TODO;
+		return RWP_PROC_SIGNAL_SINK_INIT_FAIL;
 
 	///
 	/// INIT NETWORKING STUFF
@@ -59,13 +59,12 @@ int main()
 	{
 		signal_info_read_bytes = read(signal_sink_fd, &signal_info_buf, sizeof(signal_info_buf));
 		if (signal_info_read_bytes != sizeof(signal_info_buf))
-			return RWP_ERR_TODO;
+			return RWP_PROC_SIGNAL_SINK_READ_FAIL;
 
 		if (signal_info_buf.ssi_signo == SIGINT)
 		{
 			rwp_log("Got SIGINT\n");
 			rwp_server_shutdown();
-			return RWP_ERR_TODO;
 		}
 	}
 	return 0;
