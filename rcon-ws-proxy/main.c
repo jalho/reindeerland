@@ -65,7 +65,7 @@ int main()
 		{
 			rwp_log("Got SIGINT\n");
 			rwp_server_shutdown();
+			return 0;
 		}
 	}
-	return 0;
 }

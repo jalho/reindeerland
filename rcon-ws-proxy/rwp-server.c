@@ -18,7 +18,7 @@ int rwp_server_shutdown()
 	//	- close the server socket
 	//	- close any client sockets
 	//  - close any connected upstream stores (not event implemented yet!)
-	return RWP_ERR_TODO;
+	return 0;
 }
 
 void *rwp_server_accept(void *server_socket)
