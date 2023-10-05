@@ -27,9 +27,6 @@ void *rwp_server_accept(void *server_socket)
 		int client_fd = accept(*(int *)server_socket, &client_saddr, &client_saddr_sz);
 		pthread_t handler_id;
 		int status = pthread_create(&handler_id, NULL, &rwp_handle_connection, &client_fd);
-		if (status == 0)
-			rwp_log("Handling in a separate thread!\n");
-		else
-			rwp_log("Failed to handle concurrently!\n");
+		if (status != 0) rwp_log("Failed to handle network connection concurrently!\n");
 	}
 }
