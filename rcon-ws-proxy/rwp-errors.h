@@ -25,10 +25,31 @@
  */
 #define RWP_PROC_SIGNAL_SINK_READ_FAIL 3
 
+/**
+ * Related to:  Networking
+ */
 #define RWP_SERVER_SOCK_CANNOT_CREATE 4
+
+/**
+ * Related to:  Networking
+ */
 #define RWP_SERVER_CANNOT_BIND 5
+
+/**
+ * Related to:  Networking
+ */
 #define RWP_SERVER_CANNOT_LISTEN 6
+
+/**
+ * Related to:  Networking
+ */
 #define RWP_SERVER_CANNOT_ACCEPT 7
-#define RWP_ERR_TODO 99 // TODO: remove this, and define properly instead!
+
+/**
+ * Related to:  Being lazy
+ *
+ * Meaning:     There is coding to do.
+ */
+#define RWP_ERR_TODO 99
 
 #endif
