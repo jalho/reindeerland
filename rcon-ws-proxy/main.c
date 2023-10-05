@@ -52,19 +52,18 @@ int main()
 	{
 		return server_status;
 	}
+	pthread_t handler_id;
+	int status = pthread_create(&handler_id, NULL, &rwp_server_accept, &server_fd);
+	if (status == 0)
+		rwp_log("Waiting for new connections...\n");
+	else
+		rwp_log("Failed to handle concurrently!\n");
 
-	///
-	/// MAIN LOOP
-	///
-
+	// program lifecycle management; continuously read captured signal info from the "signal sink"
 	struct signalfd_siginfo signal_info_buf;
 	ssize_t signal_info_read_bytes;
-	struct sockaddr client_saddr = {};
-	socklen_t client_saddr_sz = sizeof client_saddr;
 	while (1)
 	{
-		// continuously read captured signal info from the "signal sink"
-		// TODO: move either network request accepting or process signal sink reading to a separate thread because otherwise they block each other
 		signal_info_read_bytes = read(signal_sink_fd, &signal_info_buf, sizeof(signal_info_buf));
 		if (signal_info_read_bytes != sizeof(signal_info_buf))
 			return RWP_ERR_TODO;
@@ -75,15 +74,6 @@ int main()
 			rwp_server_shutdown();
 			return RWP_ERR_TODO;
 		}
-
-		rwp_log("Waiting for new connections...\n");
-		int client_fd = accept(server_fd, &client_saddr, &client_saddr_sz);
-		if (client_fd < 0)
-			return RWP_SERVER_CANNOT_ACCEPT;
-		pthread_t handler_id;
-		int status = pthread_create(&handler_id, NULL, &rwp_handle_connection, &client_fd);
-		if (status == 0) rwp_log("Handling in a separate thread!\n");
-		else rwp_log("Failed to handle concurrently!\n");
 	}
 	return 0;
 }
