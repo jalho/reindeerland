@@ -50,7 +50,7 @@ int main()
 	if (status == 0)
 		rwp_log("Waiting for new connections...\n");
 	else
-		rwp_log("Failed to handle concurrently!\n");
+		return RWP_SERVER_CANNOT_DETACH_ACCEPTOR;
 
 	// program lifecycle management; continuously read captured signal info from the "signal sink"
 	struct signalfd_siginfo signal_info_buf;

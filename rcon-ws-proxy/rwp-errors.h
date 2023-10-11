@@ -46,6 +46,14 @@
 #define RWP_SERVER_CANNOT_ACCEPT 7
 
 /**
+ * Related to:  Server startup
+ *
+ * Meaning:     Server could not spawn a dedicated thread for accepting
+ *              network connections.
+ */
+#define RWP_SERVER_CANNOT_DETACH_ACCEPTOR 8
+
+/**
  * Related to:  Being lazy
  *
  * Meaning:     There is coding to do.
