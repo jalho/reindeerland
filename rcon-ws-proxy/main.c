@@ -66,8 +66,7 @@ int main()
 		if (signal_info_buf.ssi_signo == SIGINT)
 		{
 			rwp_log("Got SIGINT\n");
-			rwp_server_shutdown(&server);
-			return 0;
+			return rwp_server_shutdown(&server);
 		}
 	}
 }

@@ -22,8 +22,8 @@ void* rwp_handle_connection(void *client_fd)
 		rwp_log("Wrote successfully!\n");
 	rwp_log("Closing the client socket...\n");
 	if (close(*(int*)client_fd) < 0)
-		rwp_log("Failed to close!\n");
+		rwp_log("Failed to close client socket!\n");
 	else
-		rwp_log("Closed successfully!\n");
+		rwp_log("Client socket closed successfully!\n");
 	return (void*)NULL;
 }

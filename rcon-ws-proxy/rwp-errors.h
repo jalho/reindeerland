@@ -54,6 +54,13 @@
 #define RWP_SERVER_CANNOT_DETACH_ACCEPTOR 8
 
 /**
+ * Related to:  Server shutdown
+ *
+ * Meaning:     Could not close the server socket.
+ */
+#define RWP_SERVER_CANNOT_CLOSE 9
+
+/**
  * Related to:  Being lazy
  *
  * Meaning:     There is coding to do.
