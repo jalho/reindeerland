@@ -30,9 +30,11 @@ int main()
 	///
 
 	// create a server socket
+	RWP_Server server = {0};
 	int server_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (server_fd < 0)
 		return RWP_SERVER_SOCK_CANNOT_CREATE;
+	else server.server_socket = server_fd;
 
 	// define server address and start it
 	struct sockaddr_in server_saddr = {
@@ -41,12 +43,12 @@ int main()
 		.sin_addr.s_addr = INADDR_ANY,
 	};
 	int server_status = -1;
-	if ((server_status = rwp_server_init(&server_fd, &server_saddr)) != 0)
+	if ((server_status = rwp_server_init(&server, &server_saddr)) != 0)
 	{
 		return server_status;
 	}
 	pthread_t handler_id;
-	int status = pthread_create(&handler_id, NULL, &rwp_server_accept, &server_fd);
+	int status = pthread_create(&handler_id, NULL, &rwp_server_accept, &server);
 	if (status == 0)
 		rwp_log("Waiting for new connections...\n");
 	else
@@ -64,7 +66,7 @@ int main()
 		if (signal_info_buf.ssi_signo == SIGINT)
 		{
 			rwp_log("Got SIGINT\n");
-			rwp_server_shutdown();
+			rwp_server_shutdown(&server);
 			return 0;
 		}
 	}

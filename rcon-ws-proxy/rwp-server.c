@@ -1,17 +1,17 @@
 #include "rwp-server.h"
 
-int rwp_server_init(int *server_socket, struct sockaddr_in *server_address)
+int rwp_server_init(RWP_Server *server, struct sockaddr_in *server_address)
 {
-	if (bind(*server_socket, (const struct sockaddr *)server_address, sizeof(*server_address)) < 0)
+	if (bind(server->server_socket, (const struct sockaddr *)server_address, sizeof(*server_address)) < 0)
 		return RWP_SERVER_CANNOT_BIND;
 
-	if (listen(*server_socket, 10) < 0)
+	if (listen(server->server_socket, 10) < 0)
 		return RWP_SERVER_CANNOT_LISTEN;
 
 	return 0;
 }
 
-int rwp_server_shutdown()
+int rwp_server_shutdown(RWP_Server *server)
 {
 	rwp_log("Shutting down the server...\n");
 	// TODO: do a graceful shutdown;
@@ -21,13 +21,13 @@ int rwp_server_shutdown()
 	return 0;
 }
 
-void *rwp_server_accept(void *server_socket)
+void *rwp_server_accept(void *server)
 {
 	while (1)
 	{
 		struct sockaddr client_saddr = {};
 		socklen_t client_saddr_sz = sizeof client_saddr;
-		int client_fd = accept(*(int *)server_socket, &client_saddr, &client_saddr_sz);
+		int client_fd = accept(((RWP_Server *)server)->server_socket, &client_saddr, &client_saddr_sz);
 		pthread_t handler_id;
 		int status = pthread_create(&handler_id, NULL, &rwp_handle_connection, &client_fd);
 		if (status != 0) rwp_log("Failed to handle network connection concurrently!\n");
