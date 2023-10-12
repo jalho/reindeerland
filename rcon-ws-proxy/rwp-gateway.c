@@ -2,6 +2,7 @@
 #include "rwp-log.h"
 
 // TODO: Return when HTTP request is considered ended? Now waiting until FIN, i.e. never returning before client closes the connection...
+// TODO: declare this function somewhere... maybe make http module?
 int rwp_read_http_request(int *client_fd, RWP_InboundRequest *request)
 {
 	int read_bytes = -1;
@@ -40,7 +41,7 @@ void *rwp_handle_connection(void *client_fd)
 		rwp_log(inbound_request.data_buf);
 	}
 	else
-		rwp_log("Cannot log inbound request pretty -- to space for linebreak and null termination\n");
+		rwp_log("Cannot log inbound request pretty -- no space for linebreak and null termination\n");
 
 	// TODO: evaluate auth
 
