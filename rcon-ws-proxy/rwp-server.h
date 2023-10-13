@@ -3,6 +3,7 @@
 
 #include <netinet/in.h>
 #include <pthread.h>
+#include <unistd.h>
 
 #include "rwp-errors.h"
 #include "rwp-gateway.h"
