@@ -4,6 +4,15 @@
 #include <stdio.h>
 #include <string.h>
 
+typedef struct {
+    int client_socket_fd;
+    /**
+     * Whether the (TCP) connection is on, i.e. it has been established and has
+     * not yet been closed.
+     */
+    int connection_on;
+} RWP_ConnectionInitiatingClient;
+
 /**
  * Handle an accepted client connection.
  */

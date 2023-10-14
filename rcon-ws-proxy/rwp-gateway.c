@@ -5,10 +5,15 @@
 void *rwp_handle_connection(void *client_fd)
 {
 	rwp_log("Handling a connection\n");
+
+	RWP_ConnectionInitiatingClient client = {0};
+	client.client_socket_fd = *(int*)client_fd;
+	client.connection_on = 1;
+
 	RWP_InboundRequest inbound_request = {0};
 	inbound_request.data_buf_size = INBOUND_REQUEST_DATA_BUF_SIZE;
 
-	int read_bytes_total = rwp_read_http_request(client_fd, &inbound_request);
+	int read_bytes_total = rwp_read_http_request(&client, &inbound_request);
 	int last_read_byte_idx = 0;
 	if (read_bytes_total > inbound_request.data_buf_size)
 	{

@@ -3,6 +3,9 @@
 
 #include <unistd.h>
 
+#include "rwp-log.h"
+#include "rwp-gateway.h"
+
 #define INBOUND_REQUEST_DATA_BUF_SIZE 1024
 
 /**
@@ -18,6 +21,6 @@ typedef struct {
  * Read an inbound (HTTP) request from given `client_fd` into given
  * `request` struct.
  */
-int rwp_read_http_request(int *client_fd, RWP_InboundRequest *request);
+int rwp_read_http_request(RWP_ConnectionInitiatingClient *client, RWP_InboundRequest *request);
 
 #endif
