@@ -44,6 +44,7 @@ void *rwp_handle_connection(void *client_fd)
 	// 	 (should not rely on explicit ending handshake)
 	// 	 (maybe require some aliveness pulse?)
 
+	// TODO: use the client type established above here too
 	rwp_log("Writing something to the connected client socket...\n");
 	const char *response = "HTTP/1.1 204 No Content\r\n\r\n";
 	int written = write(*(int *)client_fd, response, strlen(response));
