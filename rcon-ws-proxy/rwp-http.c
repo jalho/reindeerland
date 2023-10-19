@@ -1,4 +1,5 @@
 #include "rwp-http.h"
+#include "rwp-streams.h"
 
 // TODO: Return when HTTP request is considered ended? Now waiting until FIN, i.e. never returning before client closes the connection...
 int rwp_read_http_request(RWP_ConnectionInitiatingClient *client, RWP_InboundRequest *request)
@@ -23,12 +24,7 @@ int rwp_read_http_request(RWP_ConnectionInitiatingClient *client, RWP_InboundReq
 	 */
 	int read_buffer_offset = 0;
 
-	struct
-	{
-		char seq[4];
-		int offset;
-		int seq_size;
-	} seq_http_headers_end = {.offset = 0, .seq = "\r\n\r\n", .seq_size = 4};
+	RWP_DetectableCharacterSequence seq_http_headers_end = {.offset = 0, .seq = "\r\n\r\n", .seq_size = 4};
 
 	/*
 		When `client_fd` is a file descriptor of a TCP socket, `read` considers
@@ -56,8 +52,7 @@ int rwp_read_http_request(RWP_ConnectionInitiatingClient *client, RWP_InboundReq
 				scanning from there)
 			*/
 			c = request->data_buf[read_buffer_offset - read_bytes + i];
-			if (seq_http_headers_end.seq[seq_http_headers_end.offset] == c) seq_http_headers_end.offset++;
-			if (seq_http_headers_end.seq_size == seq_http_headers_end.offset) {
+			if (rwp_sequence_match(c, &seq_http_headers_end)) {
 				rwp_log("HTTP headers fully received!\n");
 				goto done_reading_headers;
 			}
@@ -66,7 +61,3 @@ int rwp_read_http_request(RWP_ConnectionInitiatingClient *client, RWP_InboundReq
 	done_reading_headers:
 	return read_bytes_total;
 }
-
-// TODO: add a "streams" module with a byte sequence detector function
-//	- useful for recognizing HTTP request's headers end (`\r\n\r\n`),
-//	  HTTP methods etc...
