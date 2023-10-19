@@ -47,10 +47,13 @@ int rwp_read_http_request(RWP_ConnectionInitiatingClient *client, RWP_InboundReq
 		for (int i = 0; i < read_bytes; i++) {
 			/*
 				TODO: Check this logic! Things to consider:
-				- read_bytes may be bigger than capacity or size of
-				  request->data_buf -- getting scannable char shall not segfault!
-				- read may occur multiple times -- sequence scan must move read
-				  buffer cursor smoothly!
+				- How does read work? It seems read_bytes cannot be bigger than
+				  capacity or size of request->data_buf, which is nice. But how
+				  is "\r\n\r\n" sequence detected at the end of a request that
+				  is 128 bytes long when the read buffer only has capacity of 64?
+				  Does read start to overwrite its target buffer from the start
+				  each time it receives data, or how is the sequence ever written
+				  to the buffer?
 			*/
 			c = request->data_buf[read_buffer_offset - read_bytes + i];
 			if (rwp_sequence_match(c, &seq_http_headers_end)) {
