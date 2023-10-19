@@ -23,6 +23,13 @@ int rwp_read_http_request(RWP_ConnectionInitiatingClient *client, RWP_InboundReq
 	 */
 	int read_buffer_offset = 0;
 
+	struct
+	{
+		char seq[4];
+		int offset;
+		int seq_size;
+	} seq_http_headers_end = {.offset = 0, .seq = "\r\n\r\n", .seq_size = 4};
+
 	/*
 		When `client_fd` is a file descriptor of a TCP socket, `read` considers
 		end of file reached when the client has sent a packet with FIN flag,
@@ -39,9 +46,24 @@ int rwp_read_http_request(RWP_ConnectionInitiatingClient *client, RWP_InboundReq
 
 		rwp_log("Read buffer's content length is now "); printf("%d bytes (%d bytes read total)\n", read_buffer_offset, read_bytes_total);
 
-		// TODO: break out of the loop when it can be determined that the HTTP request has been fully received
+		// scan read buffer for a sequence indicating HTTP headers end
+		char c;
+		for (int i = 0; i < read_bytes; i++) {
+			/*
+				TODO: handle case where data is read multiple times -- now we
+				keep reading from the read buffer's start each time data is read
+				(should instead move cursor in the read buffer and read continue
+				scanning from there)
+			*/
+			c = request->data_buf[read_buffer_offset - read_bytes + i];
+			if (seq_http_headers_end.seq[seq_http_headers_end.offset] == c) seq_http_headers_end.offset++;
+			if (seq_http_headers_end.seq_size == seq_http_headers_end.offset) {
+				rwp_log("HTTP headers fully received!\n");
+				goto done_reading_headers;
+			}
+		}
 	}
-	// TODO: mark the client connection as closed when EOF for the client socket FD is reached
+	done_reading_headers:
 	return read_bytes_total;
 }
 
