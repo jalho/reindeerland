@@ -6,7 +6,7 @@
 #include "rwp-log.h"
 #include "rwp-gateway.h"
 
-#define INBOUND_REQUEST_DATA_BUF_SIZE 1024
+#define INBOUND_REQUEST_DATA_BUF_SIZE 64
 
 /**
  * Parsed inbound (HTTP) request.

@@ -46,10 +46,11 @@ int rwp_read_http_request(RWP_ConnectionInitiatingClient *client, RWP_InboundReq
 		char c;
 		for (int i = 0; i < read_bytes; i++) {
 			/*
-				TODO: handle case where data is read multiple times -- now we
-				keep reading from the read buffer's start each time data is read
-				(should instead move cursor in the read buffer and read continue
-				scanning from there)
+				TODO: Check this logic! Things to consider:
+				- read_bytes may be bigger than capacity or size of
+				  request->data_buf -- getting scannable char shall not segfault!
+				- read may occur multiple times -- sequence scan must move read
+				  buffer cursor smoothly!
 			*/
 			c = request->data_buf[read_buffer_offset - read_bytes + i];
 			if (rwp_sequence_match(c, &seq_http_headers_end)) {
