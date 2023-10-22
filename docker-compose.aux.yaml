@@ -59,7 +59,7 @@ services:
         bind:
           create_host_path: false
   logprocessor:
-    image: ghcr.io/jalho/reindeerland/logprocessor:alpha-1
+    image: ghcr.io/jalho/reindeerland/logprocessor:alpha-2
     command: node main.mjs logs/
     env_file:
       - .env
