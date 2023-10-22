@@ -46,7 +46,7 @@ services:
     env_file:
       - .env
     ports:
-      - 28016:443 # using old RCON TCP port 28016 on shared VM -- TODO: use 443 when we have dedicated VM!
+      - 443:443
     volumes:
       - type: bind
         source: ${DOCKER_HOST_TLS_CERT_FILEPATH}
