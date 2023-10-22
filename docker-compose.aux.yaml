@@ -60,18 +60,13 @@ services:
           create_host_path: false
   logprocessor:
     image: ghcr.io/jalho/reindeerland/logprocessor:alpha-1
-    command: node main.mjs logs/ discord-hooks.json
+    command: node main.mjs logs/
     env_file:
       - .env
     volumes:
       - type: bind
         source: ${DOCKER_HOST_RUSTDEDICATED_LOGS_DIR}
         target: /opt/run/logs
-        bind:
-          create_host_path: false
-      - type: bind
-        source: ${DOCKER_HOST_DISCORD_HOOKS_FILEPATH} # TODO: use webhooks sourced from the .env file instead, remove discord-hooks.json altogether
-        target: /opt/run/discord-hooks.json
         bind:
           create_host_path: false
     container_name: logprocessor

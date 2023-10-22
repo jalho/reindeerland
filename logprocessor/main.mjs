@@ -1,12 +1,7 @@
-import { watch, statSync, readFileSync, accessSync, watchFile, unwatchFile } from "node:fs";
+import { watch, statSync, watchFile, unwatchFile } from "node:fs";
 import { open, readdir } from "node:fs/promises";
 import { request } from "node:https";
 import { join } from "node:path";
-
-/**
- * Each item is used to index a JSON record of Discord webhooks.
- */
-const expectedDiscordWebhooks = ["RESTRICTED_ALERTS", "PUBLIC_BOT_ALERTS", "GENERAL_CHAT"];
 
 /**
  * The entry point.
@@ -15,7 +10,7 @@ const expectedDiscordWebhooks = ["RESTRICTED_ALERTS", "PUBLIC_BOT_ALERTS", "GENE
  * sends alerts to Discord using its webhooks based on what the logs say.
  */
 async function main() {
-  const [, , logDir, discordWebhooksFilePath] = process.argv;
+  const [, , logDir] = process.argv;
   try {
     if (!statSync(logDir).isDirectory()) {
       throw new Error(`Given log dir path '${logDir}' is not a directory!`);
@@ -25,27 +20,10 @@ async function main() {
       cause: eStat,
     });
   }
-  let hooks = null;
-  try {
-    if (!discordWebhooksFilePath.endsWith(".json")) throw new Error("Expected a JSON file");
-    accessSync(discordWebhooksFilePath);
-    hooks = JSON.parse(readFileSync(discordWebhooksFilePath).toString());
-  } catch (cause) {
-    throw new Error(`Given webhooks file (2nd arg) '${discordWebhooksFilePath}' is invalid`, { cause });
-  }
-
-  // assure all expected hooks are given as valid URLs
-  for (const expectedWebhookEntry of expectedDiscordWebhooks) {
-    try {
-      new URL(hooks[expectedWebhookEntry]);
-    } catch (eurl) {
-      throw new Error(
-        `Configured Discord webhook '${expectedWebhookEntry}' in '${discordWebhooksFilePath}' is missing or invalid!`,
-        { cause: eurl }
-      );
-    }
-    console.log("DEBUG: Using Discord webhook '%s': '%s'", expectedWebhookEntry, hooks[expectedWebhookEntry]);
-  }
+  let hooks = {
+    DISCORD_WEBHOOK_RESTRICTED_ALERTS: process.env["DISCORD_WEBHOOK_RESTRICTED_ALERTS"],
+    DISCORD_WEBHOOK_PUBLIC_BOT_ALERTS: process.env["DISCORD_WEBHOOK_PUBLIC_BOT_ALERTS"],
+  };
 
   // initially start watching latest pre-existing logfile
   let initialLogfile;
@@ -66,17 +44,17 @@ async function main() {
         statSync(p);
         unwatchFile(initialLogfile);
         watchFile(p, getTailReader(hooks, p));
-        await alertDiscord(hooks["RESTRICTED_ALERTS"], `New logfile '${fileName}' was created! Watching it now!`);
+        await alertDiscord(hooks["DISCORD_WEBHOOK_RESTRICTED_ALERTS"], `New logfile '${fileName}' was created! Watching it now!`);
       } catch (_) {
         unwatchFile(p);
-        await alertDiscord(hooks["RESTRICTED_ALERTS"], `Logfile '${fileName}' was removed! Not watching it anymore!`);
+        await alertDiscord(hooks["DISCORD_WEBHOOK_RESTRICTED_ALERTS"], `Logfile '${fileName}' was removed! Not watching it anymore!`);
       }
     } else {
       console.log("DEBUG: Uninteresting fs event: '%s': '%s'", event, p);
     }
   });
 
-  await alertDiscord(hooks["RESTRICTED_ALERTS"], "Logprocessor started!");
+  await alertDiscord(hooks["DISCORD_WEBHOOK_RESTRICTED_ALERTS"], "Logprocessor started!");
 }
 
 const getTailReader = (hooks, p) => async (curr, prev) => {
@@ -173,7 +151,7 @@ const lnhandlers = [
       const [, killedname, killedid, killername, killerid] = mgroup;
       const alertmsg = `${killername} killed ${killedname}`;
       console.log("DEBUG: alerting Discord with message '%s'", alertmsg);
-      await alertDiscord(hooks["RESTRICTED_ALERTS"], alertmsg);
+      await alertDiscord(hooks["DISCORD_WEBHOOK_RESTRICTED_ALERTS"], alertmsg);
     },
   },
   {
@@ -191,7 +169,7 @@ const lnhandlers = [
       const [, killedname, killedid, killername, killerid] = mgroup;
       const alertmsg = `PvE: ${killername} killed ${killedname}`;
       console.log("DEBUG: alerting Discord with message '%s'", alertmsg);
-      await alertDiscord(hooks["RESTRICTED_ALERTS"], alertmsg);
+      await alertDiscord(hooks["DISCORD_WEBHOOK_RESTRICTED_ALERTS"], alertmsg);
     },
   },
   {
@@ -208,7 +186,7 @@ const lnhandlers = [
       const [, playername] = mgroup;
       const alertmsg = `${playername} joined the server`;
       console.log("DEBUG: alerting Discord with message '%s'", alertmsg);
-      await alertDiscord(hooks["PUBLIC_BOT_ALERTS"], alertmsg);
+      await alertDiscord(hooks["DISCORD_WEBHOOK_PUBLIC_BOT_ALERTS"], alertmsg);
     },
   },
   {
@@ -225,7 +203,7 @@ const lnhandlers = [
       const [, playername] = mgroup;
       const alertmsg = `${playername} joined the server`;
       console.log("DEBUG: alerting Discord with message '%s'", alertmsg);
-      await alertDiscord(hooks["PUBLIC_BOT_ALERTS"], alertmsg);
+      await alertDiscord(hooks["DISCORD_WEBHOOK_PUBLIC_BOT_ALERTS"], alertmsg);
     },
   },
   {
@@ -241,7 +219,7 @@ const lnhandlers = [
       const { hooks } = opts;
       const alertmsg = "Bradley spawned!";
       console.log("DEBUG: alerting Discord with message '%s'", alertmsg);
-      await alertDiscord(hooks["PUBLIC_BOT_ALERTS"], alertmsg);
+      await alertDiscord(hooks["DISCORD_WEBHOOK_PUBLIC_BOT_ALERTS"], alertmsg);
     },
   },
 ];
