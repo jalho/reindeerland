@@ -1,7 +1,7 @@
 #include "rwp-http.h"
 #include "rwp-streams.h"
 
-// TODO: Return when HTTP request is considered ended? Now waiting until FIN, i.e. never returning before client closes the connection...
+// TODO: Return when HTTP request is considered ended? 
 int rwp_read_http_request(RWP_ConnectionInitiatingClient *client, RWP_InboundRequest *request)
 {
 	/**
@@ -45,16 +45,6 @@ int rwp_read_http_request(RWP_ConnectionInitiatingClient *client, RWP_InboundReq
 		// scan read buffer for a sequence indicating HTTP headers end
 		char c;
 		for (int i = 0; i < read_bytes; i++) {
-			/*
-				TODO: Check this logic! Things to consider:
-				- How does read work? It seems read_bytes cannot be bigger than
-				  capacity or size of request->data_buf, which is nice. But how
-				  is "\r\n\r\n" sequence detected at the end of a request that
-				  is 128 bytes long when the read buffer only has capacity of 64?
-				  Does read start to overwrite its target buffer from the start
-				  each time it receives data, or how is the sequence ever written
-				  to the buffer?
-			*/
 			c = request->data_buf[read_buffer_offset - read_bytes + i];
 			if (rwp_sequence_match(c, &seq_http_headers_end)) {
 				rwp_log("HTTP headers fully received!\n");
